@@ -4,11 +4,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { TypeCopyFileOptions } from './typeCopyFileOptions'
 import { TypeMirrorOptions } from './typeMirrorOptions'
-import { RuleCopyOptions } from './ruleCopyOptions'
-import { matchStringAgainstStringArray } from '@shared/utils/string'
 import { plainToInstance } from 'class-transformer'
 import { CheckSumType, generateCheckSum } from '@shared/utils/checkSum'
 import { RuleFullPath } from './ruleFullPath'
+import { ActionType, addActionLog } from '@shared/storage/storeLogs'
+import { afterQueueProc } from '@worker/communication/ipc/inputQueue'
+import { Rules } from './rules'
+import { DriveInfo } from '@shared/drives/driveInfo'
+import { RuleStatus, StatusType } from '@worker/rules/ruleStatus'
 
 const fileName = 'rule.ts'
 const area = 'rules'
@@ -31,21 +34,39 @@ export enum CopOrDel {
   DELETE_EXTRA = 'delete-extra'
 }
 
-interface CopyPaths {
+export interface CopyPaths {
   from: string
   to: string
 }
 
 export class Rule {
+  // Rule name - Used as its ID
   private name: string
-
+  // Rule type - self explanatory
   private type: RuleType
-
-  private typeOptions: TypeCopyFileOptions | TypeMirrorOptions
-  private copyOptions: RuleCopyOptions
-  //
+  // Target and Original paths to copy from and to
   private from: RulePath
   private to: RulePath
+  // Extra options per rule type and options specific for coping
+  private typeOptions: TypeCopyFileOptions | TypeMirrorOptions
+  // Whether to set the rule as stopped after each processing - requiring confirmation to proceed
+  private stopAfterProcessing: boolean
+  // Pause prcoessing of rule
+  private pauseProcessing: boolean
+
+  // Whether doing the work in the action queues is stopped or not
+  private startActions: boolean
+  private reevaluateRule: boolean
+  // Queues for making or deleting directorys
+  // - Just lists of directories to make or delete
+  private dirMakeActionQueue: string[]
+  private dirDeleteActionQueue: string[]
+  // Queues for copying or deleting files
+  // - List of objects of paths to files copying from (origin path) and to (target path)
+  // - List of paths of files to delete
+  private fileCopyActionQueue: CopyPaths[]
+  private fileDeleteActionQueue: string[]
+
   // Is the rule currently actionable?
   // (E.G. do full paths exists, is a mirror trying to mirror from multiple paths)
   private isActionable: boolean
@@ -53,24 +74,18 @@ export class Rule {
   private isActionableReason: ActionableReason
   // There is work to do which we can currently action on
   private pendingActions: boolean
-
   private copyingComplete: boolean
-  //
-  private dirMakeActionQueue: string[]
-  private dirDeleteActionQueue: string[]
-  //
-  private fileCopyActionQueue: CopyPaths[]
-  private fileDeleteActionQueue: string[]
 
   /* --- Constructor & Getters / Setters --- */
 
   constructor(
     ruleName: string,
     type: RuleType,
-    typeOptions: TypeCopyFileOptions | TypeMirrorOptions,
-    copyOptions: RuleCopyOptions,
     fromRulePath: RulePath,
-    toRulePath: RulePath
+    toRulePath: RulePath,
+    typeOptions: TypeCopyFileOptions | TypeMirrorOptions,
+    stopAfterProcessing: boolean,
+    pauseProcessing: boolean
   ) {
     const funcName = 'Rule Constructor'
     entryLog(funcName, fileName, area)
@@ -78,17 +93,26 @@ export class Rule {
     this.name = ruleName
     this.type = type
     this.typeOptions = typeOptions
-    this.copyOptions = copyOptions
+    this.stopAfterProcessing = stopAfterProcessing
+    this.pauseProcessing = pauseProcessing
+
+    if (stopAfterProcessing) {
+      this.startActions = false
+    } else {
+      this.startActions = true
+    }
+    this.reevaluateRule = true
+    this.dirMakeActionQueue = []
+    this.dirDeleteActionQueue = []
+    this.fileCopyActionQueue = []
+    this.fileDeleteActionQueue = []
+
     this.isActionable = false
     this.isActionableReason = ActionableReason.NOPROBLEM
     this.pendingActions = false
     this.copyingComplete = false
     this.from = fromRulePath
     this.to = toRulePath
-    this.dirMakeActionQueue = []
-    this.dirDeleteActionQueue = []
-    this.fileCopyActionQueue = []
-    this.fileDeleteActionQueue = []
 
     exitLog(funcName, fileName, area)
     return
@@ -118,14 +142,6 @@ export class Rule {
     return this.typeOptions
   }
 
-  getCopyOptions(): RuleCopyOptions {
-    const funcName = 'getCopyOptions'
-    entryLog(funcName, fileName, area)
-
-    exitLog(funcName, fileName, area)
-    return this.copyOptions
-  }
-
   getFrom(): RulePath {
     const funcName = 'getFrom'
     entryLog(funcName, fileName, area)
@@ -142,15 +158,77 @@ export class Rule {
     return this.to
   }
 
+  getStopAfterProcessing(): boolean {
+    const funcName = 'getStopAfterProcessing'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.stopAfterProcessing
+  }
+
+  getPauseProcessing(): boolean {
+    const funcName = 'getPauseProcessing'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.pauseProcessing
+  }
+
+  getDirMakeActionQueue(): string[] {
+    const funcName = 'getDirMakeActionQueue'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.dirMakeActionQueue
+  }
+
+  getDirDeleteActionQueue(): string[] {
+    const funcName = 'getDirDeleteActionQueue'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.dirDeleteActionQueue
+  }
+
+  getFileCopyActionQueue(): CopyPaths[] {
+    const funcName = 'getFileCopyActionQueue'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.fileCopyActionQueue
+  }
+
+  getFileDeleteActionQueue(): string[] {
+    const funcName = 'getFileDeleteActionQueue'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.fileDeleteActionQueue
+  }
+
   /* --- Functions --- */
+
+  setPauseProcessing(pauseProcessing: boolean): void {
+    const funcName = 'setPauseProcessing'
+    entryLog(funcName, fileName, area)
+
+    this.pauseProcessing = pauseProcessing
+
+    exitLog(funcName, fileName, area)
+    return
+  }
 
   /* Calculate actionable work by filling in actionQueues and seeing if there is any actions to do */
   async checkPendingActions(recalculate = true): Promise<boolean> {
     const funcName = 'checkPendingActions'
     entryLog(funcName, fileName, area)
 
-    if (recalculate) {
+    if (this.pauseProcessing === true || this.reevaluateRule === false) {
+      condLog(`Skip evaluation`, funcName, fileName, area)
+      // No need to change the current status of rule as it wont be getting processed
+    } else if (recalculate) {
       condLog(`Recalculate the actions`, funcName, fileName, area)
+      RuleStatus.setRuleStatusInList(this, StatusType.PROCESSING)
       // Check if the rule is ready to perform actions
       if (!this.checkActionability()) {
         condLog(`Rule '${this.name}' has missing path when reuqired`, funcName, fileName, area)
@@ -168,9 +246,16 @@ export class Rule {
     ) {
       condLog(`There is work in actionQueue`, funcName, fileName, area)
       this.pendingActions = true
+      if (this.startActions === true) {
+        RuleStatus.setRuleStatusInList(this, StatusType.QUEUED_ACTIONS)
+      } else {
+        RuleStatus.setRuleStatusInList(this, StatusType.AWAITING_APPROVAL)
+        RuleStatus.setRuleStatusPendingWorkInList(this)
+      }
     } else {
       condLog(`Nothing to do in actionQueue`, funcName, fileName, area)
       this.pendingActions = false
+      RuleStatus.setRuleStatusInList(this, StatusType.NO_WORK)
     }
 
     exitLog(funcName, fileName, area)
@@ -234,11 +319,11 @@ export class Rule {
       )
       if (mirrorTypeOptions.getDeleteExtrasInTo()) {
         condLog(`Delete extras in to: True`, funcName, fileName, area)
-        for (const toFullPath of this.from.getFullPathList()) {
+        for (const toFullPath of this.to.getFullPathList()) {
           condLog(`Recsurse and add actions for deleteing in to path`, funcName, fileName, area)
           await this.recurseAddAction(
             toFullPath.getPath(),
-            this.from,
+            this.to,
             toFullPath.getPath(),
             CopOrDel.DELETE_MIRROR
           )
@@ -285,6 +370,11 @@ export class Rule {
     const entries: fs.Dirent[] = await fs.promises.readdir(currentPath, { withFileTypes: true })
     for (const entry of entries) {
       condLog(`Investigate new item in directory`, funcName, fileName, area)
+      // it it starts with something weird like $ then skip
+      if (entry.name === '$RECYCLE.BIN' || entry.name === 'System Volume Information') {
+        condLog(`Recycle bin - skip it`, funcName, fileName, area)
+        continue
+      }
       const currentFullPath = path.join(currentPath, entry.name)
       if (entry.isDirectory()) {
         condLog(`Item is directory`, funcName, fileName, area)
@@ -299,7 +389,7 @@ export class Rule {
           this.addDirToDeleteActionQueueExtra(currentFullPath, originalRulePath)
         }
         if (
-          (this.dirShouldBeCopied(currentFullPath) && copyOrDelete === CopOrDel.COPY) ||
+          (this.getFrom().shouldDirBeIncluded(currentFullPath) && copyOrDelete === CopOrDel.COPY) ||
           copyOrDelete === CopOrDel.DELETE_EXTRA ||
           copyOrDelete === CopOrDel.DELETE_MIRROR
         ) {
@@ -352,7 +442,7 @@ export class Rule {
 
     if (this.type === RuleType.MIRROR) {
       condLog(`Add to dirActionQueue based on rule's type`, funcName, fileName, area)
-      if (this.dirShouldBeCopied(fromDirPath)) {
+      if (this.getFrom().shouldDirBeIncluded(fromDirPath)) {
         // Add an action for each existing to full path
         for (const toFullPath of this.to.getFullPathList()) {
           condLog(`Create new toDirPath from new toFullPath`, funcName, fileName, area)
@@ -360,6 +450,7 @@ export class Rule {
           if (!pathExists(toDirPath)) {
             condLog(`Dir doesnt exist - Add directory to actionsQueue`, funcName, fileName, area)
             this.dirMakeActionQueue.push(toDirPath)
+            infoLog(`Add ${toDirPath} to make dir action queue`, funcName, fileName, area)
           }
         }
       }
@@ -378,7 +469,7 @@ export class Rule {
     const funcName = 'addFileToCopyActionQueue'
     entryLog(funcName, fileName, area)
 
-    if (this.fileShouldBeCopied(fromFilePath)) {
+    if (this.getFrom().shouldFileBeIncluded(fromFilePath)) {
       condLog(`File should be copied`, funcName, fileName, area)
 
       // Add an action for each existing to full path
@@ -398,6 +489,7 @@ export class Rule {
           if (await this.shouldFileBeDeleted(fromFilePath, toFilePath)) {
             condLog(`File should be deleted`, funcName, fileName, area)
             this.fileDeleteActionQueue.push(fromFilePath)
+            infoLog(`Add ${fromFilePath} to copy file action queue`, funcName, fileName, area)
           }
         }
       }
@@ -459,74 +551,6 @@ export class Rule {
     return autoCleanFromPath
   }
 
-  /*
-  Work out if its a file whicch should be copied
-  - This is currently just checking if it matches include and doesnt match exclude lists.
-  */
-  private fileShouldBeCopied(Path: string): boolean {
-    const funcName: string = 'fileShouldBeCopied'
-    entryLog(funcName, fileName, area)
-
-    let shouldCopyFile: boolean = true
-    infoLog(`Should Copy? From path: ${Path}`, funcName, fileName, area)
-    // Extract the file name from the path
-    const nameOfFile: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = this.copyOptions.getCopyInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfFile, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = this.copyOptions.getCopyExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfFile, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include file based on include/exclude lists`, funcName, fileName, area)
-      shouldCopyFile = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldCopyFile
-  }
-
-  private dirShouldBeCopied(Path: string): boolean {
-    const funcName: string = 'dirShouldBeCopied'
-    entryLog(funcName, fileName, area)
-
-    let shouldCopyFile: boolean = true
-    infoLog(`Should Copy Dir? From path: ${Path}`, funcName, fileName, area)
-    // Extract the file name from the path
-    const nameOfDir: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = this.copyOptions.getDirCopyInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfDir} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfDir, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = this.copyOptions.getDirCopyExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfDir} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfDir, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include file based on include/exclude lists`, funcName, fileName, area)
-      shouldCopyFile = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldCopyFile
-  }
-
   private async getCopyToPath(
     fromFilePath: string,
     fromFullPath: string,
@@ -562,18 +586,20 @@ export class Rule {
   }
 
   // Just for deleting mirror dirs
-  private async addDirToDeleteActionQueue(toDirPath: string, toFullPath: string): Promise<void> {
+  private addDirToDeleteActionQueue(toDirPath: string, toFullPath: string): void {
     const funcName = 'addDirToDeleteActionQueue'
     entryLog(funcName, fileName, area)
 
     // from full path list must contain only 1 item! and it must exist
-    const fromFullPathList: RuleFullPath[] = this.to.getFullPathList()
+    const fromFullPathList: RuleFullPath[] = this.from.getFullPathList()
     const fromFullPath: string = fromFullPathList[0].getPath()
     const fromDirPath: string = fromFullPath + toDirPath.slice(toFullPath.length)
 
-    // If path doesnt exist under from path, then set to delete it
-    if (this.dirShouldBeDeleted(toDirPath)) {
-      // If path doesnt exist under from path, then set to delete it
+    // Set to delete if:
+    // - Dir doesnt exist in origin path
+    // - Dir is included in the target dir filters
+    if (this.getTo().shouldDirBeIncluded(toDirPath)) {
+      condLog(`Dir filtered in`, funcName, fileName, area)
       if (!pathExists(fromDirPath)) {
         condLog(
           `Dir doesnt exist under from - Add dir to delete actionsQueue`,
@@ -581,7 +607,8 @@ export class Rule {
           fileName,
           area
         )
-        this.dirDeleteActionQueue.push(fromDirPath)
+        this.dirDeleteActionQueue.push(toDirPath)
+        infoLog(`Add ${toDirPath} to delete dir action queue`, funcName, fileName, area)
       }
     }
 
@@ -589,18 +616,20 @@ export class Rule {
     return
   }
 
-  private async addFileToDeleteActionQueue(toFilePath: string, toFullPath: string): Promise<void> {
+  private addFileToDeleteActionQueue(toFilePath: string, toFullPath: string): void {
     const funcName = 'addFileToDeleteActionQueue'
     entryLog(funcName, fileName, area)
 
     // from full path list must contain only 1 item! and it must exist
-    const fromFullPathList: RuleFullPath[] = this.to.getFullPathList()
+    const fromFullPathList: RuleFullPath[] = this.from.getFullPathList()
     const fromFullPath: string = fromFullPathList[0].getPath()
     const fromFilePath: string = fromFullPath + toFilePath.slice(toFullPath.length)
 
-    // If path doesnt exist under from path, then set to delete it
-    if (this.fileShouldBeDeleted(toFilePath)) {
-      condLog(`File should be deleted`, funcName, fileName, area)
+    // Set to delete if:
+    // - File doesnt exist in origin path
+    // - File is included in the target file filters
+    if (this.getTo().shouldFileBeIncluded(toFilePath)) {
+      condLog(`File filtered in`, funcName, fileName, area)
       if (!pathExists(fromFilePath)) {
         condLog(
           `File doesnt exist under from - Add dir to delete actionsQueue`,
@@ -608,7 +637,8 @@ export class Rule {
           fileName,
           area
         )
-        this.fileDeleteActionQueue.push(fromFilePath)
+        this.fileDeleteActionQueue.push(toFilePath)
+        infoLog(`Add ${toFilePath} to delete file action queue`, funcName, fileName, area)
       }
     }
 
@@ -616,242 +646,270 @@ export class Rule {
     return
   }
 
-  private fileShouldBeDeleted(Path: string): boolean {
-    const funcName: string = 'fileShouldBeDeleted'
-    entryLog(funcName, fileName, area)
-
-    let shouldDeleteFile: boolean = true
-    infoLog(`Should Delete? TO path: ${Path}`, funcName, fileName, area)
-    // Must be mirror
-    const mirrorTypeOptions: TypeMirrorOptions = plainToInstance(
-      TypeMirrorOptions,
-      this.typeOptions
-    )
-    // Extract the file name from the path
-    const nameOfFile: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = mirrorTypeOptions.getDeleteInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfFile, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = mirrorTypeOptions.getDeleteExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfFile, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include file based on include/exclude lists`, funcName, fileName, area)
-      shouldDeleteFile = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldDeleteFile
-  }
-
-  private dirShouldBeDeleted(Path: string): boolean {
-    const funcName: string = 'dirShouldBeDeleted'
-    entryLog(funcName, fileName, area)
-
-    let shouldDeleteDir: boolean = true
-    infoLog(`Should Delete? TO path: ${Path}`, funcName, fileName, area)
-    // Must be mirror
-    const mirrorTypeOptions: TypeMirrorOptions = plainToInstance(
-      TypeMirrorOptions,
-      this.typeOptions
-    )
-    // Extract the file name from the path
-    const nameOfFile: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = mirrorTypeOptions.getDirDeleteInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfFile, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = mirrorTypeOptions.getDirDeleteExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfFile, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include file based on include/exclude lists`, funcName, fileName, area)
-      shouldDeleteDir = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldDeleteDir
-  }
-
   // Just for deleting copy-file extra dirs
-  private async addDirToDeleteActionQueueExtra(path: string, rulePath: RulePath): Promise<void> {
+  private addDirToDeleteActionQueueExtra(path: string, rulePath: RulePath): void {
     const funcName = 'addDirToDeleteActionQueueExtra'
     entryLog(funcName, fileName, area)
 
-    // If path doesnt exist under from path, then set to delete it
-    if (this.dirShouldBeDeletedExtra(path, rulePath)) {
+    // If path included, delete it
+    if (rulePath.shouldDirBeIncluded(path)) {
       condLog(`Add dir to delete actionsQueue`, funcName, fileName, area)
       this.dirDeleteActionQueue.push(path)
+      infoLog(`Add ${path} to delete dir action queue`, funcName, fileName, area)
     }
 
     exitLog(funcName, fileName, area)
     return
-  }
-
-  private dirShouldBeDeletedExtra(Path: string, rulePath: RulePath): boolean {
-    const funcName: string = 'dirShouldBeDeletedExtra'
-    entryLog(funcName, fileName, area)
-
-    let shouldDeleteDir: boolean = true
-    infoLog(`Should Delete? TO path: ${Path}`, funcName, fileName, area)
-    // Extract the file name from the path
-    const nameOfFile: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = rulePath.getDirsToInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfFile, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = rulePath.getDirsToExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfFile, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include dir based on include/exclude lists`, funcName, fileName, area)
-      shouldDeleteDir = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldDeleteDir
   }
 
   // Just for deleting copy-file extra files
-  private async addFileToDeleteActionQueueExtra(path: string, rulePath: RulePath): Promise<void> {
+  private addFileToDeleteActionQueueExtra(path: string, rulePath: RulePath): void {
     const funcName = 'addFileToDeleteActionQueueExtra'
     entryLog(funcName, fileName, area)
 
-    // If path doesnt exist under from path, then set to delete it
-    if (this.fileShouldBeDeletedExtra(path, rulePath)) {
+    // If file included, delete it
+    if (rulePath.shouldFileBeIncluded(path)) {
       condLog(`Add file to delete actionsQueue`, funcName, fileName, area)
       this.fileDeleteActionQueue.push(path)
+      infoLog(`Add ${path} to delete file action queue`, funcName, fileName, area)
     }
 
     exitLog(funcName, fileName, area)
     return
-  }
-
-  private fileShouldBeDeletedExtra(Path: string, rulePath: RulePath): boolean {
-    const funcName: string = 'fileShouldBeDeletedExtra'
-    entryLog(funcName, fileName, area)
-
-    let shouldDeleteDir: boolean = true
-    infoLog(`Should Delete file? TO path: ${Path}`, funcName, fileName, area)
-    // Extract the file name from the path
-    const nameOfFile: string = path.basename(Path)
-    // Find if filename matches include array
-    const includeArray: string[] = rulePath.getFilesToInclude()
-    let includeMatch: boolean = true
-    if (includeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
-      includeMatch = matchStringAgainstStringArray(nameOfFile, includeArray)
-    }
-    // Find if filename matches exclude array
-    const excludeArray: string[] = rulePath.getFilesToExclude()
-    let excludeMatch: boolean = false
-    if (excludeArray.length > 0) {
-      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
-      excludeMatch = matchStringAgainstStringArray(nameOfFile, excludeArray)
-    }
-    // Work out if shouldCopyFile
-    if (!includeMatch || excludeMatch) {
-      condLog(`Should not include file based on include/exclude lists`, funcName, fileName, area)
-      shouldDeleteDir = false
-    }
-
-    exitLog(funcName, fileName, area)
-    return shouldDeleteDir
   }
 
   // loop through mkdirs queue and make all dirs
-  mkDirs(): void {
+  mkDirs(currentRules: Rules): afterQueueProc {
     const funcName: string = 'mkdirs'
     entryLog(funcName, fileName, area)
 
+    let inputQueueReaction = afterQueueProc.NOTHING
+    let updatedDirMakeActionQueue = [...this.dirMakeActionQueue]
     for (const dir of this.dirMakeActionQueue) {
       condLog(`Make dir ${dir}`, funcName, fileName, area)
-      // try {
-      //   fs.mkdirSync(dir, { recursive: true })
-      // } catch {
-      //   errorLog(`Make dir failed: ${dir}`, funcName, fileName, area)
-      // }
+      // Check inputQueues for work
+      try {
+        fs.mkdirSync(dir, { recursive: true })
+        addActionLog(this.name, ActionType.MAKE_DIRECTORY, dir)
+        updatedDirMakeActionQueue = updatedDirMakeActionQueue.filter((matchDir) => matchDir !== dir)
+      } catch {
+        errorLog(`Make dir failed: ${dir}`, funcName, fileName, area)
+      }
+      inputQueueReaction = workerConfig.getInputQueues().processInputQueue(currentRules)
+      if (
+        inputQueueReaction === afterQueueProc.REEVALUATE_ALL_RULES ||
+        inputQueueReaction === afterQueueProc.RESTART_DOING_ALL_ACTIONS
+      ) {
+        break
+      } else if (inputQueueReaction === afterQueueProc.MAYBE_SKIP_CURRENT_RULE) {
+        const currentRule = currentRules.getRuleList().find((rule) => rule.name === this.name)
+        if (currentRule === undefined || currentRule.startActions === false) {
+          inputQueueReaction = afterQueueProc.SKIP_CURRENT_RULE
+          break
+        }
+      }
     }
+    this.dirMakeActionQueue = updatedDirMakeActionQueue
 
     exitLog(funcName, fileName, area)
-    return
+    return inputQueueReaction
   }
 
-  // loop through copy file queue and copy files
-  copyFiles(): void {
+  private async isSpaceToCopyFile(fromPath: string, toPath: string) {
     const funcName: string = 'copyFiles'
     entryLog(funcName, fileName, area)
 
-    // for (const files of this.fileCopyActionQueue) {
-    //   condLog(`Copy file from ${files.from} to ${files.to}`, funcName, fileName, area)
-    //   try {
-    //     fs.mkdirSync(path.dirname(files.to), { recursive: true })
-    //     fs.copyFileSync(files.from, files.to, fs.constants.COPYFILE_EXCL)
-    //   } catch {
-    //     errorLog(`Copy file failed from ${files.from} to ${files.to}`, funcName, fileName, area)
-    //   }
-    // }
+    let isSpace: boolean = false
+    const driveInfo: DriveInfo | undefined = DriveInfo.getDriveInfoFromPath(toPath)
+    const actionCutoffInGBs = footageOrganiserSettings.getActionCutoffInGBs()
+    try {
+      const fileStats = fs.statSync(fromPath)
+      if (driveInfo) {
+        if (driveInfo.available - fileStats.size > actionCutoffInGBs) {
+          condLog(`No space to copy file to drive`, funcName, fileName, area)
+          isSpace = true
+        }
+      }
+    } catch {
+      errorLog('Failed to get file stats', funcName, fileName, area)
+    }
 
     exitLog(funcName, fileName, area)
-    return
+    return isSpace
+  }
+
+  // loop through copy file queue and copy files
+  async copyFiles(currentRules: Rules): Promise<afterQueueProc> {
+    const funcName: string = 'copyFiles'
+    entryLog(funcName, fileName, area)
+
+    let inputQueueReaction = afterQueueProc.NOTHING
+    let updatedFileCopyActionQueue = [...this.fileCopyActionQueue]
+    for (const files of this.fileCopyActionQueue) {
+      condLog(`Copy file from ${files.from} to ${files.to}`, funcName, fileName, area)
+      if (!this.isSpaceToCopyFile(files.from, files.to)) {
+        condLog(`No space to copy file to drive`, funcName, fileName, area)
+        inputQueueReaction = afterQueueProc.SKIP_CURRENT_RULE
+        break
+      }
+      try {
+        fs.mkdirSync(path.dirname(files.to), { recursive: true })
+        fs.copyFileSync(files.from, files.to, fs.constants.COPYFILE_EXCL)
+        addActionLog(this.name, ActionType.COPY_FILE, files)
+        updatedFileCopyActionQueue = updatedFileCopyActionQueue.filter(
+          (matchFiles) => matchFiles.from !== files.from && matchFiles.to !== files.to
+        )
+      } catch {
+        errorLog(`Copy file failed from ${files.from} to ${files.to}`, funcName, fileName, area)
+      }
+      inputQueueReaction = workerConfig.getInputQueues().processInputQueue(currentRules)
+      if (
+        inputQueueReaction === afterQueueProc.REEVALUATE_ALL_RULES ||
+        inputQueueReaction === afterQueueProc.RESTART_DOING_ALL_ACTIONS
+      ) {
+        break
+      } else if (inputQueueReaction === afterQueueProc.MAYBE_SKIP_CURRENT_RULE) {
+        const currentRule = currentRules.getRuleList().find((rule) => rule.name === this.name)
+        if (currentRule === undefined || currentRule.startActions === false) {
+          inputQueueReaction = afterQueueProc.SKIP_CURRENT_RULE
+          break
+        }
+      }
+    }
+    this.fileCopyActionQueue = updatedFileCopyActionQueue
+
+    exitLog(funcName, fileName, area)
+    return inputQueueReaction
   }
 
   // loop through delete dirs queue and delete all dirs
-  deleteDirs(): void {
+  deleteDirs(currentRules: Rules): afterQueueProc {
     const funcName: string = 'deleteDirs'
     entryLog(funcName, fileName, area)
 
-    // for (const dir of this.dirDeleteActionQueue) {
-    //   condLog(`Delete dir ${dir}`, funcName, fileName, area)
-    //   try {
-    //     fs.rmSync(dir, { recursive: true, force: true })
-    //   } catch {
-    //     errorLog(`Delete dir failed ${dir}`, funcName, fileName, area)
-    //   }
-    // }
+    let inputQueueReaction = afterQueueProc.NOTHING
+    let updatedDirDeleteActionQueue = [...this.dirDeleteActionQueue]
+    for (const dir of this.dirDeleteActionQueue) {
+      condLog(`Delete dir ${dir}`, funcName, fileName, area)
+      try {
+        fs.rmSync(dir, { recursive: true, force: true })
+        addActionLog(this.name, ActionType.DELETE_DIRECTORY, dir)
+        updatedDirDeleteActionQueue = updatedDirDeleteActionQueue.filter(
+          (matchDir) => matchDir !== dir
+        )
+      } catch {
+        errorLog(`Delete dir failed ${dir}`, funcName, fileName, area)
+      }
+      inputQueueReaction = workerConfig.getInputQueues().processInputQueue(currentRules)
+      if (
+        inputQueueReaction === afterQueueProc.REEVALUATE_ALL_RULES ||
+        inputQueueReaction === afterQueueProc.RESTART_DOING_ALL_ACTIONS
+      ) {
+        break
+      } else if (inputQueueReaction === afterQueueProc.MAYBE_SKIP_CURRENT_RULE) {
+        const currentRule = currentRules.getRuleList().find((rule) => rule.name === this.name)
+        if (currentRule === undefined || currentRule.startActions === false) {
+          inputQueueReaction = afterQueueProc.SKIP_CURRENT_RULE
+          break
+        }
+      }
+    }
+    this.dirDeleteActionQueue = updatedDirDeleteActionQueue
+
+    exitLog(funcName, fileName, area)
+    return inputQueueReaction
+  }
+
+  // loop through delete files queue and delete all files
+  deleteFiles(currentRules: Rules): afterQueueProc {
+    const funcName: string = 'deleteFiles'
+    entryLog(funcName, fileName, area)
+
+    let inputQueueReaction = afterQueueProc.NOTHING
+    let updatedFileDeleteActionQueue = [...this.fileDeleteActionQueue]
+    for (const file of this.fileDeleteActionQueue) {
+      condLog(`Delete file ${file}`, funcName, fileName, area)
+      try {
+        fs.unlinkSync(file)
+        addActionLog(this.name, ActionType.DELETE_FILE, file)
+        updatedFileDeleteActionQueue = updatedFileDeleteActionQueue.filter(
+          (matchFile) => matchFile !== file
+        )
+      } catch {
+        errorLog(`Delete file failed ${file}`, funcName, fileName, area)
+      }
+      inputQueueReaction = workerConfig.getInputQueues().processInputQueue(currentRules)
+      if (
+        inputQueueReaction === afterQueueProc.REEVALUATE_ALL_RULES ||
+        inputQueueReaction === afterQueueProc.RESTART_DOING_ALL_ACTIONS
+      ) {
+        break
+      } else if (inputQueueReaction === afterQueueProc.MAYBE_SKIP_CURRENT_RULE) {
+        const currentRule = currentRules.getRuleList().find((rule) => rule.name === this.name)
+        if (currentRule === undefined || currentRule.startActions === false) {
+          inputQueueReaction = afterQueueProc.SKIP_CURRENT_RULE
+          break
+        }
+      }
+    }
+    this.fileDeleteActionQueue = updatedFileDeleteActionQueue
+
+    exitLog(funcName, fileName, area)
+    return inputQueueReaction
+  }
+
+  setReevaluate(): void {
+    const funcName: string = 'setReevaluate'
+    entryLog(funcName, fileName, area)
+
+    this.reevaluateRule = true
+    this.dirDeleteActionQueue = []
+    this.dirMakeActionQueue = []
+    this.fileCopyActionQueue = []
+    this.fileDeleteActionQueue = []
+    this.startActions = false
 
     exitLog(funcName, fileName, area)
     return
   }
 
-  // loop through delete files queue and delete all files
-  deleteFiles(): void {
-    const funcName: string = 'deleteFiles'
+  setStart(): void {
+    const funcName: string = 'setStart'
     entryLog(funcName, fileName, area)
 
-    // for (const file of this.fileDeleteActionQueue) {
-    //   condLog(`Delete file ${file}`, funcName, fileName, area)
-    //   try {
-    //     fs.unlinkSync(file)
-    //   } catch {
-    //     errorLog(`Delete file failed ${file}`, funcName, fileName, area)
-    //   }
-    // }
+    this.startActions = true
+    RuleStatus.setRuleStatusInList(this, StatusType.QUEUED_ACTIONS)
+    RuleStatus.emptyRuleStatusPendingWorkInList(this)
+
+    exitLog(funcName, fileName, area)
+    return
+  }
+
+  getStartActions(): boolean {
+    const funcName: string = 'getStartActions'
+    entryLog(funcName, fileName, area)
+
+    exitLog(funcName, fileName, area)
+    return this.startActions
+  }
+
+  setStop(): void {
+    const funcName: string = 'setStop'
+    entryLog(funcName, fileName, area)
+
+    this.startActions = false
+    // Cant set RuleStatus here as action queues are not updated with what has been completed and not
+
+    exitLog(funcName, fileName, area)
+    return
+  }
+
+  updateCurrentInfo(previousRule: Rule): void {
+    const funcName: string = 'updateCurrentInfo'
+    entryLog(funcName, fileName, area)
+
+    this.startActions = previousRule.startActions
+    this.reevaluateRule = previousRule.reevaluateRule
 
     exitLog(funcName, fileName, area)
     return

@@ -2,6 +2,7 @@ import { app, utilityProcess, MessageChannelMain } from 'electron'
 // import { resolve } from 'path'
 import forkPath from '@worker/worker?modulePath'
 import { IpcMessage } from '@shared/utils/ipc'
+import { receiveWorkerMessage } from './ipc'
 
 const fileName: string = 'fork.ts'
 const area: string = 'fork'
@@ -20,18 +21,12 @@ export default function createWorkerProcess(): void {
   const extraMessage = new IpcMessage('alive', {})
   port2.start()
   port2.postMessage(extraMessage)
-  //
+  // Save port for use later
+  workerPort = port2
+  // Setup receiving messages
   port2.on('message', (e) => {
-    infoLog('Port 2 receieved', funcName, fileName, area)
-    switch (e.data.id) {
-      case 'storage-location': {
-        infoLog('storage location parsed', funcName, fileName, area)
-        const message = new IpcMessage('storage-location', app.getPath('userData'))
-        port2.start()
-        port2.postMessage(message)
-        break
-      }
-    }
+    infoLog('Worker -> Main receieved', funcName, fileName, area)
+    receiveWorkerMessage(e.data)
   })
 
   exitLog(funcName, fileName, area)

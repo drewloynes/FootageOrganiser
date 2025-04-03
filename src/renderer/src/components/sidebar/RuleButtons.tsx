@@ -17,7 +17,10 @@ export const RuleButtons = ({ className, ...props }: ComponentProps<'div'>) => {
       >
         View Rules
       </Link>
-      <button className="w-full py-2 mb-4 bg-blue-500 hover:bg-blue-600 rounded">
+      <button
+        className="w-full py-2 mb-4 bg-blue-500 hover:bg-blue-600 rounded"
+        onClick={() => window.electron.pauseAllRules()}
+      >
         Pause All Rules
       </button>
       <hr

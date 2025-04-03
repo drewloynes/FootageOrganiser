@@ -4,6 +4,7 @@ import path from 'path'
 import * as fs from 'fs'
 import { TypeCopyFileOptions } from './typeCopyFileOptions'
 import { RuleFullPath } from './ruleFullPath'
+import { matchStringAgainstStringArray } from '@shared/utils/string'
 
 const fileName: string = 'rulePath.ts'
 const area: string = 'rules'
@@ -133,7 +134,7 @@ export class RulePath {
     this.countFullPathExists = 0
     // Loop through all current connected volumes to see if theres a matching volume name
     // - If so a full path to the list and find out if the path exists
-    const currentDriveInfoList: DriveInfo[] | undefined = workerConfig.getCurrentDriveInfo()
+    const currentDriveInfoList: DriveInfo[] | undefined = currentDriveInfo
     if (currentDriveInfoList) {
       condLog(`Go through every drive`, funcName, fileName, area)
       for (const driveInfo of currentDriveInfoList) {
@@ -163,6 +164,54 @@ export class RulePath {
 
     exitLog(funcName, fileName, area)
     return this.countFullPathExists
+  }
+
+  shouldFileBeIncluded(pathToFile: string) {
+    const funcName: string = 'fileShouldBeIncluded'
+    entryLog(funcName, fileName, area)
+
+    let shouldIncludeFile: boolean = true
+    const nameOfFile: string = path.basename(pathToFile)
+    infoLog(`Should include file? ${pathToFile}`, funcName, fileName, area)
+
+    const includeArray: string[] = this.filesToInclude
+    if (includeArray.length > 0) {
+      condLog(`Check ${nameOfFile} against include array`, funcName, fileName, area)
+      shouldIncludeFile = matchStringAgainstStringArray(nameOfFile, includeArray)
+    }
+
+    const excludeArray: string[] = this.filesToExclude
+    if (excludeArray.length > 0 && shouldIncludeFile) {
+      condLog(`Check ${nameOfFile} against exclude array`, funcName, fileName, area)
+      shouldIncludeFile = !matchStringAgainstStringArray(nameOfFile, excludeArray)
+    }
+
+    exitLog(funcName, fileName, area)
+    return shouldIncludeFile
+  }
+
+  shouldDirBeIncluded(pathToDir: string) {
+    const funcName: string = 'dirShouldBeIncluded'
+    entryLog(funcName, fileName, area)
+
+    let shouldIncludeDir: boolean = true
+    const nameOfDir: string = path.basename(pathToDir)
+    infoLog(`Should include dir? ${pathToDir}`, funcName, fileName, area)
+
+    const includeArray: string[] = this.dirsToInclude
+    if (includeArray.length > 0) {
+      condLog(`Check ${nameOfDir} against include array`, funcName, fileName, area)
+      shouldIncludeDir = matchStringAgainstStringArray(nameOfDir, includeArray)
+    }
+
+    const excludeArray: string[] = this.dirsToExclude
+    if (excludeArray.length > 0 && shouldIncludeDir) {
+      condLog(`Check ${nameOfDir} against exclude array`, funcName, fileName, area)
+      shouldIncludeDir = !matchStringAgainstStringArray(nameOfDir, excludeArray)
+    }
+
+    exitLog(funcName, fileName, area)
+    return shouldIncludeDir
   }
 
   static async convertPathWithFormat(

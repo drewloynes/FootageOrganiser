@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import createWorkerProcess from './worker/fork'
 import { getMainWindow, openMainWindow } from './window'
+import { setupMainWindowIpc } from './mainWindowIpc'
 
 const fileName: string = 'mainSetup.ts'
 const area: string = 'main'
@@ -38,10 +39,11 @@ function appReady() {
   const funcName: string = 'appReady'
   entryLog(funcName, fileName, area)
 
-  // Set app user model id for windows
+  // Requried for windows, idk why?
   electronApp.setAppUserModelId('com.electron')
-  // Setup tray with context menu for when window is closed
-  const tray = new Tray(join(__dirname, '../../resources/Wario.png')) // Path to your tray icon
+
+  // Setup tray so window can be closed
+  const tray = new Tray(join(__dirname, '../../resources/Wario.png'))
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Open App', click: openMainWindow },
     { label: 'Quit', click: app.quit }
@@ -51,26 +53,14 @@ function appReady() {
   tray.on('click', () => openMainWindow())
   // Setup worker process
   createWorkerProcess()
-
-  ipcMain.handle('dialog:openDirectory', handleFileOpen)
+  // Setup IPC callbacks for the Window Proc
+  setupMainWindowIpc()
 
   // Open a window when app is ready
   openMainWindow()
 
   exitLog(funcName, fileName, area)
   return
-}
-
-async function handleFileOpen() {
-  const window: Electron.BrowserWindow | undefined = getMainWindow()
-  if (window) {
-    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
-      properties: ['openDirectory']
-    })
-    if (!canceled) {
-      return filePaths[0]
-    }
-  }
 }
 
 function appBrowserWindowCreated(_, window) {

@@ -1,4 +1,8 @@
+import { Settings } from '@shared/settings/settings'
 import { IpcMessage } from '@shared/utils/ipc'
+import { endSleepEarly } from '@shared/utils/timer'
+import { RuleStatus } from '@worker/rules/ruleStatus'
+import { Input } from 'postcss'
 
 const fileName: string = 'mainIpc.ts'
 const area: string = 'ipc'
@@ -29,9 +33,9 @@ function setupMainIpcEvents(): void {
 
   const mainPort: Electron.MessagePortMain | undefined = workerConfig.getMainPort()
   if (mainPort) {
-    mainPort.on('message', (e) => {
+    mainPort.on('message', async (e) => {
       ipcRecLog('Main->Worker Message', funcName, fileName, area)
-      receiveMainMessage(e.data)
+      await receiveMainMessage(e.data)
     })
     mainPort.on('close', () => {
       warnLog('Main->Worker Worker Port Closed', funcName, fileName, area)
@@ -46,7 +50,7 @@ function setupMainIpcEvents(): void {
 }
 
 // Parse the message ID and perform function
-function receiveMainMessage(message: IpcMessage): void {
+async function receiveMainMessage(message: IpcMessage): Promise<void> {
   const funcName: string = 'receiveMainMessage'
   entryLog(funcName, fileName, area)
 
@@ -57,8 +61,61 @@ function receiveMainMessage(message: IpcMessage): void {
     }
     case 'storage-location': {
       condLog('Received storage-location ICP message from main process', funcName, fileName, area)
-      workerConfig.setStorageLocation(message.data as string)
-      infoLog('File storage location set', funcName, fileName, area)
+      storageLocation = message.data as string
+      break
+    }
+    case 'rule-changed': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().ruleChanged(message.data as string)
+      endSleepEarly()
+      break
+    }
+    case 'rule-added': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().ruleAdded(message.data as string)
+      endSleepEarly()
+      break
+    }
+    case 'rule-deleted': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().ruleDeleted(message.data as string)
+      break
+    }
+    case 'all-rules-changed': {
+      condLog('Received all-rule-changed from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().allRulesChanged()
+      endSleepEarly()
+      break
+    }
+    case 'start-rule': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().startRule(message.data as string)
+      endSleepEarly()
+      break
+    }
+    case 'stop-rule': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      workerConfig.getInputQueues().stopRule(message.data as string)
+      endSleepEarly()
+      break
+    }
+    case 'settings-changed': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      await footageOrganiserSettings.changed()
+      endSleepEarly()
+      break
+    }
+    case 'rule-status': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      RuleStatus.sendCurrentRuleStatus(
+        message.data.requestId as string,
+        message.data.name as string
+      )
+      break
+    }
+    case 'rule-status-all': {
+      condLog('Received alive ICP message from main process', funcName, fileName, area)
+      RuleStatus.sendAllCurrentRuleStatus(message.data.requestId as string)
       break
     }
     default: {

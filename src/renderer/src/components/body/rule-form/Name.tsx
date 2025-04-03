@@ -1,22 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Input } from '@renderer/components/ui/input'
 import { ComponentProps, useState } from 'react'
+import { Control, Controller, FieldValues } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 type RuleNameType = {
-  ruleName: string
-  setRuleName: (value: string) => void
+  control: Control<FieldValues, any>
 }
 
-export const Name = ({ ruleName, setRuleName }: RuleNameType) => {
+export const RuleName = ({ control }: RuleNameType) => {
   return (
     <div>
-      <label className="block text-gray-700 font-medium mb-2">Rule Name:</label>
-      <input
-        type="text"
-        value={ruleName}
-        onChange={(e) => setRuleName(e.target.value)}
-        placeholder="Enter rule name"
-        className="w-full border border-gray-300 rounded p-2"
-        required
+      <Controller
+        name="ruleName"
+        control={control}
+        render={({ field }) => <Input placeholder="Rule Name" {...field} className="text-black" />}
       />
     </div>
   )

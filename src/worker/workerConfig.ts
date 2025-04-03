@@ -1,17 +1,23 @@
-import { DriveInfo } from '@shared/drives/driveInfo'
-import { join } from 'path'
+import { InputQueue } from './communication/ipc/inputQueue'
+import { RuleStatus } from './rules/ruleStatus'
 
 const fileName: string = 'workerConfig.ts'
 const area: string = 'worker'
 
 export class WorkerConfig {
+  // Port to main process
   private mainPort: Electron.MessagePortMain | undefined
-  private storageLocation: string | undefined
-  private currentDriveInfo: DriveInfo[] | undefined
+  // InputQueues - Work to do from external inputs
+  private inputQueues: InputQueue
+  // Rules Status - List of status of each of the rules
+  private ruleStatusList: RuleStatus[]
 
   constructor() {
     const funcName: string = 'workerConfig Constructor'
     entryLog(funcName, fileName, area)
+
+    this.inputQueues = new InputQueue()
+    this.ruleStatusList = []
 
     exitLog(funcName, fileName, area)
     return
@@ -41,76 +47,52 @@ export class WorkerConfig {
     return this.mainPort
   }
 
-  /* storageLocation Functions */
+  /* intputQueues Functions */
 
-  setStorageLocation(storageLocation: string): void {
-    const funcName: string = 'setStorageLocation'
+  setInputQueues(inputQueue: InputQueue): void {
+    const funcName: string = 'setInputQueues'
     entryLog(funcName, fileName, area)
 
-    this.storageLocation = storageLocation
+    this.inputQueues = inputQueue
 
     exitLog(funcName, fileName, area)
     return
   }
 
-  getStorageLocation(): string | undefined {
-    const funcName: string = 'getStorageLocation'
+  getInputQueues(): InputQueue {
+    const funcName: string = 'getInputQueues'
     entryLog(funcName, fileName, area)
 
-    if (!this.storageLocation) {
-      warnLog('storageLocation is undefined', funcName, fileName, area)
+    if (!this.inputQueues) {
+      warnLog('inputQueues is undefined', funcName, fileName, area)
     }
 
     exitLog(funcName, fileName, area)
-    return this.storageLocation
+    return this.inputQueues
   }
 
-  getRulesStorageLocation(): string | undefined {
-    const funcName: string = 'getStorageLocation'
+  /* ruleStatusList Functions */
+
+  setRuleStatusList(ruleStatusList: RuleStatus[]): void {
+    const funcName: string = 'setRuleStatusList'
     entryLog(funcName, fileName, area)
 
-    let rulesStorageLocation: string | undefined = undefined
-    if (this.storageLocation) {
-      condLog('Fill rules storage location', funcName, fileName, area)
-      rulesStorageLocation = join(this.storageLocation, 'rules.json')
-    } else {
-      warnLog('storageLocation is undefined', funcName, fileName, area)
-    }
-
-    exitLog(funcName, fileName, area)
-    return rulesStorageLocation
-  }
-
-  /* currentDriveInfo Functions */
-
-  getCurrentDriveInfo(): DriveInfo[] | undefined {
-    const funcName: string = 'getCurrentDriveInfo'
-    entryLog(funcName, fileName, area)
-
-    if (!this.currentDriveInfo) {
-      warnLog('currentDriveInfo is undefined', funcName, fileName, area)
-    }
-
-    exitLog(funcName, fileName, area)
-    return this.currentDriveInfo
-  }
-
-  // Get the latest information on drives conencted to the computer, update workerConfig.currentDriveinfo
-  async updateCurrentDriveInfo(): Promise<void> {
-    const funcName: string = 'updateCurrentDriveInfo'
-    entryLog(funcName, fileName, area)
-
-    const drives: DriveInfo[] = await DriveInfo.getCurrentDriveInfoList()
-    // Failed to find any drives - throw error
-    if (drives.length === 0) {
-      errorLog('Failed to get and parse any drives', funcName, fileName, area)
-      throw 'Failed to get and parse any drives'
-    }
-    // Save drive to the workerConfig
-    this.currentDriveInfo = drives
+    this.ruleStatusList = ruleStatusList
 
     exitLog(funcName, fileName, area)
     return
+  }
+
+  getRuleStatusList(): RuleStatus[] {
+    const funcName: string = 'getRuleStatusList'
+    entryLog(funcName, fileName, area)
+
+    if (!this.ruleStatusList) {
+      warnLog('ruleStatusList is undefined', funcName, fileName, area)
+    }
+
+    exitLog(funcName, fileName, area)
+    return this.ruleStatusList
   }
 }
 

@@ -10,7 +10,7 @@ interface debugConfigLayout {
 
 const debugConfig: debugConfigLayout = {
   logLevel: process.env.LOG_LEVEL || 'func',
-  logProcess: [],
+  logProcess: ['mainProc'],
   logFunc: [],
   logFile: [],
   logArea: []

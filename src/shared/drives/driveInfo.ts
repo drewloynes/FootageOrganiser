@@ -84,21 +84,53 @@ export class DriveInfo {
     return drives
   }
 
+  static async updateCurrentDriveInfo(): Promise<void> {
+    const funcName: string = 'updateCurrentDriveInfo'
+    entryLog(funcName, fileName, area)
+
+    const drives: DriveInfo[] = await DriveInfo.getCurrentDriveInfoList()
+    // Failed to find any drives - throw error
+    if (drives.length === 0) {
+      errorLog('Failed to get and parse any drives', funcName, fileName, area)
+      throw 'Failed to get and parse any drives'
+    }
+    currentDriveInfo = drives
+
+    exitLog(funcName, fileName, area)
+    return
+  }
+
+  static getDriveInfoFromPath(path: string): DriveInfo | undefined {
+    const funcName: string = 'getDriveInfoFromPath'
+    entryLog(funcName, fileName, area)
+
+    const driveInfoList: DriveInfo[] | undefined = currentDriveInfo
+    let driveInfoOfPath: DriveInfo | undefined = undefined
+    if (driveInfoList) {
+      condLog(`Loop through driveInfos`, funcName, fileName, area)
+      for (const driveInfo of driveInfoList) {
+        condLog(`Test if path starts with drive mount`, funcName, fileName, area)
+        // For mac this should loop through and match a /volume after matching macintosh hd's /
+        if (path.startsWith(driveInfo.mount)) {
+          condLog(`Match with mount ${driveInfo.mount}`, funcName, fileName, area)
+          driveInfoOfPath = driveInfo
+        }
+      }
+    }
+
+    exitLog(funcName, fileName, area)
+    return driveInfoOfPath
+  }
+
   static getVolNameFromPath(path: string): string {
     const funcName: string = 'getVolNameFromPath'
     entryLog(funcName, fileName, area)
 
-    const driveInfos: DriveInfo[] | undefined = workerConfig.getCurrentDriveInfo()
+    const driveInfo: DriveInfo | undefined = DriveInfo.getDriveInfoFromPath(path)
     let volumeName: string = 'Unknown'
-    if (driveInfos) {
-      condLog(`Loop through driveInfos`, funcName, fileName, area)
-      for (const driveInfo of driveInfos) {
-        condLog(`Test if path starts with drive mount`, funcName, fileName, area)
-        if (path.startsWith(driveInfo.mount)) {
-          condLog(`Match with mount ${driveInfo.mount}`, funcName, fileName, area)
-          volumeName = driveInfo.volumeName
-        }
-      }
+    if (driveInfo) {
+      condLog(`Drive info found`, funcName, fileName, area)
+      volumeName = driveInfo.volumeName
     }
 
     exitLog(funcName, fileName, area)

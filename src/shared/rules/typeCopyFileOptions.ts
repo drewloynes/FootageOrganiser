@@ -113,7 +113,7 @@ export class TypeCopyFileOptions {
         }
         case TypeCopyFileFormatOptions.DAY: {
           condLog(`Add day to path format`, funcName, fileName, area)
-          formatPath = formatPath.concat(path.sep, `${fileStats.birthtime.getDay()}`)
+          formatPath = formatPath.concat(path.sep, `${fileStats.birthtime.getDate()}`)
           break
         }
         case TypeCopyFileFormatOptions.VOLUME_NAME: {

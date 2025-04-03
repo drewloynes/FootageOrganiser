@@ -13,6 +13,17 @@ export function initMainGlobals(): void {
   global.ipcSentLog = logger.ipcSentLog
   global.processName = 'mainProc'
   global.workerPrcoess = undefined
+
+  global.workerPort = undefined
+  global.footageOrganiserSettings = undefined
+
+  global.currentDriveInfo = undefined
+
+  global.storageLocation = undefined
+
+  global.ruleStatusPendingRequests = new Map()
+  global.ruleStatusAllPendingRequests = new Map()
+
   // No exit log as there was no entry!
 }
 

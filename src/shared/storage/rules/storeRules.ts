@@ -1,6 +1,7 @@
 import { Rules } from '@shared/rules/rules'
 import { StoreRule } from './storeRule'
 import { Rule } from '@shared/rules/rule'
+import { DriveInfo } from '@shared/drives/driveInfo'
 
 const fileName = 'storeRules.ts'
 const area = 'store rules'
@@ -35,22 +36,22 @@ export class StoreRules {
     entryLog(funcName, fileName, area)
 
     let rules: Rules | undefined = undefined
-    // try {
-    // Update workerConfig.currentDriveInfo to latest from the computer
-    await workerConfig.updateCurrentDriveInfo()
-    if (data.ruleList === undefined) {
-      throw 'Cant find Rules.RuleList'
+    try {
+      // Update workerConfig.currentDriveInfo to latest from the computer
+      await DriveInfo.updateCurrentDriveInfo()
+      if (data.ruleList === undefined) {
+        throw 'Cant find Rules.RuleList'
+      }
+      const ruleList: Rule[] = []
+      for (const rule of data.ruleList) {
+        condLog('Create each Rule object', funcName, fileName, area)
+        const newRule: Rule = StoreRule.toRule(rule)
+        ruleList.push(newRule)
+      }
+      rules = new Rules(ruleList)
+    } catch {
+      errorLog('Failure parsing rules file', funcName, fileName, area)
     }
-    const ruleList: Rule[] = []
-    for (const rule of data.ruleList) {
-      condLog('Create each Rule object', funcName, fileName, area)
-      const newRule: Rule = StoreRule.toRule(rule)
-      ruleList.push(newRule)
-    }
-    rules = new Rules(ruleList)
-    // } catch {
-    // errorLog('Failure parsing rules file', funcName, fileName, area)
-    // }
 
     exitLog(funcName, fileName, area)
     return rules

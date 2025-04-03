@@ -7,7 +7,12 @@ export const ExtraButtons = ({ className, ...props }: ComponentProps<'div'>) => 
       <button className="w-full py-2 mb-4 bg-blue-500 hover:bg-blue-600 rounded">
         CheckSums On Mirrors
       </button>
-      <button className="w-full py-2 mb-4 bg-blue-500 hover:bg-blue-600 rounded">Logs</button>
+      <button
+        className="w-full py-2 mb-4 bg-blue-500 hover:bg-blue-600 rounded"
+        onClick={() => window.electron.openLogsFolder()}
+      >
+        Logs
+      </button>
       <hr
         style={{
           color: 'red',

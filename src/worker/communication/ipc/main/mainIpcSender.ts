@@ -1,4 +1,5 @@
 import { IpcMessage } from '@shared/utils/ipc'
+import { RuleStatus } from '@worker/rules/ruleStatus'
 
 const fileName: string = 'mainIpcSender.ts'
 const area: string = 'ipc'
@@ -28,6 +29,30 @@ export function requestStorageLocation(): void {
   entryLog(funcName, fileName, area)
 
   const message = new IpcMessage('storage-location', {})
+  sendMessageMain(message)
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+// Request for storage location to be filled
+export function sendRuleStatus(ruleStatus: object): void {
+  const funcName: string = 'sendRuleStatus'
+  entryLog(funcName, fileName, area)
+
+  const message = new IpcMessage('rule-status', ruleStatus)
+  sendMessageMain(message)
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+// Request for storage location to be filled
+export function sendRuleStatusAll(ruleStatusAll: object): void {
+  const funcName: string = 'sendRuleStatusAll'
+  entryLog(funcName, fileName, area)
+
+  const message = new IpcMessage('rule-status-all', ruleStatusAll)
   sendMessageMain(message)
 
   exitLog(funcName, fileName, area)

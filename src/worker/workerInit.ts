@@ -1,8 +1,10 @@
 import * as logger from '@shared/debug/logger'
+import { Settings } from '@shared/settings/settings'
 import WorkerConfig from '@worker/workerConfig'
 
 export function initWorkerGlobals(): void {
   // Setup loggers first - lets start logging!!!
+
   global.entryLog = logger.entryLog
   global.exitLog = logger.exitLog
   global.condLog = logger.condLog
@@ -13,8 +15,18 @@ export function initWorkerGlobals(): void {
   global.ipcRecLog = logger.ipcRecLog
   global.ipcSentLog = logger.ipcSentLog
   global.processName = 'WorkerProc'
-  // Make workerConfig global
+
+  global.footageOrganiserSettings = undefined
+
+  global.currentDriveInfo = undefined
+
+  global.storageLocation = undefined
+
+  // Need worker config accessible globally
   global.workerConfig = new WorkerConfig()
+
+  global.currentRunningTimeoutsAndResolve = new Map()
+
   // No exit log as there was no entry!
 }
 

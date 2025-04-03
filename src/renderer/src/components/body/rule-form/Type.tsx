@@ -1,20 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/components/ui/select'
+import { Control, Controller, FieldValues } from 'react-hook-form'
+
 type RuleTypeType = {
-  ruleType: string
-  setRuleType: (value: string) => void
+  control: Control<FieldValues, any>
 }
 
-export const Type = ({ ruleType, setRuleType }: RuleTypeType) => {
+export const RuleType = ({ control }: RuleTypeType) => {
   return (
     <div>
-      <label className="block text-gray-700 font-medium mb-2">Rule Type:</label>
-      <select
-        value={ruleType}
-        onChange={(e) => setRuleType(e.target.value)}
-        className="w-full border border-gray-300 rounded p-2"
-      >
-        <option value="Copy File">Copy File</option>
-        <option value="Mirror">Mirror</option>
-      </select>
+      <Controller
+        name="ruleType"
+        control={control}
+        defaultValue={'Copy File'}
+        render={({ field }) => (
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <SelectTrigger className="text-black">{field.value}</SelectTrigger>
+            <SelectContent className="text-black">
+              <SelectItem className="text-black" value="Copy File">
+                Copy File
+              </SelectItem>
+              <SelectItem className="text-black" value="Mirror">
+                Mirror
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      />
     </div>
   )
 }
