@@ -1,0 +1,12 @@
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 10:54:45:5445|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 10:54:45:5445|[39m
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 10:55:13:5513|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 10:55:13:5513|[39m
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 10:56:33:5633|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 10:56:33:5633|[39m
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 11:03:59:359|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 11:03:59:359|[39m
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 11:06:55:655|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 11:06:55:655|[39m
+[33m[warn]: 	mainPort is undefined                                       |WorkerProc|getMainPort                   |workerConfig.ts     |worker    |2025-04-02 11:07:29:729|[39m
+[33m[warn]: 	storageLocation is undefined                                |WorkerProc|getSettingsStorageLocation    |filePaths.ts        |utils     |2025-04-02 11:07:29:729|[39m
