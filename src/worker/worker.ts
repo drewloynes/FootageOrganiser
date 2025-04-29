@@ -1,18 +1,15 @@
+// Entry File for the worker process
+
 import { setupWorker } from '@worker/workerSetup'
-import initWorkerGlobals from '@worker/workerInit'
+import initWorkerGlobals from '@worker/workerInitialisation'
 import { runWorker } from './runWorker'
 
 const fileName: string = 'worker.ts'
-const funcName: string = 'Worker Entry'
 const area: string = 'worker'
+const funcName: string = 'Worker Entry'
 
-// Initialise Logging and global variables
 initWorkerGlobals()
-// Setup worker process, then run the worker
-if (await setupWorker()) {
-  condLog('Worker sucessfully setup', funcName, fileName, area)
-  await runWorker()
-} else {
-  errorLog('Worker failed to setup', funcName, fileName, area)
-  throw 'Worker setup failed'
-}
+infoLog('Initialisation of worker globals complete', funcName, fileName, area)
+await setupWorker()
+infoLog('Setup of worker complete', funcName, fileName, area)
+await runWorker()

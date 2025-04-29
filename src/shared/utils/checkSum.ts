@@ -1,106 +1,122 @@
-import * as fs from 'fs'
+import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
+import { CRC32Stream } from 'crc32-stream'
 import * as crypto from 'crypto'
-import * as crc32 from 'crc-32'
+import * as fs from 'fs'
 
-const fileName: string = 'checkSum.ts'
+const fileName: string = 'checksum.ts'
 const area: string = 'utils'
 
-export enum CheckSumType {
-  CRC = 'crc',
-  MD5 = 'md5',
-  SHA_256 = 'sha-256'
-}
-
-export async function generateCheckSum(
+export async function generateChecksum(
   pathToFile: string,
-  checkSumType: CheckSumType
+  checksumType: CHECKSUM_TYPE
 ): Promise<string> {
-  const funcName: string = 'shouldFileBeDeleted'
+  const funcName: string = 'generateChecksum'
   entryLog(funcName, fileName, area)
 
-  let checkSum: string = ''
-  switch (checkSumType) {
-    case CheckSumType.CRC: {
-      checkSum = await generateCrcCheckSum(pathToFile)
+  let checksum: string = ''
+  switch (checksumType) {
+    case CHECKSUM_TYPE.CRC: {
+      condLog('CRC checksum', funcName, fileName, area)
+      checksum = await generateCrcChecksum(pathToFile)
       break
     }
-    case CheckSumType.MD5: {
-      checkSum = await generateMd5CheckSum(pathToFile)
+    case CHECKSUM_TYPE.MD5: {
+      condLog('MD5 checksum', funcName, fileName, area)
+      checksum = await generateMd5Checksum(pathToFile)
       break
     }
-    case CheckSumType.SHA_256: {
-      checkSum = await generateSha256CheckSum(pathToFile)
+    case CHECKSUM_TYPE.SHA_256: {
+      condLog('SHA 256 checksum', funcName, fileName, area)
+      checksum = await generateSha256Checksum(pathToFile)
       break
     }
   }
-  infoLog(`Generated checksum: ${checkSum}`, funcName, fileName, area)
+  debugLog(`Generated checksum: ${checksum}`, funcName, fileName, area)
 
   exitLog(funcName, fileName, area)
-  return checkSum
+  return checksum
 }
 
-function generateCrcCheckSum(pathToFile) {
-  const funcName: string = 'generateCrcCheckSum'
+function generateCrcChecksum(pathToFile: string): Promise<string> {
+  const funcName: string = 'generateCrcChecksum'
   entryLog(funcName, fileName, area)
 
   const checkSum: Promise<string> = new Promise((resolve, reject) => {
-    condLog(`Auto clean from path: TRUE`, funcName, fileName, area)
-    let hash = crc32.buf([])
     const stream = fs.createReadStream(pathToFile, { encoding: undefined })
+    const crcStream = new CRC32Stream()
+    stream.pipe(crcStream)
 
-    stream.on('data', (chunk) => {
-      // Update the CRC32 checksum with each chunk
-      if (Buffer.isBuffer(chunk)) {
-        // Update the CRC32 checksum with the chunk as a Uint8Array
-        hash = crc32.buf(chunk, hash)
-      } else {
-        // Handle cases where chunk might be a string (not expected in binary mode)
-        reject(new Error('Unexpected string chunk received'))
-      }
+    crcStream.on('end', () => {
+      condLog('Stream ending', funcName, fileName, area)
+      // The CRC32 value as a hex string
+      const checksum = crcStream.digest('hex')
+      resolve(checksum)
     })
 
-    stream.on('end', () => {
-      // Convert the CRC32 checksum to an 8-character hexadecimal string
-      resolve((hash >>> 0).toString(16).padStart(8, '0'))
+    crcStream.on('error', (err) => {
+      condLog('CRC stream error encountered', funcName, fileName, area)
+      reject(err)
     })
 
-    stream.on('error', (err) => reject(err))
+    stream.on('error', (err) => {
+      condLog('Read stream error encountered', funcName, fileName, area)
+      reject(err)
+    })
   })
 
   exitLog(funcName, fileName, area)
   return checkSum
 }
 
-function generateMd5CheckSum(pathToFile) {
-  const funcName: string = 'generateMd5CheckSum'
+function generateMd5Checksum(pathToFile: string): Promise<string> {
+  const funcName: string = 'generateMd5Checksum'
   entryLog(funcName, fileName, area)
 
-  const checkSum: Promise<string> = new Promise((resolve, reject) => {
+  const checksum: Promise<string> = new Promise((resolve, reject) => {
     const hash = crypto.createHash('md5')
     const stream = fs.createReadStream(pathToFile)
 
-    stream.on('data', (data) => hash.update(data))
-    stream.on('end', () => resolve(hash.digest('hex')))
-    stream.on('error', (err) => reject(err))
+    stream.on('data', (data) => {
+      condLog('Data received', funcName, fileName, area)
+      hash.update(data)
+    })
+    stream.on('end', () => {
+      condLog('Stream ending', funcName, fileName, area)
+      resolve(hash.digest('hex'))
+    })
+    stream.on('error', (err) => {
+      condLog('Error encountered', funcName, fileName, area)
+      reject(err)
+    })
   })
 
   exitLog(funcName, fileName, area)
-  return checkSum
+  return checksum
 }
 
-function generateSha256CheckSum(pathToFile): Promise<string> {
-  const funcName: string = 'generateSha256CheckSum'
+function generateSha256Checksum(pathToFile: string): Promise<string> {
+  const funcName: string = 'generateSha256Checksum'
   entryLog(funcName, fileName, area)
 
-  const checkSum: Promise<string> = new Promise((resolve, reject) => {
+  const checksum: Promise<string> = new Promise((resolve, reject) => {
     const hash = crypto.createHash('sha256')
     const stream = fs.createReadStream(pathToFile)
 
-    stream.on('data', (data) => hash.update(data))
-    stream.on('end', () => resolve(hash.digest('hex')))
-    stream.on('error', (err) => reject(err))
+    stream.on('data', (data) => {
+      condLog('Data received', funcName, fileName, area)
+      hash.update(data)
+    })
+    stream.on('end', () => {
+      condLog('Stream ending', funcName, fileName, area)
+      resolve(hash.digest('hex'))
+    })
+    stream.on('error', (err) => {
+      condLog('Error encountered', funcName, fileName, area)
+      reject(err)
+    })
   })
 
   exitLog(funcName, fileName, area)
-  return checkSum
+  return checksum
 }
+export { CHECKSUM_TYPE }

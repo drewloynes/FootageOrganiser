@@ -1,19 +1,30 @@
-import { RootLayout } from './components/RootLayout'
-import { Sidebar } from './components/sidebar/Sidebar'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import ViewAllRules from './components/body/ViewAllRules'
-import Title from './components/body/Title'
+// import { Route, Router, Routes } from "react-router-dom"
+// import { DraggableTopBar } from "./components/DraggableTopBar"
+// import { RootLayout } from "./components/RootLayout"
+// import { Body } from "./components/body/Body"
+// import { Sidebar } from "./components/sidebar/Sidebar"
+// import Title from "./components/body/Title"
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { DraggableTopBar } from './components/DraggableTopBar'
-import { Body } from './components/body/Body'
-import Help from './components/body/Help.'
+import { RootLayout } from './components/RootLayout'
 import About from './components/body/About'
-import Settings from './components/body/settings/Settings'
-import Confirmation from './components/body/confirmation/Confirmation'
-import EditRule from './components/body/edit/EditRule'
+import { Body } from './components/body/Body'
 import CreateNewRule from './components/body/CreateNewRule'
+import Help from './components/body/Help.'
+import Title from './components/body/Title'
+import ViewAllRules from './components/body/ViewAllRules'
 import ApprovalList from './components/body/action-list/ApprovalList'
+import EditRule from './components/body/edit/EditRule'
+import Settings from './components/body/settings/Settings'
+import { Sidebar } from './components/sidebar/Sidebar'
+
+const fileName: string = 'App.tsx'
+const area: string = 'app'
 
 function App() {
+  const funcName: string = 'App'
+  log.rend(funcName, fileName, area)
+
   return (
     <Router>
       <DraggableTopBar />
@@ -26,7 +37,6 @@ function App() {
             <Route path="/create-rule" element={<CreateNewRule />} />
             <Route path="/edit-rule/:ruleName" element={<EditRule />} />
             <Route path="/approval-list/:ruleName" element={<ApprovalList />} />
-            <Route path="/Confirmation" element={<Confirmation />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />

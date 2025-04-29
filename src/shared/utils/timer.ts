@@ -1,73 +1,51 @@
+import { PromiseResolveTimer } from './promise'
+
 const fileName: string = 'timer.ts'
 const area: string = 'utils'
 
-// Sleep or pause running for a set amount of time.
-export async function sleep(ms): Promise<NodeJS.Timeout> {
-  return await new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-export async function sleepOrWork(ms) {
-  const funcName: string = 'sleepOrWork'
+export async function sleep(
+  ms: number,
+  id: string | undefined = undefined,
+  promiseResolveTimerMap: Map<string, PromiseResolveTimer> | undefined = undefined
+): Promise<boolean> {
+  const funcName: string = 'sleep'
   entryLog(funcName, fileName, area)
 
   const promise = await new Promise((resolve) => {
-    // Timeout promise
+    // Time out promise or let it end manually through the map
     const timer = setTimeout(() => {
-      resolve('timeout') // No work, just slept
+      resolve(true)
     }, ms)
 
-    currentRunningTimeoutsAndResolve.set('Sleeping', { resolve, timer })
+    if (id !== undefined && promiseResolveTimerMap !== undefined) {
+      condLog(`Add ${id} to map`, funcName, fileName, area)
+      promiseResolveTimerMap.set(id, { resolve, timer })
+    }
   })
 
   exitLog(funcName, fileName, area)
-  return promise
+  return promise as Promise<boolean> // True if slept for entire time, otherwise false
 }
 
-export async function endSleepEarly() {
-  const funcName: string = 'endSleepEarly'
+export function endSleep(
+  id: string,
+  promiseResolveTimerMap: Map<string, PromiseResolveTimer>
+): boolean {
+  const funcName: string = 'endSleep'
   entryLog(funcName, fileName, area)
 
-  if (currentRunningTimeoutsAndResolve.has('Sleeping')) {
-    condLog('Pending request found', funcName, fileName, area)
-    // Resolve the Promise with the worker's response
-    currentRunningTimeoutsAndResolve.get('Sleeping').resolve()
-    clearTimeout(currentRunningTimeoutsAndResolve.get('Sleeping').timer)
-    currentRunningTimeoutsAndResolve.delete('Sleeping') // Cleanup
+  let sleepEnded: boolean = false
+  if (promiseResolveTimerMap.has(id)) {
+    condLog(`Sleep for '${id}' found in ResolveTimer map`, funcName, fileName, area)
+    const resolveTimerEntry = promiseResolveTimerMap.get(id)
+    resolveTimerEntry?.resolve(false) // Pop the promise
+    clearTimeout(resolveTimerEntry?.timer) // End the timer
+    promiseResolveTimerMap.delete(id) // Delete the map entry
+    sleepEnded = true
+  } else {
+    warnLog(`Sleep for '${id}' not found in ResolveTimer map`, funcName, fileName, area)
   }
 
   exitLog(funcName, fileName, area)
-  return
-}
-
-// Wait till isReadyFunction reports true.
-// - Returns true if function doesnt timeout
-// - Returns false if function does timeout
-export async function waitReady(
-  isReadyFunction: () => boolean,
-  timeOut: number = 10000,
-  refresh: number = 200
-): Promise<boolean> {
-  const funcName: string = 'waitReady'
-  entryLog(funcName, fileName, area)
-
-  let timeTotal: number = 0
-  let outOfTime: boolean = true
-  // While we've not timed out, wait and test the isReadyFunction
-  while (timeTotal < timeOut) {
-    condLog('timeTotal < timeOut', funcName, fileName, area)
-    if (isReadyFunction()) {
-      condLog('Ready function is true', funcName, fileName, area)
-      outOfTime = false
-      break
-    }
-    timeTotal += refresh
-    await sleep(refresh)
-  }
-  // If we timed out, log as a warning
-  if (outOfTime) {
-    warnLog('Ready function is true', funcName, fileName, area)
-  }
-
-  exitLog(funcName, fileName, area)
-  return !outOfTime
+  return sleepEnded
 }

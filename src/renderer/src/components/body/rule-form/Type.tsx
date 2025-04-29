@@ -1,26 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/components/ui/select'
-import { Control, Controller, FieldValues } from 'react-hook-form'
+import { RULE_TYPE, StoreRule } from '@shared/types/ruleTypes'
+import { Control, Controller } from 'react-hook-form'
 
 type RuleTypeType = {
-  control: Control<FieldValues, any>
+  control: Control<StoreRule>
 }
 
 export const RuleType = ({ control }: RuleTypeType) => {
   return (
     <div>
       <Controller
-        name="ruleType"
+        name="type"
         control={control}
-        defaultValue={'Copy File'}
         render={({ field }) => (
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <SelectTrigger className="text-black">{field.value}</SelectTrigger>
             <SelectContent className="text-black">
-              <SelectItem className="text-black" value="Copy File">
+              <SelectItem className="text-black" value={RULE_TYPE.COPYFILE}>
                 Copy File
               </SelectItem>
-              <SelectItem className="text-black" value="Mirror">
+              <SelectItem className="text-black" value={RULE_TYPE.MIRROR}>
                 Mirror
               </SelectItem>
             </SelectContent>

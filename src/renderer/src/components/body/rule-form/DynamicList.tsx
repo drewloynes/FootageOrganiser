@@ -1,5 +1,5 @@
-import { Button } from '@renderer/components/ui/button'
-import { Input } from '@renderer/components/ui/input'
+import { Button } from '@renderer/src/components/ui/button'
+import { Input } from '@renderer/src/components/ui/input'
 import { Controller } from 'react-hook-form'
 
 export default function DynamicList({ label, name, control, options = [] }) {

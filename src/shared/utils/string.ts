@@ -5,8 +5,14 @@ export function matchStringAgainstStringArray(string: string, stringArray: strin
   const funcName = 'matchStringAgainstStringArray'
   entryLog(funcName, fileName, area)
 
-  // Check each file name against the files to incldue list
   const matchFound: boolean = stringArray.some((pattern) => {
+    condLog(`For pattern ${pattern}`, funcName, fileName, area)
+
+    if (pattern === '*') {
+      condLog(`* matches all`, funcName, fileName, area)
+      return true
+    }
+
     // Convert the wildcard pattern to a RegExp
     const regexPattern = new RegExp(
       '^' +
@@ -17,8 +23,23 @@ export function matchStringAgainstStringArray(string: string, stringArray: strin
     )
     return regexPattern.test(string)
   })
-  debugLog(`matchFound is ${matchFound}`, funcName, fileName, area)
+
+  debugLog(`matchFound: ${matchFound} for ${string}`, funcName, fileName, area)
 
   exitLog(funcName, fileName, area)
   return matchFound
+}
+
+export function cloneStringArray(stringArray: string[]): string[] {
+  const funcName = 'cloneStringArray'
+  entryLog(funcName, fileName, area)
+
+  const clonedStringArray: string[] = []
+  for (const item of stringArray) {
+    condLog(`Item in string arrray`, funcName, fileName, area)
+    clonedStringArray.push(item)
+  }
+
+  exitLog(funcName, fileName, area)
+  return clonedStringArray
 }
