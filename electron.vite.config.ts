@@ -1,15 +1,17 @@
-import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { resolve } from 'path'
+import packageJson from './package.json'
 
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
-        '@lib': resolve('src/main/lib'),
         '@shared': resolve('src/shared'),
-        '@worker': resolve('src/worker')
+        '@worker': resolve('src/worker'),
+        '@main': resolve('src/main')
       }
     },
     build: {
@@ -19,6 +21,9 @@ export default defineConfig({
           worker: resolve(__dirname, 'src/worker/worker.ts')
         }
       }
+    },
+    define: {
+      FOOTAGE_ORGANISER_VERSION: JSON.stringify(packageJson.version)
     }
   },
   preload: {
@@ -35,14 +40,18 @@ export default defineConfig({
     }
   },
   renderer: {
-    assetsInclude: 'src/renderer/assets/**',
+    assetsInclude: ['src/renderer/assets/**'],
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
         '@shared': resolve('src/shared'),
-        '@/components': resolve('src/renderer/src/components')
+        '@assets': resolve('src/renderer/src/assets'),
+        '@components': resolve('src/renderer/src/components')
       }
     },
-    plugins: [react()]
+    define: {
+      FOOTAGE_ORGANISER_VERSION: JSON.stringify(packageJson.version)
+    },
+    plugins: [react(), tailwindcss()]
   }
 })

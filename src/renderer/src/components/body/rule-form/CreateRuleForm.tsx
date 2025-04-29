@@ -1,112 +1,57 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Checkbox } from '@components/ui/checkbox'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@renderer/components/ui/button'
+import { Card, CardContent } from '@renderer/components/ui/card'
+import { Input } from '@renderer/components/ui/input'
+import {
+  DEFAULT_STORE_RULE,
+  FullRule,
+  RULE_TYPE,
+  ShortRule,
+  StoreRule
+} from '@shared/types/ruleTypes'
+import { STORE_RULE_ZOD_SCHEMA } from '@shared/validation/validateRule'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import {
+  Control,
+  Controller,
+  FieldPath,
+  FieldValues,
+  Resolver,
+  useController,
   useFieldArray,
   useForm,
-  Controller,
-  UseFormRegister,
-  FieldValues,
   UseFormSetValue
 } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select'
-import { Card, CardContent } from '@/components/ui/card'
-import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import CopyFormat from './copy-file/CopyFormat'
 import { DirectorySelector } from './directorySelector'
 import { RuleName } from './Name'
 import { RuleType } from './Type'
-import CopyFormat from './copy-file/CopyFormat'
-import { RulePath } from '@shared/rules/rulePath'
-import { useNavigate } from 'react-router-dom'
 
-const extraDeleteSchema = {
-  DeleteExtraPath: z.array(z.string()),
-  deleteExtraFileInclude: z.array(z.string()).default([]),
-  deleteExtraFileExclude: z.array(z.string()).default([]),
-  deleteExtraFolderInclude: z.array(z.string()).default([]),
-  deleteExtraFolderExclude: z.array(z.string()).default([])
+function initIncludeExcldue(setValue: UseFormSetValue<StoreRule>) {
+  setValue('copyFileOptions.targetSubPathFormat', [])
 }
-
-const includeExcludeArrays = {
-  fileInclude: z.array(z.string()).default([]),
-  fileExclude: z.array(z.string()).default([]),
-  folderInclude: z.array(z.string()).default([]),
-  folderExclude: z.array(z.string()).default([])
-}
-
-const ruleSchema = z.object({
-  ruleName: z.string().min(1, 'Required'),
-  ruleType: z.enum(['Copy File', 'Mirror']).default('Copy File'),
-  copyFrom: z.array(z.string()),
-  copyTo: z.array(z.string()),
-  copyFilters: z.object(includeExcludeArrays),
-  stopAfterProcessing: z.boolean().optional(),
-  pauseProcessing: z.boolean().optional(),
-
-  copyFormat: z
-    .array(z.enum(['Year', 'Month', 'Day', 'Volume Name', 'File Format', 'Custom']))
-    .max(6)
-    .optional(),
-  customString: z.string().optional(),
-  autoClean: z.boolean().optional(),
-  deleteExtra: z.boolean().optional(),
-  deleteExtraPaths: z.array(z.object(extraDeleteSchema)).default([]),
-
-  cleanTarget: z.boolean().optional(),
-  deleteTarget: z.object(includeExcludeArrays).optional()
-})
-
-function initIncludeExcldue(setValue: UseFormSetValue<FieldValues>) {
-  const emptyStringArray: string[] = []
-  setValue('copyFormat', emptyStringArray)
-}
-
-type FormData = z.infer<typeof ruleSchema>
 
 type CreateRuleFormType = {
   newRule: boolean
-  ruleName: string
-  currentRuleValues?: any
+  initialRuleName: string
+  initialRuleValues?: StoreRule | ShortRule | FullRule
+  showDisableRule?: boolean
 }
 
 export default function CreateRuleForm({
   newRule,
-  ruleName,
-  currentRuleValues
+  initialRuleName,
+  initialRuleValues,
+  showDisableRule = true
 }: CreateRuleFormType) {
   const [loading, setLoading] = useState(true)
 
-  const defaultValues: FormData = {
-    ruleName: currentRuleValues?.ruleName || '',
-    ruleType: currentRuleValues?.ruleType || 'Copy File',
-    copyFrom: currentRuleValues?.copyFrom || [],
-    copyTo: currentRuleValues?.copyTo || [],
-    copyFilters: currentRuleValues?.copyFilters || {
-      fileInclude: [],
-      fileExclude: [],
-      folderInclude: [],
-      folderExclude: []
-    },
-    stopAfterProcessing: currentRuleValues?.stopAfterProcessing || false,
-    pauseProcessing: currentRuleValues?.pauseProcessing || false,
-
-    copyFormat: currentRuleValues?.copyFormat || [],
-    customString: currentRuleValues?.customString || '',
-    autoClean: currentRuleValues?.autoClean || false,
-    deleteExtra: currentRuleValues?.deleteExtra || false,
-    deleteExtraPaths: currentRuleValues?.deleteExtraPaths || [],
-
-    cleanTarget: currentRuleValues?.cleanTarget || false,
-    deleteTarget: currentRuleValues?.deleteTarget || {
-      fileInclude: [],
-      fileExclude: [],
-      folderInclude: [],
-      folderExclude: []
-    }
+  let defaultValues: StoreRule = {
+    ...DEFAULT_STORE_RULE,
+    ...initialRuleValues
   }
 
   const {
@@ -114,41 +59,39 @@ export default function CreateRuleForm({
     handleSubmit,
     setValue,
     watch,
-    register,
     getValues,
     reset,
-    getFieldState,
     formState: { errors }
-  } = useForm<FormData>({
-    resolver: zodResolver(ruleSchema),
+  } = useForm<StoreRule>({
+    resolver: zodResolver(STORE_RULE_ZOD_SCHEMA) as Resolver<StoreRule>,
     defaultValues: defaultValues,
     criteriaMode: 'all'
   })
 
-  initIncludeExcldue(register)
+  // initIncludeExcldue(register)
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'deleteExtraPaths'
+    name: 'copyFileOptions.otherPaths'
   })
 
   const [advancedOpen, setAdvancedOpen] = useState(false)
 
   useEffect(() => {
     console.log('Setvalue copy file')
-    setValue('ruleType', 'Copy File')
+    setValue('type', RULE_TYPE.COPYFILE)
   }, [setValue])
-  const ruleType = watch('ruleType')
+  const ruleType = watch('type')
 
-  const isDeleteExtraChecked = watch('deleteExtra')
+  const isDeleteExtraChecked = watch('copyFileOptions.deleteUnderOtherPaths')
 
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchDataAndSetDefaults = async () => {
       console.log('run await')
-      const serverData = await window.electron.getRule(ruleName)
-      const mergeData = { ...currentRuleValues, ...serverData }
+      const serverData = await window.electron.getRule(initialRuleName)
+      const mergeData = { ...initialRuleValues, ...serverData }
       // Merge server data with initial values
       reset(mergeData)
 
@@ -160,41 +103,14 @@ export default function CreateRuleForm({
     } else {
       setLoading(false)
     }
-  }, [currentRuleValues, reset])
+  }, [initialRuleValues, reset])
 
   const onSubmit = (data) => {
     console.log('Form Data:', data)
 
     const submitAddRule = async (data) => {
       try {
-        if (data.ruleType === 'Copy File') {
-          await window.electron.addCopyFileRule(
-            data.ruleName,
-            data.copyFrom,
-            data.copyTo,
-            data.copyFilters,
-            data.copyFormat,
-            data.customString,
-            data.autoClean,
-            data.deleteExtra,
-            data.deleteExtraPaths,
-            data.stopAfterProcessing,
-            data.pauseProcessing
-          )
-        } else if (data.ruleType === 'Mirror') {
-          await window.electron.addMirrorRule(
-            data.ruleName,
-            data.copyFrom,
-            data.copyTo,
-            data.copyFilters,
-            data.deleteTarget,
-            data.cleanTarget,
-            data.stopAfterProcessing,
-            data.pauseProcessing
-          )
-        } else {
-          console.error('Failed to match rule type.')
-        }
+        window.electron.addRule(data)
       } catch (error) {
         console.error('Failed to fetch list:', error)
       }
@@ -202,36 +118,7 @@ export default function CreateRuleForm({
 
     const submitEditRule = async (data) => {
       try {
-        if (data.ruleType === 'Copy File') {
-          await window.electron.modifyCopyFileRule(
-            ruleName,
-            data.ruleName,
-            data.copyFrom,
-            data.copyTo,
-            data.copyFilters,
-            data.copyFormat,
-            data.customString,
-            data.autoClean,
-            data.deleteExtra,
-            data.deleteExtraPaths,
-            data.stopAfterProcessing,
-            data.pauseProcessing
-          )
-        } else if (data.ruleType === 'Mirror') {
-          await window.electron.modifyMirrorRule(
-            ruleName,
-            data.ruleName,
-            data.copyFrom,
-            data.copyTo,
-            data.copyFilters,
-            data.deleteTarget,
-            data.cleanTarget,
-            data.stopAfterProcessing,
-            data.pauseProcessing
-          )
-        } else {
-          console.error('Failed to match rule type.')
-        }
+        window.electron.modifyRule(initialRuleName, data)
       } catch (error) {
         console.error('Failed to fetch list:', error)
       }
@@ -257,18 +144,8 @@ export default function CreateRuleForm({
     <form onSubmit={handleSubmit(onSubmit, onError)} className=" bg-white text-black">
       <RuleName control={control} />
       <RuleType control={control} />
-      <DirectorySelector
-        watch={watch}
-        setValue={setValue}
-        directory="copyFrom"
-        buttonText="Select Copy From"
-      />
-      <DirectorySelector
-        watch={watch}
-        setValue={setValue}
-        directory="copyTo"
-        buttonText="Select Copy To"
-      />
+      <DirectorySelector<StoreRule> control={control} name="origin" buttonText="Select Copy From" />
+      <DirectorySelector<StoreRule> control={control} name="target" buttonText="Select Copy To" />
       <Button
         type="button"
         className="flex flex-wrap gap-2 w-[120px]"
@@ -280,50 +157,46 @@ export default function CreateRuleForm({
         <div>
           <label>
             <Controller
-              name="stopAfterProcessing"
+              name="enableStartStopActions"
               control={control}
-              defaultValue={false}
               render={({ field }) => (
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               )}
             />{' '}
             Confirm before actions
           </label>
-          <label>
-            <Controller
-              name="pauseProcessing"
-              control={control}
-              defaultValue={false}
-              render={({ field }) => (
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />{' '}
-            Pause Rule
-          </label>
+          {showDisableRule && (
+            <label>
+              <Controller
+                name="disabled"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                )}
+              />{' '}
+              Pause Rule
+            </label>
+          )}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <DynamicList
-              label="File Include"
-              name="copyFilters.fileInclude"
-              setValue={setValue}
-              getValues={getValues}
+            <DynamicList<StoreRule>
+              control={control}
+              name="origin.filesToInclude"
+              label={'Files to include'}
             />
-            <DynamicList
-              label="File Exclude"
-              name="copyFilters.fileExclude"
-              setValue={setValue}
-              getValues={getValues}
+            <DynamicList<StoreRule>
+              control={control}
+              name="origin.filesToExclude"
+              label="Files to exclude"
             />
-            <DynamicList
-              label="Folder Include"
-              name="copyFilters.folderInclude"
-              setValue={setValue}
-              getValues={getValues}
+            <DynamicList<StoreRule>
+              control={control}
+              name="origin.dirsToInclude"
+              label="Folders to include"
             />
-            <DynamicList
-              label="Folder Exclude"
-              name="copyFilters.folderExclude"
-              setValue={setValue}
-              getValues={getValues}
+            <DynamicList<StoreRule>
+              control={control}
+              name="origin.dirsToExclude"
+              label="Folders to exclude"
             />
           </motion.div>
         </div>
@@ -332,16 +205,16 @@ export default function CreateRuleForm({
       {ruleType === 'Copy File' && (
         <Card>
           <CardContent>
-            <CopyFormat control={control} setValue={setValue} watch={watch} />
-            <Controller
-              name="customString"
+            <CopyFormat control={control} />
+            <Controller<StoreRule, 'copyFileOptions.customDirectoryName'>
+              name="copyFileOptions.customDirectoryName"
               control={control}
               defaultValue={''}
               render={({ field }) => <Input placeholder="Custom String" {...field} />}
             />
             <label>
-              <Controller
-                name="autoClean"
+              <Controller<StoreRule, 'copyFileOptions.deleteCopiedFiles'>
+                name="copyFileOptions.deleteCopiedFiles"
                 control={control}
                 defaultValue={false}
                 render={({ field }) => (
@@ -352,8 +225,8 @@ export default function CreateRuleForm({
             </label>
             <div>
               <label>
-                <Controller
-                  name="deleteExtra"
+                <Controller<StoreRule, 'copyFileOptions.deleteUnderOtherPaths'>
+                  name="copyFileOptions.deleteUnderOtherPaths"
                   control={control}
                   defaultValue={false}
                   render={({ field }) => (
@@ -368,40 +241,35 @@ export default function CreateRuleForm({
                   {fields.map((field, index) => (
                     <Card key={field.id} className="mb-4">
                       <CardContent>
-                        <DirectorySelector
-                          watch={watch}
-                          setValue={setValue}
-                          directory={`deleteExtraPaths.${index}.DeleteExtraPath`}
-                          buttonText={`Select Delete Extra Path ${index + 1}`}
+                        <DirectorySelector<StoreRule>
+                          control={control}
+                          name={`copyFileOptions.otherPaths.${index}`}
+                          buttonText="Select path to delete: "
                         />
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="space-y-4"
                         >
-                          <DynamicList
-                            label="File Include"
-                            name={`deleteExtraPaths.${index}.deleteExtraFileInclude`}
-                            setValue={setValue}
-                            getValues={getValues}
+                          <DynamicList<StoreRule>
+                            control={control}
+                            name={`copyFileOptions.otherPaths.${index}.filesToInclude`}
+                            label="Files to Include"
                           />
-                          <DynamicList
-                            label="File Exclude"
-                            name={`deleteExtraPaths.${index}.deleteExtraFileExclude`}
-                            setValue={setValue}
-                            getValues={getValues}
+                          <DynamicList<StoreRule>
+                            control={control}
+                            name={`copyFileOptions.otherPaths.${index}.filesToExclude`}
+                            label="Files to Exclude"
                           />
-                          <DynamicList
-                            label="Folder Include"
-                            name={`deleteExtraPaths.${index}.deleteExtraFolderInclude`}
-                            setValue={setValue}
-                            getValues={getValues}
+                          <DynamicList<StoreRule>
+                            control={control}
+                            name={`copyFileOptions.otherPaths.${index}.dirsToInclude`}
+                            label="Folders to Include"
                           />
-                          <DynamicList
-                            label="Folder Exclude"
-                            name={`deleteExtraPaths.${index}.deleteExtraFolderExclude`}
-                            setValue={setValue}
-                            getValues={getValues}
+                          <DynamicList<StoreRule>
+                            control={control}
+                            name={`copyFileOptions.otherPaths.${index}.dirsToExclude`}
+                            label="Folders to Exclude"
                           />
                         </motion.div>
                         <Button
@@ -417,7 +285,15 @@ export default function CreateRuleForm({
                   <Button
                     type="button"
                     onClick={
-                      () => append({}) // Add a new empty object to create another card
+                      () =>
+                        append({
+                          volumeName: '',
+                          pathFromVolumeRoot: '',
+                          filesToInclude: [],
+                          filesToExclude: [],
+                          dirsToInclude: [],
+                          dirsToExclude: []
+                        }) // Add a new empty object to create another card
                     }
                     className="mt-4 bg-blue-500 hover:bg-blue-600"
                   >
@@ -433,8 +309,8 @@ export default function CreateRuleForm({
         <Card>
           <CardContent>
             <label>
-              <Controller
-                name="cleanTarget"
+              <Controller<StoreRule, 'mirrorOptions.enableDeletingInTarget'>
+                name="mirrorOptions.enableDeletingInTarget"
                 control={control}
                 defaultValue={false}
                 render={({ field }) => (
@@ -444,100 +320,207 @@ export default function CreateRuleForm({
               Clean Target
             </label>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-              <DynamicList
-                label="File Include"
-                name="deleteTarget.fileInclude"
-                setValue={setValue}
-                getValues={getValues}
+              <DynamicList<StoreRule>
+                control={control}
+                name="target.filesToInclude"
+                label="Files to include"
               />
-              <DynamicList
-                label="File Exclude"
-                name="deleteTarget.fileExclude"
-                setValue={setValue}
-                getValues={getValues}
+              <DynamicList<StoreRule>
+                control={control}
+                name="target.filesToExclude"
+                label="Files to exclude"
               />
-              <DynamicList
-                label="Folder Include"
-                name="deleteTarget.folderInclude"
-                setValue={setValue}
-                getValues={getValues}
+              <DynamicList<StoreRule>
+                control={control}
+                name="target.dirsToInclude"
+                label="Folders to include"
               />
-              <DynamicList
-                label="Folder Exclude"
-                name="deleteTarget.folderExclude"
-                setValue={setValue}
-                getValues={getValues}
+              <DynamicList<StoreRule>
+                control={control}
+                name="target.dirsToExclude"
+                label="Folders to exclude"
               />
             </motion.div>
           </CardContent>
         </Card>
       )}
-      {errors.ruleName && <p className="text-red-500">{errors.ruleName.message}</p>}
-      {errors.ruleType && <p className="text-red-500">{errors.ruleType.message}</p>}
-      {errors.copyFrom && <p className="text-red-500">{errors.copyFrom.message}</p>}
-      {errors.copyTo && <p className="text-red-500">{errors.copyTo.message}</p>}
-      {errors.copyFilters && <p className="text-red-500">{errors.copyFilters.message}</p>}
-      {errors.copyFormat && <p className="text-red-500">{errors.copyFormat.message}</p>}
-      {errors.customString && <p className="text-red-500">{errors.customString.message}</p>}
-      {errors.autoClean && <p className="text-red-500">{errors.autoClean.message}</p>}
-      {errors.deleteExtra && <p className="text-red-500">{errors.deleteExtra.message}</p>}
-      {errors.deleteExtraPaths && <p className="text-red-500">{errors.deleteExtraPaths.message}</p>}
-      {errors.cleanTarget && <p className="text-red-500">{errors.cleanTarget.message}</p>}
-      {errors.deleteTarget && <p className="text-red-500">{errors.deleteTarget.message}</p>}
+      {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+      {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+      {errors.origin?.volumeName && (
+        <p className="text-red-500">{errors.origin.volumeName.message}</p>
+      )}
+      {errors.origin?.pathFromVolumeRoot && (
+        <p className="text-red-500">{errors.origin.pathFromVolumeRoot.message}</p>
+      )}
+      {errors.target?.volumeName && (
+        <p className="text-red-500">{errors.target.volumeName.message}</p>
+      )}
+      {errors.target?.pathFromVolumeRoot && (
+        <p className="text-red-500">{errors.target.pathFromVolumeRoot.message}</p>
+      )}
+
+      {errors.enableStartStopActions && (
+        <p className="text-red-500">{errors.enableStartStopActions.message}</p>
+      )}
+      {errors.disabled && <p className="text-red-500">{errors.disabled.message}</p>}
+      {errors.origin?.filesToInclude && (
+        <p className="text-red-500">{errors.origin.filesToInclude.message}</p>
+      )}
+      {errors.origin?.filesToExclude && (
+        <p className="text-red-500">{errors.origin.filesToExclude.message}</p>
+      )}
+      {errors.origin?.dirsToInclude && (
+        <p className="text-red-500">{errors.origin.dirsToInclude.message}</p>
+      )}
+      {errors.origin?.dirsToExclude && (
+        <p className="text-red-500">{errors.origin.dirsToExclude.message}</p>
+      )}
+
+      {errors.copyFileOptions?.targetSubPathFormat && (
+        <p className="text-red-500">{errors.copyFileOptions.targetSubPathFormat.message}</p>
+      )}
+      {errors.copyFileOptions?.customDirectoryName && (
+        <p className="text-red-500">{errors.copyFileOptions.customDirectoryName.message}</p>
+      )}
+      {errors.copyFileOptions?.deleteCopiedFiles && (
+        <p className="text-red-500">{errors.copyFileOptions.deleteCopiedFiles.message}</p>
+      )}
+      {errors.copyFileOptions?.deleteUnderOtherPaths && (
+        <p className="text-red-500">{errors.copyFileOptions.deleteUnderOtherPaths.message}</p>
+      )}
+      {errors.copyFileOptions?.otherPaths && (
+        <p className="text-red-500">{errors.copyFileOptions.otherPaths.message}</p>
+      )}
+
+      {errors.mirrorOptions?.enableDeletingInTarget && (
+        <p className="text-red-500">{errors.mirrorOptions.enableDeletingInTarget.message}</p>
+      )}
+      {errors.target?.filesToInclude && (
+        <p className="text-red-500">{errors.target.filesToInclude.message}</p>
+      )}
+      {errors.target?.filesToExclude && (
+        <p className="text-red-500">{errors.target.filesToExclude.message}</p>
+      )}
+      {errors.target?.dirsToInclude && (
+        <p className="text-red-500">{errors.target.dirsToInclude.message}</p>
+      )}
+      {errors.target?.dirsToExclude && (
+        <p className="text-red-500">{errors.target.dirsToExclude.message}</p>
+      )}
+
       {newRule && <Button type="submit">Create Rule</Button>}
       {!newRule && <Button type="submit">Edit Rule</Button>}
     </form>
   )
 }
 
-type DynamicListType = {
+// type DynamicListType = {
+//   label: string
+//   name: string
+//   setValue: any
+//   getValues: any
+// }
+
+// function DynamicList({ label, name, setValue, getValues }: DynamicListType) {
+//   console.log('Dynamic Lsit:', name)
+
+//   const [newItem, setNewItem] = useState('')
+
+//   const initialCurrentList: string[] = getValues(name)
+//   setValue(name, initialCurrentList)
+//   console.log('newCurrentlist: ', initialCurrentList)
+
+//   const [currentItems, setCurrentItems] = useState<string[]>(initialCurrentList)
+
+//   // Add to include file list
+//   const addToList = () => {
+//     if (newItem.trim()) {
+//       const newCurrentList: string[] = [...currentItems, newItem.trim()]
+//       setValue(name, newCurrentList)
+//       setCurrentItems(newCurrentList)
+//       setNewItem('')
+//     }
+//   }
+
+//   // Remove from include file list
+//   const removeFromList = (index) => {
+//     const newCurrentList = currentItems.filter((_, i) => i !== index)
+//     setValue(name, newCurrentList)
+//     setCurrentItems(newCurrentList)
+//   }
+
+//   return (
+//     <div>
+//       <Input value={newItem} onChange={(e) => setNewItem(e.target.value)} />
+//       <Button type="button" onClick={() => addToList()}>
+//         Add Item
+//       </Button>
+
+//       <p>{label}</p>
+
+//       {currentItems.map((item, index) => (
+//         <div key={index} className="flex gap-2">
+//           <Input value={item} readOnly />
+//           <Button type="button" onClick={() => removeFromList(index)}>
+//             Remove
+//           </Button>
+//         </div>
+//       ))}
+//     </div>
+//   )
+// }
+
+type DynamicListProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>
+  name: FieldPath<TFieldValues>
   label: string
-  name: string
-  setValue: any
-  getValues: any
 }
 
-function DynamicList({ label, name, setValue, getValues }: DynamicListType) {
-  console.log('Dynamic Lsit:', name)
-
+export function DynamicList<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label
+}: DynamicListProps<TFieldValues>) {
   const [newItem, setNewItem] = useState('')
 
-  const initialCurrentList: string[] = getValues(name)
-  setValue(name, initialCurrentList)
-  console.log('newCurrentlist: ', initialCurrentList)
+  const {
+    field: { value = [], onChange }
+  } = useController({
+    control,
+    name
+  })
 
-  const [currentItems, setCurrentItems] = useState<string[]>(initialCurrentList)
-
-  // Add to include file list
   const addToList = () => {
-    if (newItem.trim()) {
-      const newCurrentList: string[] = [...currentItems, newItem.trim()]
-      setValue(name, newCurrentList)
-      setCurrentItems(newCurrentList)
+    const trimmed = newItem.trim()
+    if (trimmed) {
+      onChange([...value, trimmed])
       setNewItem('')
     }
   }
 
-  // Remove from include file list
-  const removeFromList = (index) => {
-    const newCurrentList = currentItems.filter((_, i) => i !== index)
-    setValue(name, newCurrentList)
-    setCurrentItems(newCurrentList)
+  const removeFromList = (index: number) => {
+    const updated = value.filter((_: string, i: number) => i !== index)
+    onChange(updated)
   }
 
   return (
     <div>
-      <Input value={newItem} onChange={(e) => setNewItem(e.target.value)} />
-      <Button type="button" onClick={() => addToList()}>
-        Add Item
-      </Button>
+      <label className="block font-medium mb-1">{label}</label>
+      <div className="flex gap-2 mb-2">
+        <Input
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+          placeholder="Add item..."
+        />
+        <Button type="button" onClick={addToList}>
+          Add
+        </Button>
+      </div>
 
-      <p>{label}</p>
-
-      {currentItems.map((item, index) => (
-        <div key={index} className="flex gap-2">
-          <Input value={item} readOnly />
-          <Button type="button" onClick={() => removeFromList(index)}>
+      {value.map((item: string, index: number) => (
+        <div key={index} className="flex items-center gap-2 mb-1">
+          <Input value={item} readOnly className="flex-1" />
+          <Button type="button" variant="outline" onClick={() => removeFromList(index)}>
             Remove
           </Button>
         </div>

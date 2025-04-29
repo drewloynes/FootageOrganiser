@@ -1,59 +1,60 @@
-import { waitReady } from '@shared/utils/timer'
-import { setupIpc, isIpcSetup } from './communication/ipc/ipc'
-import { requestStorageLocation } from './communication/ipc/main/mainIpcSender'
-import { Settings } from '@shared/settings/settings'
+import { sendSyncIpcMessageMain } from './communication/ipc/main/mainIpcSender'
+import { setupMainIpc } from './communication/ipc/main/mainIpcSetup'
+import { setCurrentSettings } from './settings/currentSettings'
+import { updateCurrentDriveInfo } from './drives/currentDriveInfo'
+import { setCurrentRules } from './rules/currentRules'
+import { startAutoDeleteOldLogs } from './storage/logs/storeLogs'
+import { pathExists } from '@shared/utils/filePaths'
 
-const fileName: string = 'setupWorker.ts'
+const fileName: string = 'workerSetup.ts'
 const area: string = 'worker'
 
-export async function setupWorker(): Promise<boolean> {
-  const funcName: string = 'startUpWorker'
+export async function setupWorker(): Promise<void> {
+  const funcName: string = 'setupWorker'
   entryLog(funcName, fileName, area)
 
-  let setupSuccess = false
-  // Setup IPC first
-  if (await setupIpc()) {
-    // Setup config - depends on IPC setup
-    setupConfig()
-    // Wait for the worker setup to fully complete
-    setupSuccess = await waitReady(isWorkerSetup)
+  // Need main port setup to contact main to fill worker globals
+  if (!(await setupMainIpc())) {
+    errorLog('Error setting up main IPC ', funcName, fileName, area)
+    throw 'Failed to setup IPC with main process'
   }
 
+  await fillWorkerGlobals()
+  // Don't await this async function - Want it to run in the background permenantly
+  startAutoDeleteOldLogs()
+
+  glob.workerGlobals.workerSetup = true
+
   exitLog(funcName, fileName, area)
-  return setupSuccess
+  return
 }
 
-// Check if the worker process has finsihed setting up
-function isWorkerSetup(): boolean {
-  const funcName: string = 'isWorkerSetup'
+async function fillWorkerGlobals(): Promise<void> {
+  const funcName: string = 'fillWorkerGlobals'
   entryLog(funcName, fileName, area)
 
-  let setup: boolean = true
-  if (!isIpcSetup()) {
-    condLog('IPC is not setup', funcName, fileName, area)
-    setup = false
-  } else if (storageLocation === undefined) {
-    condLog('storageLocation is undefined', funcName, fileName, area)
-    setup = false
-  } else if (footageOrganiserSettings === undefined) {
-    condLog('footageOrganiserSettings is undefined', funcName, fileName, area)
-    setup = false
+  await setStorageLocation()
+  await updateCurrentDriveInfo()
+  await setCurrentSettings()
+  await setCurrentRules()
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+async function setStorageLocation(): Promise<void> {
+  const funcName: string = 'setStorageLocation'
+  entryLog(funcName, fileName, area)
+
+  glob.workerGlobals.storageLocation = (await sendSyncIpcMessageMain(
+    'storage-location',
+    {}
+  )) as string
+
+  if (!pathExists(glob.workerGlobals.storageLocation)) {
+    errorLog(`Storage location path doesn't exist`, funcName, fileName, area)
+    throw `Storage location path doesn't exist`
   }
-
-  exitLog(funcName, fileName, area)
-  return setup
-}
-
-function setupConfig(): void {
-  const funcName: string = 'setupConfig'
-  entryLog(funcName, fileName, area)
-
-  /* Setup workerConfig */
-  // Request for storage location from main IPC
-  requestStorageLocation()
-  // Setup settings
-  Settings.fillSettings()
-  // Setup auto deleting logs
 
   exitLog(funcName, fileName, area)
   return

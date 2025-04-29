@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, X } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card } from '@renderer/components/ui/card'
+import { X } from 'lucide-react'
 
 export function CopyFormatItem({
   id,

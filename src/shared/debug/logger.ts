@@ -1,5 +1,5 @@
 import * as winston from 'winston'
-import appConfig from '@shared/config/app'
+import loggerConfig from './loggerConfig'
 
 const levels = {
   error: 0,
@@ -12,26 +12,6 @@ const levels = {
   func: 7
 }
 
-const colors = {
-  error: 'red',
-  warn: 'yellow',
-  http: 'magenta',
-  ipc_: 'magenta',
-  info: 'green',
-  debug: 'white',
-  cond: 'cyan',
-  func: 'grey'
-}
-
-winston.addColors(colors)
-
-const format = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.align(),
-  winston.format.printf((info) => `[${info.level}]: ${info.message}|${info.timestamp}|`),
-  winston.format.colorize({ all: true })
-)
-
 const transports = [
   new winston.transports.Console(),
   new winston.transports.File({
@@ -41,20 +21,43 @@ const transports = [
   new winston.transports.File({ filename: 'logs/server.ans' })
 ]
 
+const format = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
+  winston.format.align(),
+  winston.format.printf((info) => `[${info.level}]: ${info.message}|${info.timestamp}|`),
+  winston.format.colorize({ all: true })
+)
+
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  debug: 'blue',
+  http: 'magenta',
+  ipc_: 'magenta',
+  cond: 'cyan',
+  func: 'grey'
+}
+
+winston.addColors(colors)
+
 const winstonLogger = winston.createLogger({
-  level: appConfig.debugConfig.logLevel,
+  level: loggerConfig.logLevel,
   levels,
   format,
   transports
 })
 
-export function logger(description, funcName, fileName, area = 'unknown', severity = 'info') {
+/* Setup logging functions */
+
+// Main logging function
+function logger(description, funcName, fileName, area = 'unknown', severity = 'info') {
   if (shouldLog(funcName, fileName, area)) {
     winstonLogger.log(
       severity,
       description.padEnd(60, ' ') +
         '|' +
-        processName.padEnd(10, ' ') +
+        global.processName.padEnd(10, ' ') +
         '|' +
         funcName.padEnd(30, ' ') +
         '|' +
@@ -66,37 +69,27 @@ export function logger(description, funcName, fileName, area = 'unknown', severi
   return
 }
 
-function shouldLog(funcName, fileName, area: string): boolean {
+// Decide if it should be logged based on logging filters
+function shouldLog(funcName: string, fileName: string, area: string): boolean {
   let shouldLog: boolean = false
   if (
-    appConfig.debugConfig.logProcess.length < 1 ||
-    matchStrings(processName, appConfig.debugConfig.logProcess)
+    loggerConfig.logProcess.length < 1 ||
+    matchStrings(global.processName, loggerConfig.logProcess)
   ) {
-    if (
-      appConfig.debugConfig.logFunc.length < 1 ||
-      matchStrings(funcName, appConfig.debugConfig.logFunc)
-    ) {
-      if (
-        appConfig.debugConfig.logFile.length < 1 ||
-        matchStrings(fileName, appConfig.debugConfig.logFile)
-      ) {
-        if (
-          appConfig.debugConfig.logArea.length < 1 ||
-          matchStrings(area, appConfig.debugConfig.logArea)
-        ) {
+    if (loggerConfig.logFunc.length < 1 || matchStrings(funcName, loggerConfig.logFunc)) {
+      if (loggerConfig.logFile.length < 1 || matchStrings(fileName, loggerConfig.logFile)) {
+        if (loggerConfig.logArea.length < 1 || matchStrings(area, loggerConfig.logArea)) {
           shouldLog = true
         }
       }
     }
   }
-
   return shouldLog
 }
 
+// Match the strings - Used to match for logging filters
 function matchStrings(string: string, matchStringArray: string[]): boolean {
-  // Check each file name against the files to incldue list
   const matchFound: boolean = matchStringArray.some((pattern) => {
-    // Convert the wildcard pattern to a RegExp
     const regexPattern = new RegExp(
       '^' +
         pattern
@@ -109,19 +102,26 @@ function matchStrings(string: string, matchStringArray: string[]): boolean {
   return matchFound
 }
 
+/* External Logging functions */
+
 export function entryLog(funcName, fileName, area = 'unknown') {
   const entryString = `Entry { ${funcName}`
   logger(entryString, funcName, fileName, area, 'func')
 }
 
 export function exitLog(funcName, fileName, area = 'unknown') {
-  const entryString = `Exit } : ${funcName}`
+  const entryString = `Exit } ${funcName}`
   logger(entryString, funcName, fileName, area, 'func')
 }
 
 export function condLog(description, funcName, fileName, area = 'unknown') {
   const entryString = 'Cond: '
   logger(entryString.concat(description), funcName, fileName, area, 'cond')
+}
+
+export function condExitLog(description, funcName, fileName, area = 'unknown') {
+  condLog(description, funcName, fileName, area)
+  exitLog(funcName, fileName, area)
 }
 
 export function ipcRecLog(description, funcName, fileName, area = 'unknown') {
@@ -138,16 +138,36 @@ export function debugLog(description, funcName, fileName, area = 'unknown') {
   logger(description, funcName, fileName, area, 'debug')
 }
 
+export function debugExitLog(description, funcName, fileName, area = 'unknown') {
+  logger(description, funcName, fileName, area, 'debug')
+  exitLog(funcName, fileName, area)
+}
+
 export function infoLog(description, funcName, fileName, area = 'unknown') {
   logger(description, funcName, fileName, area, 'info')
+}
+
+export function infoExitLog(description, funcName, fileName, area = 'unknown') {
+  infoLog(description, funcName, fileName, area)
+  exitLog(funcName, fileName, area)
 }
 
 export function warnLog(description, funcName, fileName, area = 'unknown') {
   logger(description, funcName, fileName, area, 'warn')
 }
 
+export function warnExitLog(description, funcName, fileName, area = 'unknown') {
+  warnLog(description, funcName, fileName, area)
+  exitLog(funcName, fileName, area)
+}
+
 export function errorLog(description, funcName, fileName, area = 'unknown') {
   logger(description, funcName, fileName, area, 'error')
+}
+
+export function errorExitLog(description, funcName, fileName, area = 'unknown') {
+  errorLog(description, funcName, fileName, area)
+  exitLog(funcName, fileName, area)
 }
 
 export default logger

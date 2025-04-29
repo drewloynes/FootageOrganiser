@@ -1,21 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Button } from '@renderer/components/ui/button'
+import { FullRule, RULE_STATUS_TYPE } from '@shared/types/ruleTypes'
 import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function ApprovalList() {
-  const { ruleName } = useParams<{ ruleName: string }>()
+  let { ruleName } = useParams<{ ruleName: string }>()
+  const [rule, setRule] = useState<FullRule>()
 
-  const [ruleData, setRuleData] = useState<any>(null)
+  const navigate = useNavigate()
+
+  if (ruleName === undefined) {
+    ruleName = ''
+    navigate(`/`)
+  }
+
+  useEffect(() => {
+    console.log('Start startRuleStream')
+    window.electron.startRuleStream(ruleName)
+
+    window.electron.onRule((rule) => {
+      console.log('Received rule')
+      console.log(rule)
+      setRule(rule)
+    })
+
+    return () => {
+      console.log('Stop stopEveryRuleStream')
+      window.electron.stopEveryRuleStream()
+    }
+  }, [])
 
   const getRuleData = async () => {
     const originalRule = await window.electron.getRule(ruleName)
     console.log('Rule Data:')
     console.log(originalRule)
-    setRuleData(originalRule)
+    setRule(originalRule)
   }
-
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (ruleName) {
@@ -23,8 +43,8 @@ export default function ApprovalList() {
     }
   }, [])
 
-  if (!ruleData) {
-    return <p>Loading...</p>
+  if (!rule) {
+    return <div className="text-black">Loading</div>
   }
 
   return (
@@ -34,33 +54,50 @@ export default function ApprovalList() {
         <Button variant="outline" onClick={() => window.history.back()}>
           Back
         </Button>
-        <Button
-          onClick={() => {
-            window.electron.startRule(ruleName)
-            navigate(`/`)
-          }}
-        >
-          Start Actions
-        </Button>
+        {rule.enableStartStopActions && (
+          <div>
+            {rule.status === RULE_STATUS_TYPE.AWAITING_APPROVAL && (
+              <Button
+                onClick={() => {
+                  window.electron.startRule(ruleName)
+                  navigate(`/`)
+                }}
+              >
+                Start Actions
+              </Button>
+            )}
+            {(rule.status === RULE_STATUS_TYPE.EXECUTING_ACTIONS ||
+              rule.status === RULE_STATUS_TYPE.QUEUED_ACTIONS) && (
+              <Button
+                onClick={() => {
+                  window.electron.stopRule(ruleName)
+                  navigate(`/`)
+                }}
+              >
+                Stop Actions
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Data Display */}
       <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-grow h-full w-full">
         <ApprovalSectionCopy
           title="Files Waiting for Copy Approval"
-          items={ruleData.fileCopyWaitingApproval}
+          items={rule.fileCopyActionQueue}
         />
         <ApprovalSection
           title="Files Waiting for Deletion Approval"
-          items={ruleData.fileDeleteWaitingApproval}
+          items={rule.fileDeleteActionQueue}
         />
         <ApprovalSection
           title="Directories Waiting for Creation Approval"
-          items={ruleData.dirCreateWaitingApproval}
+          items={rule.dirMakeActionQueue}
         />
         <ApprovalSection
           title="Directories Waiting for Deletion Approval"
-          items={ruleData.dirDeleteWaitingApproval}
+          items={rule.dirDeleteActionQueue}
         />
       </div>
     </div>

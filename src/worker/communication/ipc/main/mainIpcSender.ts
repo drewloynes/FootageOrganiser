@@ -1,59 +1,50 @@
-import { IpcMessage } from '@shared/utils/ipc'
-import { RuleStatus } from '@worker/rules/ruleStatus'
+import { AsyncIpcMessage, SyncIpcMessage } from '@shared/utils/ipc'
 
 const fileName: string = 'mainIpcSender.ts'
 const area: string = 'ipc'
 
-// Send IPC to main process
-function sendMessageMain(message: unknown): void {
-  const funcName: string = 'sendMessageMain'
+function sendIpcMessageMain(message: AsyncIpcMessage | SyncIpcMessage): void {
+  const funcName: string = 'sendIpcMessageMain'
   entryLog(funcName, fileName, area)
 
-  const mainPort: Electron.MessagePortMain | undefined = workerConfig.getMainPort()
-  if (mainPort) {
-    condLog('mainPort found', funcName, fileName, area)
-    mainPort.start()
-    mainPort.postMessage(message)
-    ipcSentLog('Worker->Main Message', funcName, fileName, area)
-  } else {
-    warnLog('mainPort is undefined', funcName, fileName, area)
-  }
+  glob.workerGlobals.mainPort?.start()
+  glob.workerGlobals.mainPort?.postMessage(message)
+  ipcSentLog(`Worker->Main Message: ${message.type}`, funcName, fileName, area)
 
   exitLog(funcName, fileName, area)
   return
 }
 
-// Request for storage location to be filled
-export function requestStorageLocation(): void {
-  const funcName: string = 'requestStorageLocation'
+export function sendAsyncIpcMessageMain(type: string, data: unknown): void {
+  const funcName: string = 'sendAsyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
-  const message = new IpcMessage('storage-location', {})
-  sendMessageMain(message)
+  sendIpcMessageMain(new AsyncIpcMessage(type, data))
 
   exitLog(funcName, fileName, area)
   return
 }
 
-// Request for storage location to be filled
-export function sendRuleStatus(ruleStatus: object): void {
-  const funcName: string = 'sendRuleStatus'
+export async function sendSyncIpcMessageMain(type: string, data: unknown): Promise<unknown> {
+  const funcName: string = 'sendSyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
-  const message = new IpcMessage('rule-status', ruleStatus)
-  sendMessageMain(message)
+  const receivedData = await SyncIpcMessage.sendSyncIpc(
+    type,
+    data,
+    sendIpcMessageMain,
+    glob.workerGlobals.awaitingIpcMessages
+  )
 
   exitLog(funcName, fileName, area)
-  return
+  return receivedData
 }
 
-// Request for storage location to be filled
-export function sendRuleStatusAll(ruleStatusAll: object): void {
-  const funcName: string = 'sendRuleStatusAll'
+export function replySyncIpcMessageMain(originalMessage: SyncIpcMessage, data: unknown): void {
+  const funcName: string = 'replySyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
-  const message = new IpcMessage('rule-status-all', ruleStatusAll)
-  sendMessageMain(message)
+  SyncIpcMessage.replySyncIpc(originalMessage, data, sendIpcMessageMain)
 
   exitLog(funcName, fileName, area)
   return

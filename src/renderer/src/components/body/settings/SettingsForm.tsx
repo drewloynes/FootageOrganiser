@@ -1,77 +1,58 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue
-} from '@/components/ui/select'
+import { Button } from '@renderer/components/ui/button'
+import { Input } from '@renderer/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/components/ui/select'
+import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
+import { StoreSettings } from '@shared/types/settingsTypes'
+import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared/validation/validateSettings'
 import { useEffect, useState } from 'react'
+import { Controller, Resolver, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-const schema = z.object({
-  actionCutoffInGBs: z.number().int('Must be an integer').min(10, 'Must be at least 10 GB'),
-  autoDeleteLogsInDays: z.number().int('Must be an integer').min(1, 'Must be greater than 0'),
-  checkSumMethod: z.enum(['CRC', 'MD5', 'SHA-256'], 'Invalid checksum method'),
-  syncTime: z.number().int('Must be an integer').min(1, 'Must be greater than 0')
-})
+function SettingsForm() {
+  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState<StoreSettings>()
 
-type SettingsFormType = {
-  fetchSettings?: any
-}
-
-function SettingsForm({ fetchSettings }: SettingsFormType) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedCheckSumMethod, setSelectedCheckSumMethod] = useState('')
   const {
+    control,
     register,
+    reset,
     handleSubmit,
     setValue,
     getValues,
     formState: { errors }
   } = useForm({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(STORE_SETTINGS_ZOD_SCHEMA) as Resolver<StoreSettings>,
+    defaultValues: settings
   })
 
   const navigate = useNavigate()
 
   useEffect(() => {
     async function loadSettings() {
-      const settings = await window.electron.getSettings()
-      console.log(settings)
-      if (settings) {
-        setValue('actionCutoffInGBs', settings.actionCutoffInGBs)
-        setValue('autoDeleteLogsInDays', settings.autodeleteLogsInDays)
-        setValue('checkSumMethod', settings.checksumMethod)
-        setSelectedCheckSumMethod(settings.checksumMethod)
-        setValue('syncTime', settings.syncTime)
-        setIsLoading(false)
+      const currentSettings = await window.electron.getSettings()
+      console.log(currentSettings)
+      setSettings(currentSettings)
+      reset(currentSettings)
+
+      if (loading) {
+        setLoading(false)
       }
     }
     loadSettings()
-  }, [fetchSettings, setValue])
+  }, [])
 
-  if (isLoading) {
+  if (loading) {
     return <p>Loading settings...</p>
   }
 
-  const onSubmit = (data) => {
-    async function updateSettings(data) {
-      await window.electron.updateSettings(
-        data.actionCutoffInGBs,
-        data.autoDeleteLogsInDays,
-        data.checkSumMethod,
-        data.syncTime
-      )
-    }
+  const onSubmit = (newSettings) => {
+    newSettings.footageOrganiserVersion = FOOTAGE_ORGANISER_VERSION
     console.log('Submitted')
-    console.log(data)
-    updateSettings(data)
+    console.log(newSettings)
+
+    window.electron.modifySettings(newSettings)
+
     navigate(`/`)
   }
 
@@ -84,47 +65,89 @@ function SettingsForm({ fetchSettings }: SettingsFormType) {
     <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4 bg-white text-black">
       <div>
         <label className="block text-sm font-medium text-gray-700">Action Cutoff (GBs)</label>
-        <Input type="number" {...register('actionCutoffInGBs', { valueAsNumber: true })} />
-        {errors.actionCutoffInGBs && (
-          <p className="text-red-500 text-sm mt-1">{errors.actionCutoffInGBs.message}</p>
+        <Controller
+          name="actionsCutoffInGBs"
+          control={control}
+          render={({ field }) => (
+            <Input
+              type="number"
+              placeholder="Action Cutoff (GBs)"
+              {...field}
+              onChange={(e) => field.onChange(e.target.valueAsNumber)}
+              className="text-black"
+            />
+          )}
+        />
+        {errors.actionsCutoffInGBs && (
+          <p className="text-red-500 text-sm mt-1">{errors.actionsCutoffInGBs.message}</p>
         )}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700">Auto Delete Logs (Days)</label>
-        <Input type="number" {...register('autoDeleteLogsInDays', { valueAsNumber: true })} />
-        {errors.autoDeleteLogsInDays && (
-          <p className="text-red-500 text-sm mt-1">{errors.autoDeleteLogsInDays.message}</p>
+        <Controller
+          name="deleteOldLogsInDays"
+          control={control}
+          render={({ field }) => (
+            <Input
+              type="number"
+              placeholder="Auto Delete Logs (Days)"
+              {...field}
+              onChange={(e) => field.onChange(e.target.valueAsNumber)}
+              className="text-black"
+            />
+          )}
+        />
+        {errors.deleteOldLogsInDays && (
+          <p className="text-red-500 text-sm mt-1">{errors.deleteOldLogsInDays.message}</p>
         )}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700">Checksum Method</label>
-        <Select
-          value={selectedCheckSumMethod}
-          onValueChange={(value) => {
-            setValue('checkSumMethod', value)
-            setSelectedCheckSumMethod(value)
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a method" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="CRC">CRC</SelectItem>
-            <SelectItem value="MD5">MD5</SelectItem>
-            <SelectItem value="SHA-256">SHA-256</SelectItem>
-          </SelectContent>
-        </Select>
-        {errors.checkSumMethod && (
-          <p className="text-red-500 text-sm mt-1">{errors.checkSumMethod.message}</p>
+        <Controller
+          name="checksumMethod"
+          control={control}
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <SelectTrigger className="text-black">{field.value}</SelectTrigger>
+              <SelectContent className="text-black">
+                <SelectItem className="text-black" value={CHECKSUM_TYPE.CRC}>
+                  CRC
+                </SelectItem>
+                <SelectItem className="text-black" value={CHECKSUM_TYPE.MD5}>
+                  MD5
+                </SelectItem>
+                <SelectItem className="text-black" value={CHECKSUM_TYPE.SHA_256}>
+                  SHA 256
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {errors.checksumMethod && (
+          <p className="text-red-500 text-sm mt-1">{errors.checksumMethod.message}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Sync Time</label>
-        <Input type="number" {...register('syncTime', { valueAsNumber: true })} />
-        {errors.syncTime && <p className="text-red-500 text-sm mt-1">{errors.syncTime.message}</p>}
+        <label className="block text-sm font-medium text-gray-700">Time to resync (Minutes)</label>
+        <Controller
+          name="reevaluateSleepTime"
+          control={control}
+          render={({ field }) => (
+            <Input
+              type="number"
+              placeholder="Time to resync (Minutes)"
+              {...field}
+              onChange={(e) => field.onChange(e.target.valueAsNumber)}
+              className="text-black"
+            />
+          )}
+        />
+        {errors.reevaluateSleepTime && (
+          <p className="text-red-500 text-sm mt-1">{errors.reevaluateSleepTime.message}</p>
+        )}
       </div>
 
       <Button type="submit">Save Settings</Button>
