@@ -5,9 +5,6 @@ import {
   STORE_RULE_ZOD_SCHEMA
 } from '@shared/validation/validateRule'
 import { z } from 'zod'
-import { DEFAULT_STORE_COPY_FILE_OPTIONS } from './copyFileTypes'
-import { DEFAULT_STORE_MIRROR_OPTIONS } from './MirrorTypes'
-import { DEFAULT_STORE_PATH_IN_VOLUME } from './pathInVolumeTypes'
 
 export enum RULE_TYPE {
   COPYFILE = 'Copy File',
@@ -15,26 +12,26 @@ export enum RULE_TYPE {
 }
 
 export enum RULE_STATUS_TYPE {
-  UNKNOWN = 'unknown',
-  ERROR = 'error',
-  AWAITING_EVALUATION = 'awaiting-evaluation',
-  EVALUATING = 'processing',
-  NOT_EVALUATABLE = 'not-evaluatable',
-  CHECKSUM_RUNNING = 'checksum-running',
-  AWAITING_APPROVAL = 'awaitng-approval',
-  QUEUED_ACTIONS = 'queued-actions',
-  EXECUTING_ACTIONS = 'executing-actions',
-  NO_WORK = 'no-work',
-  DISABLED = 'disabled'
+  UNKNOWN = 'Unknown',
+  ERROR = 'Error',
+  AWAITING_EVALUATION = 'Awaiting Evaluation',
+  EVALUATING = 'Evaluating',
+  NOT_EVALUATABLE = 'Not Evaluatable',
+  CHECKSUM_RUNNING = 'Calculating Checksum',
+  AWAITING_APPROVAL = 'Actions Stopped',
+  QUEUED_ACTIONS = 'Actions Queued',
+  EXECUTING_ACTIONS = 'Actions Executing',
+  NO_WORK = 'No Work',
+  DISABLED = 'Disabled'
 }
 
 export enum UNEVALUATABLE_REASON {
-  AWAITING_EVALUATION = 'awaiting-evaluation',
-  NO_PROBLEM = 'no-problem',
-  RULE_DISABLED = 'rule-disabled',
-  ZERO_EXISTING_TARGET_PATHS = 'zero-existing-target-paths',
-  ZERO_EXISTING_ORIGIN_PATHS = 'zero-existing-origin-paths',
-  MIRROR_MULTIPLE_ORIGIN_PATHS = 'mirror-multiple-origin-paths'
+  AWAITING_EVALUATION = 'Awaiting Evaluation',
+  NO_PROBLEM = 'No Problem',
+  RULE_DISABLED = 'Rule Disabled',
+  ZERO_EXISTING_TARGET_PATHS = 'Zero Existing Target Paths',
+  ZERO_EXISTING_ORIGIN_PATHS = 'Zero Existing Origin Paths',
+  MIRROR_MULTIPLE_ORIGIN_PATHS = 'Mirror Rule Has Multiple Origin Paths'
 }
 
 export type CopyPaths = z.infer<typeof COPY_PATHS_ZOD_SCHEMA>
@@ -49,15 +46,4 @@ export type ModifyRuleInfo = {
   originalRuleName: string
   modifiedStoreRule: StoreRule
   error: string
-}
-
-export const DEFAULT_STORE_RULE: StoreRule = {
-  name: '',
-  type: RULE_TYPE.COPYFILE,
-  origin: DEFAULT_STORE_PATH_IN_VOLUME,
-  target: DEFAULT_STORE_PATH_IN_VOLUME,
-  copyFileOptions: DEFAULT_STORE_COPY_FILE_OPTIONS,
-  mirrorOptions: DEFAULT_STORE_MIRROR_OPTIONS,
-  enableStartStopActions: true,
-  disabled: false
 }

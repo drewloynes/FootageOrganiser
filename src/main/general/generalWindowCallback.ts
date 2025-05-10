@@ -37,7 +37,7 @@ export async function chooseDirectory(): Promise<ShortPathInVolume | undefined> 
   return shortPathInVolume
 }
 
-export async function openLogsFolder() {
+export async function openLogsFolder(): Promise<void> {
   const funcName: string = 'openLogsFolder'
   entryLog(funcName, fileName, area)
 
@@ -47,6 +47,26 @@ export async function openLogsFolder() {
       errorLog('Problem opening logs folder', funcName, fileName, area)
     }
   })
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export async function openGithub(): Promise<void> {
+  const funcName: string = 'openGithub'
+  entryLog(funcName, fileName, area)
+
+  await shell.openExternal('https://github.com/drewloynes/FootageOrganiser')
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export async function openReportBug(): Promise<void> {
+  const funcName: string = 'openReportBug'
+  entryLog(funcName, fileName, area)
+
+  await shell.openExternal('https://github.com/drewloynes/FootageOrganiser/issues/new')
 
   exitLog(funcName, fileName, area)
   return

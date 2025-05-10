@@ -81,6 +81,22 @@ export class PathInVolume {
     return this.#type
   }
 
+  get filesToInclude() {
+    return this.#filesToInclude
+  }
+
+  get filesToExclude() {
+    return this.#filesToExclude
+  }
+
+  get dirsToInclude() {
+    return this.#dirsToInclude
+  }
+
+  get dirsToExclude() {
+    return this.#dirsToExclude
+  }
+
   get fullPathList() {
     return this.#fullPathList
   }

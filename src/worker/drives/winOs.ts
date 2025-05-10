@@ -27,7 +27,7 @@ export async function winGetVolNameFromMount(mount: string): Promise<string | un
       volumeName = lines[1]
     }
   } catch (error) {
-    errorLog(`Error reteieving volume name`, funcName, fileName, area)
+    errorLog(`Error retrieving volume name`, funcName, fileName, area)
     throw error
   }
 

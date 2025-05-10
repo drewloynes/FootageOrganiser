@@ -9,9 +9,9 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
-        '@shared': resolve('src/shared'),
-        '@worker': resolve('src/worker'),
-        '@main': resolve('src/main')
+        '@shared': resolve(__dirname, 'src/shared'),
+        '@worker': resolve(__dirname, 'src/worker'),
+        '@main': resolve(__dirname, 'src/main')
       }
     },
     build: {
@@ -43,10 +43,10 @@ export default defineConfig({
     assetsInclude: ['src/renderer/assets/**'],
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src'),
-        '@shared': resolve('src/shared'),
-        '@assets': resolve('src/renderer/src/assets'),
-        '@components': resolve('src/renderer/src/components')
+        '@renderer': resolve(__dirname, 'src/renderer/src'),
+        '@shared': resolve(__dirname, 'src/shared'),
+        '@assets': resolve(__dirname, 'src/renderer/src/assets'),
+        '@components': resolve(__dirname, 'src/renderer/src/components')
       }
     },
     define: {

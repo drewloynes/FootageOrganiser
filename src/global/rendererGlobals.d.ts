@@ -48,6 +48,8 @@ declare global {
       modifySettings: (newSettings: StoreSettings) => void
 
       openLogsFolder: () => void
+      openGithub: () => void
+      openReportBug: () => void
       quit: () => void
 
       // Render -> Main sync

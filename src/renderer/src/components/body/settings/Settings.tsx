@@ -1,11 +1,21 @@
+import { ScrollArea } from '@renderer/components/ui/scroll-area'
 import SettingsForm from './SettingsForm'
 
-const Settings = () => {
+const fileName: string = 'Settings.tsx'
+const area: string = 'settings'
+
+function Settings() {
+  const funcName: string = 'Settings'
+  log.rend(funcName, fileName, area)
+
   return (
-    <div>
-      <div className="space-y-4 p-4 h-full overflow-y-auto pb-20 bg-white text-black">Settings</div>
+    <ScrollArea className="flex-1 py-2 text-center h-1">
+      <h2 className="text-3xl font-extrabold text-center py-1 mx-auto w-fit border-t-1 border-b-1 border-gray-200 mb-6">
+        Settings
+      </h2>
+
       <SettingsForm />
-    </div>
+    </ScrollArea>
   )
 }
 

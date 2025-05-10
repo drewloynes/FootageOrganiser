@@ -74,7 +74,7 @@ export class ClientLogger {
       console.error(
         this.generateLogIntro(CLIENT_LOG_LEVEL.ERROR),
         'color: red; font-weight: bold;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
     }
   }
@@ -84,7 +84,7 @@ export class ClientLogger {
       console.warn(
         this.generateLogIntro(CLIENT_LOG_LEVEL.WARN),
         'color: yellow; font-weight: bold;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
     }
   }
@@ -94,7 +94,7 @@ export class ClientLogger {
       console.info(
         this.generateLogIntro(CLIENT_LOG_LEVEL.INFO),
         'color: green; font-weight: bold;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
     }
   }
@@ -104,7 +104,7 @@ export class ClientLogger {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.DEBUG),
         'color: blue;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
       if (data) {
         console.log(data)
@@ -117,7 +117,7 @@ export class ClientLogger {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.IPC_SENT),
         'color: magenta;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
       if (data) {
         console.log(data)
@@ -130,7 +130,7 @@ export class ClientLogger {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.IPC_REC),
         'color: magenta;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
       if (data) {
         console.log(data)
@@ -143,7 +143,7 @@ export class ClientLogger {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.COND),
         'color: cyan;',
-        this.generateLogMessage(desc, func, file, area)
+        this.generateLogMessage(func, file, area, desc)
       )
     }
   }

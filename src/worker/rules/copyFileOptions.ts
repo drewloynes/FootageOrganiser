@@ -137,9 +137,6 @@ export class CopyFileOptions {
           if (!volumeName) {
             condLog(`No file type`, funcName, fileName, area)
             volumeName = 'Unknown-Volume-Name'
-          } else {
-            condLog(`File type found`, funcName, fileName, area)
-            volumeName = volumeName.substring(1)
           }
           formatPath = formatPath.concat(path.sep, `${volumeName}`)
           break
@@ -150,6 +147,9 @@ export class CopyFileOptions {
           if (extensionName === '') {
             condLog(`No file type`, funcName, fileName, area)
             extensionName = 'No-File-Type'
+          } else {
+            condLog(`File type found`, funcName, fileName, area)
+            extensionName = extensionName.substring(1)
           }
           formatPath = formatPath.concat(path.sep, `${extensionName}`)
           break

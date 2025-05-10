@@ -42,15 +42,18 @@ function generateCrcChecksum(pathToFile: string): Promise<string> {
   entryLog(funcName, fileName, area)
 
   const checkSum: Promise<string> = new Promise((resolve, reject) => {
-    const stream = fs.createReadStream(pathToFile, { encoding: undefined })
-    const crcStream = new CRC32Stream()
-    stream.pipe(crcStream)
+    condLog('Start CRC checksum promise', funcName, fileName, area)
 
-    crcStream.on('end', () => {
-      condLog('Stream ending', funcName, fileName, area)
-      // The CRC32 value as a hex string
-      const checksum = crcStream.digest('hex')
-      resolve(checksum)
+    const stream = fs.createReadStream(pathToFile)
+    const crcStream = new CRC32Stream()
+
+    crcStream.on('data', (chunk) =>
+      condLog(`CRC chunk: ${chunk.length} bytes`, funcName, fileName, area)
+    )
+
+    stream.on('error', (err) => {
+      condLog('Read stream error encountered', funcName, fileName, area)
+      reject(err)
     })
 
     crcStream.on('error', (err) => {
@@ -58,10 +61,14 @@ function generateCrcChecksum(pathToFile: string): Promise<string> {
       reject(err)
     })
 
-    stream.on('error', (err) => {
-      condLog('Read stream error encountered', funcName, fileName, area)
-      reject(err)
+    crcStream.on('end', () => {
+      condLog('Stream ending', funcName, fileName, area)
+      // The CRC32 value as a hex string
+      const checksum = crcStream.hex()
+      resolve(checksum)
     })
+
+    stream.pipe(crcStream)
   })
 
   exitLog(funcName, fileName, area)

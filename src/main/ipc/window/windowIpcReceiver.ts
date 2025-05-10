@@ -1,4 +1,9 @@
-import { chooseDirectory, openLogsFolder } from '@main/general/generalWindowCallback'
+import {
+  chooseDirectory,
+  openGithub,
+  openLogsFolder,
+  openReportBug
+} from '@main/general/generalWindowCallback'
 import {
   activateRule,
   addRule,
@@ -55,6 +60,8 @@ export function setupWindowIpcEvents(): void {
   ipcMain.on('modify-settings', (_, newSettings: StoreSettings) => modifySettings(newSettings))
 
   ipcMain.on('open-logs-folder', openLogsFolder)
+  ipcMain.on('open-github', openGithub)
+  ipcMain.on('open-report-bug', openReportBug)
   ipcMain.on('quit', app.quit)
 
   // Two-way sync Window-Main callbacks providing return values

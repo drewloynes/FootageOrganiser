@@ -64,7 +64,7 @@ export class Rule {
   #error: string = ''
 
   // StreamUpdate object for streaming rule to main
-  streamToMain: StreamUpdate = new StreamUpdate(500, sendRuleStreamToMain)
+  streamToMain: StreamUpdate = new StreamUpdate(200, sendRuleStreamToMain)
 
   constructor(
     ruleName: string,

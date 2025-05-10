@@ -112,19 +112,19 @@ export async function parseMainIpcMessage(
     // Async message
     case 'activate-rule': {
       condLog('activate-rule message received', funcName, fileName, area)
-      activateRule(message.data as string)
+      await activateRule(message.data as string)
       break
     }
     // Async message
     case 'disable-rule': {
       condLog('disable-rule message received', funcName, fileName, area)
-      disableRule(message.data as string)
+      await disableRule(message.data as string)
       break
     }
     // Async message
     case 'disable-all-rules': {
       condLog('disable-all-rules message received', funcName, fileName, area)
-      disableAllRules()
+      await disableAllRules()
       break
     }
     // Sync from main
