@@ -1,157 +1,147 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@renderer/components/ui/button'
-import { Input } from '@renderer/components/ui/input'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@renderer/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/components/ui/select'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@renderer/components/ui/tooltip'
 import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
 import { StoreSettings } from '@shared/types/settingsTypes'
 import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared/validation/validateSettings'
 import { useEffect, useState } from 'react'
-import { Controller, Resolver, useForm } from 'react-hook-form'
+import { Resolver, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import SettingsFormLoading from './SettingsFormLoading'
+import { SettingsFormNumberInput } from './utils/SettingsFormNumberInput'
+
+const fileName: string = 'SettingsFomr.tsx'
+const area: string = 'settings'
 
 function SettingsForm() {
-  const [loading, setLoading] = useState(true)
-  const [settings, setSettings] = useState<StoreSettings>()
+  const funcName: string = 'SettingsForm'
+  log.rend(funcName, fileName, area)
 
-  const {
-    control,
-    register,
-    reset,
-    handleSubmit,
-    setValue,
-    getValues,
-    formState: { errors }
-  } = useForm({
-    resolver: zodResolver(STORE_SETTINGS_ZOD_SCHEMA) as Resolver<StoreSettings>,
-    defaultValues: settings
+  const [loading, setLoading] = useState(true)
+
+  const form = useForm({
+    resolver: zodResolver(STORE_SETTINGS_ZOD_SCHEMA) as Resolver<StoreSettings>
   })
+  const { control, reset, handleSubmit, getValues } = form
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    async function loadSettings() {
-      const currentSettings = await window.electron.getSettings()
-      console.log(currentSettings)
-      setSettings(currentSettings)
-      reset(currentSettings)
+    log.cond('useEffect: Set form current values', funcName, fileName, area)
 
-      if (loading) {
-        setLoading(false)
-      }
+    async function loadSettings() {
+      log.ipcSent(`Request current settings`, funcName, fileName, area)
+      const currentSettings = await window.electron.getSettings()
+      log.ipcRec('Current settings received', funcName, fileName, area, currentSettings)
+
+      reset(currentSettings)
+      setLoading(false)
     }
+
     loadSettings()
   }, [])
 
   if (loading) {
-    return <p>Loading settings...</p>
+    log.cond('Loading settings', funcName, fileName, area)
+    return <SettingsFormLoading />
   }
 
   const onSubmit = (newSettings) => {
-    newSettings.footageOrganiserVersion = FOOTAGE_ORGANISER_VERSION
-    console.log('Submitted')
-    console.log(newSettings)
+    log.cond('Settings-Form Submitted', funcName, fileName, area)
 
+    newSettings.footageOrganiserVersion = FOOTAGE_ORGANISER_VERSION
+
+    log.ipcSent('modify-settings', funcName, fileName, area, newSettings)
     window.electron.modifySettings(newSettings)
 
     navigate(`/`)
   }
 
   const onError = (errors: any) => {
-    getValues()
     console.log('Zod Errors:', errors)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4 bg-white text-black">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Action Cutoff (GBs)</label>
-        <Controller
-          name="actionsCutoffInGBs"
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4 px-6">
+        <SettingsFormNumberInput
           control={control}
-          render={({ field }) => (
-            <Input
-              type="number"
-              placeholder="Action Cutoff (GBs)"
-              {...field}
-              onChange={(e) => field.onChange(e.target.valueAsNumber)}
-              className="text-black"
-            />
-          )}
+          fieldName="actionsCutoffInGBs"
+          label="Drive Cutoff (GBs)"
+          tooltip="Stop performing actions on a drive when its available space is less than this
+                    number of GBs"
+          placeHolderText="Action Cutoff (GBs)"
         />
-        {errors.actionsCutoffInGBs && (
-          <p className="text-red-500 text-sm mt-1">{errors.actionsCutoffInGBs.message}</p>
-        )}
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Auto Delete Logs (Days)</label>
-        <Controller
-          name="deleteOldLogsInDays"
+        <SettingsFormNumberInput
           control={control}
-          render={({ field }) => (
-            <Input
-              type="number"
-              placeholder="Auto Delete Logs (Days)"
-              {...field}
-              onChange={(e) => field.onChange(e.target.valueAsNumber)}
-              className="text-black"
-            />
-          )}
+          fieldName="deleteOldLogsInDays"
+          label="Logs Retention (Days)"
+          tooltip="Number of days logs of actions are stored for before automatic deletion"
+          placeHolderText="Logs Retention (Days)"
         />
-        {errors.deleteOldLogsInDays && (
-          <p className="text-red-500 text-sm mt-1">{errors.deleteOldLogsInDays.message}</p>
-        )}
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Checksum Method</label>
-        <Controller
+        <FormField
+          control={control}
           name="checksumMethod"
-          control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className="text-black">{field.value}</SelectTrigger>
-              <SelectContent className="text-black">
-                <SelectItem className="text-black" value={CHECKSUM_TYPE.CRC}>
-                  CRC
-                </SelectItem>
-                <SelectItem className="text-black" value={CHECKSUM_TYPE.MD5}>
-                  MD5
-                </SelectItem>
-                <SelectItem className="text-black" value={CHECKSUM_TYPE.SHA_256}>
-                  SHA 256
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <FormItem className="mr-10">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="flex flex-row items-center w-fit">
+                    <FormLabel className="text-xs ml-4">Checksum Method</FormLabel>
+                  </TooltipTrigger>
+                  <TooltipContent>Method to use when running checksums</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className="cursor-pointer w-40">{field.value}</SelectTrigger>
+                  <SelectContent>
+                    <SelectItem className="cursor-pointer" value={CHECKSUM_TYPE.CRC}>
+                      CRC
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer" value={CHECKSUM_TYPE.MD5}>
+                      MD5
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer" value={CHECKSUM_TYPE.SHA_256}>
+                      SHA 256
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
-        {errors.checksumMethod && (
-          <p className="text-red-500 text-sm mt-1">{errors.checksumMethod.message}</p>
-        )}
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Time to resync (Minutes)</label>
-        <Controller
-          name="reevaluateSleepTime"
+        <SettingsFormNumberInput
           control={control}
-          render={({ field }) => (
-            <Input
-              type="number"
-              placeholder="Time to resync (Minutes)"
-              {...field}
-              onChange={(e) => field.onChange(e.target.valueAsNumber)}
-              className="text-black"
-            />
-          )}
+          fieldName="reevaluateSleepTime"
+          label="Time Until Re-Evaluation (Minutes)"
+          tooltip="Number of minutes to pause between re-evaluating rules"
+          placeHolderText="Number of minutes to pause between re-evaluating rules"
         />
-        {errors.reevaluateSleepTime && (
-          <p className="text-red-500 text-sm mt-1">{errors.reevaluateSleepTime.message}</p>
-        )}
-      </div>
 
-      <Button type="submit">Save Settings</Button>
-    </form>
+        <Button type="submit" className="text-xl px-4 mt-3 py-6 font-bold cursor-pointer">
+          Save Settings
+        </Button>
+      </form>
+    </Form>
   )
 }
 

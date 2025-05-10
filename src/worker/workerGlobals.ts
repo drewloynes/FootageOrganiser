@@ -1,8 +1,8 @@
-import { DriveInfo } from '@worker/drives/driveInfo'
-import { Settings } from '@worker/settings/settings'
-import { Rules } from '@worker/rules/rules'
 import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared/utils/promise'
 import { StreamUpdate } from '@shared/utils/streamUpdates'
+import { DriveInfo } from '@worker/drives/driveInfo'
+import { Rules } from '@worker/rules/rules'
+import { Settings } from '@worker/settings/settings'
 import { sendCurrentRulesStreamToMain } from './rules/currentRules'
 import { Rule } from './rules/rule'
 import { Change } from './state-changes/change'
@@ -13,59 +13,35 @@ const area: string = 'worker'
 export class WorkerGlobals {
   /* Global useful data for worker */
   // Is the worker setup
-  workerSetup: boolean
+  workerSetup: boolean = false
   // Port to main process
-  mainPort: Electron.MessagePortMain | undefined
+  mainPort: Electron.MessagePortMain | undefined = undefined
   // Location of appdata, where we write to disk
-  storageLocation: string | undefined
+  storageLocation: string | undefined = undefined
   // Last received information on the drives connected to the OS
-  currentDriveInfo: DriveInfo[] | undefined
+  currentDriveInfo: DriveInfo[] | undefined = undefined
   // Stream object for streaming all rules to the main process
-  streamAllRulesToMain: StreamUpdate
+  streamAllRulesToMain: StreamUpdate = new StreamUpdate(200, sendCurrentRulesStreamToMain)
   // The rule currently being evaluated or executed on - Unddfined when not evaluating or executing
-  ruleInUse: Rule | undefined
+  ruleInUse: Rule | undefined = undefined
   // List of changes to make at next mvailable moment (When a rule is not in use)
-  awaitingChanges: Change[]
+  awaitingChanges: Change[] = []
 
   /* Resolving promises */
   // Map for resolving normal SyncIpcMessages
-  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer>
+  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer> = new Map()
   // Map for resolving sleeps
-  currentSleeps: Map<string, PromiseResolveTimer>
+  currentSleeps: Map<string, PromiseResolveTimer> = new Map()
 
   /* User Set Data */
   // Current settings used by worker
-  currentSettings: Settings | undefined
+  currentSettings: Settings | undefined = undefined
   // Current settings is about to change to these settings
-  upcomingSettings: Settings | undefined
+  upcomingSettings: Settings | undefined = undefined
   // Current rules used by worker
-  currentRules: Rules | undefined
+  currentRules: Rules | undefined = undefined
   // Current rules is about to change to these rules
-  upcomingRules: Rules | undefined
-
-  constructor() {
-    const funcName: string = 'WorkerGlobals Constructor'
-    entryLog(funcName, fileName, area)
-
-    this.workerSetup = false
-    this.mainPort = undefined
-    this.currentDriveInfo = undefined
-    this.storageLocation = undefined
-    this.streamAllRulesToMain = new StreamUpdate(500, sendCurrentRulesStreamToMain)
-    this.ruleInUse = undefined
-    this.awaitingChanges = []
-
-    this.awaitingIpcMessages = new Map()
-    this.currentSleeps = new Map()
-
-    this.currentSettings = undefined
-    this.upcomingSettings = undefined
-    this.currentRules = undefined
-    this.upcomingRules = undefined
-
-    exitLog(funcName, fileName, area)
-    return
-  }
+  upcomingRules: Rules | undefined = undefined
 }
 
 export default WorkerGlobals

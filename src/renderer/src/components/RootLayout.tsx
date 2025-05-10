@@ -1,16 +1,14 @@
 import { ComponentProps } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { SidebarProvider } from './ui/sidebar'
 
 const fileName: string = 'RootLayout.tsx'
 const area: string = 'app'
 
-export const RootLayout = ({ children, className, ...props }: ComponentProps<'main'>) => {
+function RootLayout({ children }: ComponentProps<'div'>) {
   const funcName: string = 'RootLayout'
   log.rend(funcName, fileName, area)
 
-  return (
-    <main className={twMerge('flex h-screen', className)} {...props}>
-      {children}
-    </main>
-  )
+  return <SidebarProvider>{children}</SidebarProvider>
 }
+
+export default RootLayout

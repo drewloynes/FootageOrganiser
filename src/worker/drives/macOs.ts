@@ -31,7 +31,7 @@ export async function macGetVolNameFromFs(fs: string): Promise<string | undefine
       volumeName = parsedInfo['Volume Name'].trim()
     }
   } catch (error) {
-    errorLog(`Error reteieving volume name`, funcName, fileName, area)
+    errorLog(`Error retrieving volume name`, funcName, fileName, area)
     throw error
   }
 

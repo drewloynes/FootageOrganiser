@@ -152,7 +152,7 @@ async function checksumValidatePaths(
   entryLog(funcName, fileName, area)
 
   rule.setStatus(RULE_STATUS_TYPE.CHECKSUM_RUNNING)
-  rule.setChecksumAction(originFilePath)
+  rule.setChecksumAction(`Checksumming ${originFilePath} with ${targetFilePath}`)
 
   if (!glob.workerGlobals.currentSettings) {
     errorExitLog(`Current settings doesn't exist when it should`, funcName, fileName, area)

@@ -192,7 +192,7 @@ export function stopAllRules(): void {
   return
 }
 
-export function activateRule(ruleName: string): void {
+export async function activateRule(ruleName: string): Promise<void> {
   const funcName = 'activateRule'
   entryLog(funcName, fileName, area)
 
@@ -207,14 +207,14 @@ export function activateRule(ruleName: string): void {
     const newRule = rule.clone()
     newRule.setDisabled(false)
     const newStoreRule = toStoreRule(newRule)
-    modifyRule(rule.name, newStoreRule)
+    await modifyRule(rule.name, newStoreRule)
   }
 
   exitLog(funcName, fileName, area)
   return
 }
 
-export function disableRule(ruleName: string, error: string = ''): void {
+export async function disableRule(ruleName: string, error: string = ''): Promise<void> {
   const funcName = 'disableRule'
   entryLog(funcName, fileName, area)
 
@@ -229,14 +229,14 @@ export function disableRule(ruleName: string, error: string = ''): void {
     const newRule = rule.clone()
     newRule.setDisabled(true)
     const newStoreRule = toStoreRule(newRule)
-    modifyRule(rule.name, newStoreRule, error)
+    await modifyRule(rule.name, newStoreRule, error)
   }
 
   exitLog(funcName, fileName, area)
   return
 }
 
-export function disableAllRules(): void {
+export async function disableAllRules(): Promise<void> {
   const funcName = 'disableAllRules'
   entryLog(funcName, fileName, area)
 
@@ -247,7 +247,7 @@ export function disableAllRules(): void {
 
   for (const rule of glob.workerGlobals.currentRules.ruleList) {
     condLog(`For rule: ${rule.name}`, funcName, fileName, area)
-    disableRule(rule.name)
+    await disableRule(rule.name)
   }
 
   exitLog(funcName, fileName, area)

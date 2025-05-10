@@ -53,6 +53,8 @@ try {
       ipcRenderer.send('modify-settings', newSettings),
 
     openLogsFolder: () => ipcRenderer.send('open-logs-folder'),
+    openGithub: () => ipcRenderer.send('open-github'),
+    openReportBug: () => ipcRenderer.send('open-report-bug'),
     quit: () => ipcRenderer.send('quit'),
 
     // Renderer -> Main two-way sync

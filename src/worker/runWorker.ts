@@ -47,7 +47,7 @@ async function sleepTillReevaluation() {
   return
 }
 
-export async function endReevaluationSleepEarly(): Promise<void> {
+export function endReevaluationSleepEarly(): void {
   const funcName: string = 'endReevaluationSleepEarly'
   entryLog(funcName, fileName, area)
 

@@ -1,70 +1,41 @@
 import { Button } from '@renderer/components/ui/button'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@renderer/components/ui/form'
+import { Separator } from '@renderer/components/ui/separator'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@renderer/components/ui/tooltip'
 import { ShortPathInVolume } from '@shared/types/pathInVolumeTypes'
+import { StoreRule } from '@shared/types/ruleTypes'
+import { Control, FieldPath, useController } from 'react-hook-form'
 
-// type DirectorySelectorType = {
-//   watch: UseFormWatch<any>
-//   setValue: UseFormSetValue<any>
-//   directory: string
-//   buttonText: string
-// }
+const fileName: string = 'DirectorySelector.tsx'
+const area: string = 'rule-form'
 
-// export const DirectorySelector = ({
-//   watch,
-//   setValue,
-//   directory,
-//   buttonText
-// }: DirectorySelectorType) => {
-//   const [driveName, setDriveName] = useState<string | undefined>()
-//   const [drivePath, setDrivePath] = useState<string | undefined>()
-
-//   const selectFolder = async (field: string) => {
-//     if (!window.electron?.chooseDirectory) {
-//       return
-//     }
-//     const result = await window.electron.chooseDirectory()
-//     console.log(result)
-//     if (result) {
-//       setValue(field + '.volumeName', result.volumeName) // Updates the form state
-//       setValue(field + '.volumePath', result.volumePath) // Updates the form state
-//     }
-//   }
-
-//   // Use useEffect to listen for changes in the watched directory values
-//   useEffect(() => {
-//     setDriveName(watch(`${directory}.volumeName`))
-//     setDrivePath(watch(`${directory}.voumePath`))
-//   }, [watch(directory)])
-
-//   return (
-//     <div>
-//       {(driveName || drivePath) && (
-//         <div className="mb-2 text-center">
-//           <p className="text-lg font-semibold text-black">Drive Name: {driveName}</p>
-//           <p className="text-lg font-semibold text-black">Drive Path: {drivePath}</p>
-//         </div>
-//       )}
-//       <Button type="button" className="flex-[45%]" onClick={() => selectFolder(directory)}>
-//         {buttonText}
-//       </Button>
-//     </div>
-//   )
-// }
-
-// TODO Tru tp clean up to make more type safe
-
-import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
-
-type DirectorySelectorProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>
-  name: FieldPath<TFieldValues> // fully dynamic path e.g. "copyFileOptions.otherPaths.2"
-  buttonText: string
-}
-
-export function DirectorySelector<TFieldValues extends FieldValues>({
+export function DirectorySelector({
   control,
   name,
-  buttonText
-}: DirectorySelectorProps<TFieldValues>) {
+  buttonText,
+  label,
+  toolTip
+}: {
+  control: Control<StoreRule>
+  name: FieldPath<StoreRule>
+  buttonText: string
+  label: string
+  toolTip: string
+}) {
+  const funcName: string = 'DirectorySelector'
+  log.rend(funcName, fileName, area)
+
   const {
     field: { value, onChange }
   } = useController({
@@ -72,32 +43,73 @@ export function DirectorySelector<TFieldValues extends FieldValues>({
     name
   })
 
+  if (typeof value !== 'object' || !('volumeName' in value)) {
+    return <div />
+  }
+
   const selectFolder = async () => {
-    if (!window.electron?.chooseDirectory) return
-    const result: ShortPathInVolume | undefined = await window.electron.chooseDirectory()
-    console.log(result)
-    if (result) {
+    log.ipcSent('choose-directory', funcName, fileName, area)
+    const directoryChosen: ShortPathInVolume | undefined = await window.electron.chooseDirectory()
+    log.ipcRec('choose-directory', funcName, fileName, area, directoryChosen)
+
+    if (directoryChosen) {
+      log.cond('Set chosen directory', funcName, fileName, area)
       onChange({
         ...value,
-        volumeName: result.volumeName,
-        pathFromVolumeRoot: result.pathFromVolumeRoot
+        volumeName: directoryChosen.volumeName,
+        pathFromVolumeRoot: directoryChosen.pathFromVolumeRoot
       })
     }
   }
 
   return (
-    <div>
-      {(value?.volumeName || value?.pathFromVolumeRoot) && (
-        <div className="mb-2 text-center">
-          <p className="text-lg font-semibold text-black">Drive Name: {value?.volumeName}</p>
-          <p className="text-lg font-semibold text-black">
-            Drive Path: {value?.pathFromVolumeRoot}
-          </p>
-        </div>
+    <FormField
+      control={control}
+      name={name}
+      render={() => (
+        <FormItem className="flex-1 mx-4">
+          <Separator />
+
+          <FormLabel className="text-xs ml-4">{label}</FormLabel>
+          <FormControl>
+            <div className="flex flex-col items-center px-4 ">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      className="content-center cursor-pointer"
+                      onClick={selectFolder}
+                    >
+                      {buttonText}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{toolTip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {(value.volumeName || value.pathFromVolumeRoot) && (
+                <div className="flex flex-col mb-2 mt-4">
+                  <div className="flex flex-row items-center ">
+                    <div className="font-bold py-1 pr-4 w-[120px] shrink-0">Drive Name</div>
+                    <div className=" break-all">{value.volumeName}</div>
+                  </div>
+                  <div className="flex flex-row items-center">
+                    <div className="font-bold py-1 pr-4 w-[120px] shrink-0">Drive Path</div>
+                    <div className=" break-all">{value.pathFromVolumeRoot}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </FormControl>
+          <FormMessage />
+          <Separator className="mt-2" />
+        </FormItem>
       )}
-      <Button type="button" className="flex-[45%]" onClick={selectFolder}>
-        {buttonText}
-      </Button>
-    </div>
+    />
   )
 }
+
+export default DirectorySelector

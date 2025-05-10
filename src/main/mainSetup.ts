@@ -1,6 +1,5 @@
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, Menu, Tray } from 'electron'
-import { join } from 'path'
 import { setupWindowIpc } from './ipc/window/windowIpcSetup'
 import { openWindow } from './window/window'
 import setupWorkerProcess from './worker/workerProcess'
@@ -52,7 +51,7 @@ async function ready() {
   // Windows: Set Application User Model ID
   electronApp.setAppUserModelId('com.footage-organiser')
 
-  const tray = new Tray(join(__dirname, '../../resources/Wario.png'))
+  const tray = new Tray('resources/footage-organiser-logo-3.png')
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'Open', click: openWindow },

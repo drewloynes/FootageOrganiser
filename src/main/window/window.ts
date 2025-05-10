@@ -39,8 +39,11 @@ function createWindow(): void {
   entryLog(funcName, fileName, area)
 
   new BrowserWindow({
-    width: 1000,
-    height: 670,
+    width: 1200,
+    height: 800,
+    minWidth: 1150,
+    minHeight: 600,
+    icon: 'resources/footage-organiser-logo-3.png',
     show: false,
     autoHideMenuBar: true,
     center: true,
