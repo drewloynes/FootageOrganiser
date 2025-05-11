@@ -1,6 +1,3 @@
-const fileName = 'validateDirectory.ts'
-const area = 'validation'
-
 const INVALID_WINDOWS_DIR_NAME_CHARS: RegExp = /[<>:"/\\|?*\x00-\x1F]/g
 
 const INVALID_DIR_NAME_FILTER_CHARS: RegExp = /[\/\\:?"><|]/
@@ -53,6 +50,8 @@ export function validateDirectoryName(directoryName: string): boolean {
 
 // Make sure each segment of a partial directory path is valid
 // - This path does not include the root of the path. i.e. C:// on windows
+//
+// Cant have logs - Used in all processes
 export function validatePartialDirectoryPath(partialDirectoryPath: string): boolean {
   // Path to a directory doesnt end with / or \\
   if (partialDirectoryPath.endsWith('/') || partialDirectoryPath.endsWith('\\')) {
@@ -72,29 +71,26 @@ export function validatePartialDirectoryPath(partialDirectoryPath: string): bool
 // Validates strings are valid dir name filters
 // - Can be a full dir name
 // - Can include asterisks (*) to denote anything before or after the asterisk
+//
+// Cant have logs - Used in all processes
 export function validateDirNameFilter(dirNameFilter: string): boolean {
   if (RESERVED_WINDOWS_DIR_NAMES.includes(dirNameFilter.toUpperCase())) {
-    console.log('RESERVED_WINDOWS_DIR_NAMES')
     return false
   }
 
   if (INVALID_DIR_NAME_FILTER_CHARS.test(dirNameFilter)) {
-    console.log('INVALID_DIR_NAME_FILTER_CHARS')
     return false
   }
 
   if (!ONLY_EDGE_ASTERISKS.test(dirNameFilter)) {
-    console.log('ONLY_EDGE_ASTERISKS')
     return false
   }
 
   if (ASCII_CONTROL_CHARACTERS.test(dirNameFilter)) {
-    console.log('ASCII_CONTROL_CHARACTERS')
     return false
   }
 
   if (ENDS_WITH_DOT_OR_SPACE.test(dirNameFilter)) {
-    console.log('ENDS_WITH_DOT_OR_SPACE')
     return false
   }
 

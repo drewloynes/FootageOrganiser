@@ -40,13 +40,13 @@ export default defineConfig({
     }
   },
   renderer: {
-    assetsInclude: ['src/renderer/assets/**'],
     resolve: {
       alias: {
         '@renderer': resolve(__dirname, 'src/renderer/src'),
         '@shared': resolve(__dirname, 'src/shared'),
         '@assets': resolve(__dirname, 'src/renderer/src/assets'),
-        '@components': resolve(__dirname, 'src/renderer/src/components')
+        '@components': resolve(__dirname, 'src/renderer/src/components'),
+        '@resources': resolve(__dirname, 'resources')
       }
     },
     define: {

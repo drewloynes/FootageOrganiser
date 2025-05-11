@@ -7,9 +7,6 @@ import { sendCurrentRulesStreamToMain } from './rules/currentRules'
 import { Rule } from './rules/rule'
 import { Change } from './state-changes/change'
 
-const fileName: string = 'workerGlobals.ts'
-const area: string = 'worker'
-
 export class WorkerGlobals {
   /* Global useful data for worker */
   // Is the worker setup

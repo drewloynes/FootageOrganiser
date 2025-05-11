@@ -47,3 +47,34 @@ export type ModifyRuleInfo = {
   modifiedStoreRule: StoreRule
   error: string
 }
+
+export const STORE_RULE_DEFAULT_VALUES: StoreRule = {
+  name: '',
+  type: RULE_TYPE.COPYFILE,
+  origin: {
+    volumeName: '',
+    pathFromVolumeRoot: '',
+    filesToInclude: [],
+    filesToExclude: [],
+    dirsToInclude: [],
+    dirsToExclude: []
+  },
+  target: {
+    volumeName: '',
+    pathFromVolumeRoot: '',
+    filesToInclude: [],
+    filesToExclude: [],
+    dirsToInclude: [],
+    dirsToExclude: []
+  },
+  enableStartStopActions: true,
+  disabled: false,
+  copyFileOptions: {
+    targetSubPathFormat: [],
+    customDirectoryName: '',
+    deleteCopiedFiles: false,
+    deleteUnderOtherPaths: false,
+    otherPaths: []
+  },
+  mirrorOptions: { enableDeletingInTarget: false }
+}

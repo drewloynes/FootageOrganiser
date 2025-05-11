@@ -1,4 +1,4 @@
-import { ModifyRuleInfo, RULE_STATUS_TYPE, StoreRule } from '@shared/types/ruleTypes'
+import { ModifyRuleInfo, StoreRule } from '@shared/types/ruleTypes'
 import { endReevaluationSleepEarly } from '@worker/runWorker'
 import { CHANGE_TYPE } from '@worker/state-changes/change'
 import { addAwaitingChange } from '@worker/state-changes/changeState'
@@ -7,14 +7,18 @@ import {
   addRuleInCurrentRules,
   deleteRuleInCurrentRules,
   evaluateAllCurrentRules,
-  modifyRuleInCurrentRules
+  modifyRuleInCurrentRules,
+  startRuleInCurrentRules,
+  stopRuleInCurrentRules
 } from './currentRules'
 import { Rule } from './rule'
 import {
   addRuleInUpcomingRules,
   deleteRuleInUpcomingRules,
   evaluateAllUpcomingRules,
-  modifyRuleInUpcomingRules
+  modifyRuleInUpcomingRules,
+  startRuleInUpcomingRules,
+  stopRuleInUpcomingRules
 } from './upcomingRules'
 
 const fileName = 'changeRules.ts'
@@ -110,28 +114,14 @@ export function startRule(ruleName: string): void {
   const funcName = 'startRule'
   entryLog(funcName, fileName, area)
 
-  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
-  if (
-    rule &&
-    !rule.disabled &&
-    rule.enableStartStopActions &&
-    rule.status === RULE_STATUS_TYPE.AWAITING_APPROVAL &&
-    !rule.startActions
-  ) {
-    condLog(`Start rule: ${rule.name}`, funcName, fileName, area)
-    rule.setStartActions(true)
-    rule.setStatus(RULE_STATUS_TYPE.QUEUED_ACTIONS)
-    infoLog(`Started rule: ${rule.name}`, funcName, fileName, area)
-    endReevaluationSleepEarly()
+  startRuleInCurrentRules(ruleName)
 
-    // Update rule if were storing upcoming changes to rules
-    const upcomingRule = glob.workerGlobals.upcomingRules?.findRule(ruleName)
-    if (upcomingRule) {
-      condLog(`Upcoming rules being filled: ${rule.name}`, funcName, fileName, area)
-      upcomingRule.setStartActions(true)
-      upcomingRule.setStatus(RULE_STATUS_TYPE.QUEUED_ACTIONS)
-    }
+  if (glob.workerGlobals.upcomingRules) {
+    condLog(`Upcoming rules is being set - update it`, funcName, fileName, area)
+    startRuleInUpcomingRules(ruleName)
   }
+
+  endReevaluationSleepEarly()
 
   exitLog(funcName, fileName, area)
   return
@@ -141,34 +131,19 @@ export function stopRule(ruleName: string): void {
   const funcName = 'stopRule'
   entryLog(funcName, fileName, area)
 
-  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
   if (
-    rule &&
-    !rule.disabled &&
-    rule.enableStartStopActions &&
-    rule.status === (RULE_STATUS_TYPE.QUEUED_ACTIONS || RULE_STATUS_TYPE.EXECUTING_ACTIONS) &&
-    rule.startActions
+    glob.workerGlobals.upcomingRules ||
+    (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === ruleName)
   ) {
-    condLog(`Stop rule: ${rule.name}`, funcName, fileName, area)
-    rule.setStartActions(false)
-    if (rule.status === RULE_STATUS_TYPE.QUEUED_ACTIONS) {
-      condLog(`Rules actions are current queued`, funcName, fileName, area)
-      rule.setStatus(RULE_STATUS_TYPE.AWAITING_APPROVAL)
-    }
-    infoLog(`Stopped rule: ${rule.name}`, funcName, fileName, area)
-    endReevaluationSleepEarly()
-
-    // Update rule if were storing upcoming changes to rules
-    const upcomingRule = glob.workerGlobals.upcomingRules?.findRule(ruleName)
-    if (upcomingRule) {
-      condLog(`Upcoming rules being filled: ${rule.name}`, funcName, fileName, area)
-      upcomingRule.setStartActions(false)
-      if (upcomingRule.status === RULE_STATUS_TYPE.QUEUED_ACTIONS) {
-        condLog(`Upcoming rules actions are current queued`, funcName, fileName, area)
-        upcomingRule.setStatus(RULE_STATUS_TYPE.AWAITING_APPROVAL)
-      }
-    }
+    condLog(`Upcoming rules is being set or rule is in use`, funcName, fileName, area)
+    addAwaitingChange(CHANGE_TYPE.STOP_RULE, ruleName)
+    stopRuleInUpcomingRules(ruleName)
+  } else {
+    condLog(`Can stop rule ${ruleName} immediately`, funcName, fileName, area)
+    stopRuleInCurrentRules(ruleName)
   }
+
+  endReevaluationSleepEarly()
 
   exitLog(funcName, fileName, area)
   return

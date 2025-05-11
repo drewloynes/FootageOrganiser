@@ -6,9 +6,6 @@ import {
   STORE_PATH_IN_VOLUME_SCHEMA
 } from './validatePathInVolume'
 
-const fileName = 'validateCopyFileOptions.ts'
-const area = 'validation'
-
 export const STORE_COPY_FILE_OPTIONS_SCHEMA = {
   targetSubPathFormat: z.array(z.nativeEnum(TARGET_SUB_PATH_FORMAT_OPTIONS)),
   customDirectoryName: z.string(),
@@ -21,6 +18,7 @@ export const STORE_COPY_FILE_OPTIONS_ZOD_SCHEMA = z
   .object(STORE_COPY_FILE_OPTIONS_SCHEMA)
   .superRefine(extraZodValidationCopyFileOptions)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationCopyFileOptions(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   copyFileOptionsData: any,

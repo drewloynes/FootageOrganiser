@@ -32,7 +32,7 @@ export function StartStopSmall({
       <div className="flex items-center">
         <Button
           className="cursor-pointer px-8 h-14 w-[150px]  align-middle bg-gray-200 border-1 border-gray-300 text-gray-600 hover:text-white mr-[13px]  text-[15px] mx-0"
-          onClick={() => navigate(`/approval-list/${rule.name}`)}
+          onClick={() => navigate(`/view-actions/${rule.name}`)}
         >
           <Rows4 className="!size-[25px]" />
           View <br />
@@ -109,7 +109,7 @@ export function StartStopBig({
     <div className="flex flex-row w-full justify-start">
       <Button
         className="cursor-pointer px-14 h-14 w-[240px]  align-middle bg-gray-200 border-1 border-gray-300 text-gray-600 hover:text-white mr-[13px]  text-[15px] mx-0"
-        onClick={() => navigate(`/approval-list/${rule.name}`)}
+        onClick={() => navigate(`/view-actions/${rule.name}`)}
       >
         <Rows4 className="!size-[25px]" />
         View Pending Actions

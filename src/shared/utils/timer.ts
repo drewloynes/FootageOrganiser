@@ -43,7 +43,7 @@ export function endSleep(
     promiseResolveTimerMap.delete(id) // Delete the map entry
     sleepEnded = true
   } else {
-    warnLog(`Sleep for '${id}' not found in ResolveTimer map`, funcName, fileName, area)
+    debugLog(`Sleep for '${id}' not found in ResolveTimer map`, funcName, fileName, area)
   }
 
   exitLog(funcName, fileName, area)

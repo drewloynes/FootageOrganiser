@@ -1,8 +1,5 @@
 import { z } from 'zod'
 
-const fileName = 'validateMirrorOptions.ts'
-const area = 'validation'
-
 export const STORE_MIRROR_OPTIONS_SCHEMA = {
   enableDeletingInTarget: z.boolean()
 }

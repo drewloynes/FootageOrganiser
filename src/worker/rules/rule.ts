@@ -422,4 +422,94 @@ export class Rule {
     exitLog(funcName, fileName, area)
     return hasExecuatableActions
   }
+
+  stop(): void {
+    const funcName = 'stop'
+    entryLog(funcName, fileName, area)
+
+    if (this.evaluateRule) {
+      condExitLog(`Rule is requiring evaluation - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (this.disabled) {
+      condExitLog(`Rule is disabled - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (!this.enableStartStopActions) {
+      condExitLog(`Rule does not have enableStartStopActions set - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (
+      this.status !== RULE_STATUS_TYPE.QUEUED_ACTIONS &&
+      this.status !== RULE_STATUS_TYPE.EXECUTING_ACTIONS
+    ) {
+      condExitLog(
+        `Rule does not currently have actions to execute - skip`,
+        funcName,
+        fileName,
+        area
+      )
+      return
+    }
+
+    if (!this.startActions) {
+      condExitLog(`startActions is already false - skip`, funcName, fileName, area)
+      return
+    }
+
+    this.setStartActions(false)
+    this.setExecutingAction('')
+    this.setActionsProgress(0)
+
+    if (this.hasActions()) {
+      condLog(`There are actions in the action queues`, funcName, fileName, area)
+      this.setStatus(RULE_STATUS_TYPE.AWAITING_APPROVAL)
+    } else {
+      condLog(`There are no actions in the action queues`, funcName, fileName, area)
+      this.setStatus(RULE_STATUS_TYPE.AWAITING_EVALUATION)
+      this.setSilentEvaluate()
+    }
+
+    exitLog(funcName, fileName, area)
+    return
+  }
+
+  start(): void {
+    const funcName = 'start'
+    entryLog(funcName, fileName, area)
+
+    if (this.evaluateRule) {
+      condExitLog(`Rule is requiring evaluation - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (this.disabled) {
+      condExitLog(`Rule is disabled - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (!this.enableStartStopActions) {
+      condExitLog(`Rule does not have enableStartStopActions set - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (this.status !== RULE_STATUS_TYPE.AWAITING_APPROVAL) {
+      condExitLog(`Rule is not awaiting approval - skip`, funcName, fileName, area)
+      return
+    }
+
+    if (this.startActions) {
+      condExitLog(`startActions is already true - skip`, funcName, fileName, area)
+      return
+    }
+
+    this.setStartActions(true)
+    this.setStatus(RULE_STATUS_TYPE.QUEUED_ACTIONS)
+
+    exitLog(funcName, fileName, area)
+    return
+  }
 }

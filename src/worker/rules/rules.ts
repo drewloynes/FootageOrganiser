@@ -138,6 +138,40 @@ export class Rules {
     return ruleDeleted
   }
 
+  stopRule(ruleName: string): boolean {
+    const funcName = 'stopRule'
+    entryLog(funcName, fileName, area)
+
+    let ruleStoped: boolean = false
+    const rule: Rule | undefined = this.findRule(ruleName)
+    if (rule) {
+      condLog(`Rule ${rule.name} found`, funcName, fileName, area)
+      rule.stop()
+      ruleStoped = true
+      streamUpdateCurrentRules()
+    }
+
+    exitLog(funcName, fileName, area)
+    return ruleStoped
+  }
+
+  startRule(ruleName: string): boolean {
+    const funcName = 'startRule'
+    entryLog(funcName, fileName, area)
+
+    let ruleStarted: boolean = false
+    const rule: Rule | undefined = this.findRule(ruleName)
+    if (rule) {
+      condLog(`Rule ${rule.name} found`, funcName, fileName, area)
+      rule.start()
+      ruleStarted = true
+      streamUpdateCurrentRules()
+    }
+
+    exitLog(funcName, fileName, area)
+    return ruleStarted
+  }
+
   evaluateAllRules() {
     const funcName = 'evaluateAllRules'
     entryLog(funcName, fileName, area)

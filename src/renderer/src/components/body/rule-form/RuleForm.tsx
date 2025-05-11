@@ -7,7 +7,7 @@ import {
 } from '@renderer/components/ui/collapsible'
 import { Form } from '@renderer/components/ui/form'
 import { Separator } from '@renderer/components/ui/separator'
-import { FullRule, StoreRule } from '@shared/types/ruleTypes'
+import { FullRule, STORE_RULE_DEFAULT_VALUES, StoreRule } from '@shared/types/ruleTypes'
 import { STORE_RULE_ZOD_SCHEMA } from '@shared/validation/validateRule'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -66,6 +66,10 @@ export function RuleForm({
     if (!newRule) {
       log.cond('Request rule data- Set defaults', funcName, fileName, area)
       fetchRuleSetDefaults()
+    } else {
+      log.cond('No loading needed', funcName, fileName, area)
+      reset(STORE_RULE_DEFAULT_VALUES)
+      setLoading(false)
     }
   }, [])
 

@@ -59,6 +59,7 @@ export const SHORT_RULE_ZOD_SCHEMA = z.object(SHORT_RULE_SCHEMA)
 
 export const FULL_RULE_ZOD_SCHEMA = z.object(FULL_RULE_SCHEMA)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationStoreRule(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storeRuleData: any,

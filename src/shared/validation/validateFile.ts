@@ -1,6 +1,3 @@
-const fileName = 'validateFile.ts'
-const area = 'validation'
-
 const RESERVED_WINDOWS_FILE_NAMES: string[] = [
   'CON',
   'PRN',
@@ -21,6 +18,8 @@ const ENDS_WITH_DOT_OR_SPACE: RegExp = /[. ]$/
 // Validates strings are valid files name filters
 // - Can be a full file name
 // - Can include asterisks (*) to denote anything before or after the asterisk
+//
+// Cant have logs - Used in all processes
 export function validateFileNameFilter(fileNameFilter: string): boolean {
   if (RESERVED_WINDOWS_FILE_NAMES.includes(fileNameFilter.toUpperCase())) {
     return false

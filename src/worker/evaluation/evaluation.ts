@@ -3,7 +3,7 @@ import { pathExists } from '@shared/utils/filePaths'
 import { Rule } from '@worker/rules/rule'
 import {
   abortIfStateAwaitingChanges,
-  processErrorFofrStageChanges
+  processErrorForStateChanges
 } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -43,7 +43,7 @@ export async function evaluateCurrentRules(): Promise<boolean> {
     }
   } catch (err) {
     condLog(`Caught error`, funcName, fileName, area)
-    await processErrorFofrStageChanges(err)
+    await processErrorForStateChanges(err)
   }
 
   glob.workerGlobals.ruleInUse = undefined

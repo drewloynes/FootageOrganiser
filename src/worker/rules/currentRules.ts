@@ -113,14 +113,14 @@ export function getAllCurrentRulesToSend(): ShortRule[] {
   const funcName = 'getAllCurrentRulesToSend'
   entryLog(funcName, fileName, area)
 
-  const currnetRules: Rules | undefined = getCurrentRules()
-  if (!currnetRules) {
+  const currentRules: Rules | undefined = getCurrentRules()
+  if (!currentRules) {
     condExitLog(`Current rules not defined`, funcName, fileName, area)
     return []
   }
 
   const rulesToSend: Array<ShortRule> = []
-  currnetRules.ruleList.forEach((rule) => rulesToSend.push(rule.convertToShortRule()))
+  currentRules.ruleList.forEach((rule) => rulesToSend.push(rule.convertToShortRule()))
 
   exitLog(funcName, fileName, area)
   return rulesToSend
@@ -130,13 +130,13 @@ export function getRuleToSend(ruleName: string): FullRule | undefined {
   const funcName = 'getRuleToSend'
   entryLog(funcName, fileName, area)
 
-  const currnetRules: Rules | undefined = getCurrentRules()
-  if (!currnetRules) {
+  const currentRules: Rules | undefined = getCurrentRules()
+  if (!currentRules) {
     condExitLog(`Current rules not defined`, funcName, fileName, area)
     return undefined
   }
 
-  const ruleToSend: FullRule | undefined = currnetRules.findRule(ruleName)?.convertToFullRule()
+  const ruleToSend: FullRule | undefined = currentRules.findRule(ruleName)?.convertToFullRule()
 
   exitLog(funcName, fileName, area)
   return ruleToSend
@@ -260,6 +260,36 @@ export async function deleteRuleInCurrentRules(deleteRuleName: string): Promise<
 
   exitLog(funcName, fileName, area)
   return ruleDeleted
+}
+
+export async function stopRuleInCurrentRules(ruleName: string): Promise<boolean> {
+  const funcName = 'stopRuleInCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  let ruleStopped: boolean = false
+  if (glob.workerGlobals.currentRules?.stopRule(ruleName)) {
+    infoLog(`Rule: ${ruleName} has been stopped`, funcName, fileName, area)
+    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+    ruleStopped = true
+  }
+
+  exitLog(funcName, fileName, area)
+  return ruleStopped
+}
+
+export async function startRuleInCurrentRules(ruleName: string): Promise<boolean> {
+  const funcName = 'startRuleInCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  let ruleStarted: boolean = false
+  if (glob.workerGlobals.currentRules?.startRule(ruleName)) {
+    infoLog(`Rule: ${ruleName} has been started`, funcName, fileName, area)
+    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+    ruleStarted = true
+  }
+
+  exitLog(funcName, fileName, area)
+  return ruleStarted
 }
 
 export function startAllRulesStream(): void {

@@ -5,7 +5,8 @@
     "src/renderer/src/**/**/**/**/*",
     "src/renderer/src/**/*.tsx",
     "src/global/rendererGlobals.d.ts",
-    "src/shared/**/*", "src/lib/utils.ts",
+    "src/shared/**/*",
+    "src/lib/utils.ts",
   ],
   "compilerOptions": {
     "composite": true,
@@ -27,7 +28,10 @@
      ],
      "@assets/*": [
       "src/renderer/src/assets/*"
-   ],
+     ],
+      "@resources/*": [
+      "resources/*"
+     ],
     }
   }
 }

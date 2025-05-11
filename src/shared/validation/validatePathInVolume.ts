@@ -2,9 +2,6 @@ import { z } from 'zod'
 import { validateDirNameFilter, validatePartialDirectoryPath } from './validateDirectory'
 import { validateFileNameFilter } from './validateFile'
 
-const fileName = 'validatePathInVolume.ts'
-const area = 'validation'
-
 export const SHORT_PATH_IN_VOLUME_SCHEMA = {
   volumeName: z.string().min(1),
   pathFromVolumeRoot: z.string()
@@ -26,6 +23,7 @@ export const STORE_PATH_IN_VOLUME_ZOD_SCHEMA = z
   .object(STORE_PATH_IN_VOLUME_SCHEMA)
   .superRefine(extraZodValidationStorePathInVolume)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationShortPathInVolume(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   shortPathInVolumeData: any,
@@ -42,6 +40,7 @@ export function extraZodValidationShortPathInVolume(
   }
 }
 
+// Cant have logs - Used in all processes
 export function extraZodValidationStorePathInVolume(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storePathInVolumeData: any,

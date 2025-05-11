@@ -2,7 +2,7 @@ import { RULE_STATUS_TYPE } from '@shared/types/ruleTypes'
 import { Rule } from '@worker/rules/rule'
 import {
   abortIfStateAwaitingChanges,
-  processErrorFofrStageChanges
+  processErrorForStateChanges
 } from '@worker/state-changes/changeState'
 import { ACTION_TYPE, addActionLog } from '@worker/storage/logs/storeLogs'
 import * as fs from 'fs'
@@ -47,7 +47,7 @@ export async function executeCurrentRules(): Promise<void> {
       rule.setSilentEvaluate()
     } catch (err) {
       condLog(`Caught error`, funcName, fileName, area)
-      await processErrorFofrStageChanges(err)
+      await processErrorForStateChanges(err)
     }
   }
 

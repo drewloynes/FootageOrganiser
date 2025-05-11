@@ -35,7 +35,7 @@ export function modifyRuleInUpcomingRules(originalRuleName: string, modifiedRule
   entryLog(funcName, fileName, area)
 
   initialiseUpcomingRules()
-  glob.workerGlobals.currentRules?.modifyRule(originalRuleName, modifiedRule)
+  glob.workerGlobals.upcomingRules?.modifyRule(originalRuleName, modifiedRule)
 
   exitLog(funcName, fileName, area)
   return
@@ -46,7 +46,29 @@ export function deleteRuleInUpcomingRules(deleteRuleName: string): void {
   entryLog(funcName, fileName, area)
 
   initialiseUpcomingRules()
-  glob.workerGlobals.currentRules?.deleteRule(deleteRuleName)
+  glob.workerGlobals.upcomingRules?.deleteRule(deleteRuleName)
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function stopRuleInUpcomingRules(ruleName: string): void {
+  const funcName = 'stopRuleInUpcomingRules'
+  entryLog(funcName, fileName, area)
+
+  initialiseUpcomingRules()
+  glob.workerGlobals.upcomingRules?.stopRule(ruleName)
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function startRuleInUpcomingRules(ruleName: string): void {
+  const funcName = 'startRuleInUpcomingRules'
+  entryLog(funcName, fileName, area)
+
+  initialiseUpcomingRules()
+  glob.workerGlobals.upcomingRules?.startRule(ruleName)
 
   exitLog(funcName, fileName, area)
   return
