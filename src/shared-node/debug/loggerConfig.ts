@@ -1,6 +1,5 @@
-import process from 'node:process'
-
 type LoggingConfiguration = {
+  dev: boolean
   logLevel: string
   logProcess: string[]
   logFunc: string[]
@@ -9,7 +8,8 @@ type LoggingConfiguration = {
 }
 
 const loggerConfig: LoggingConfiguration = {
-  logLevel: process.env.LOG_LEVEL || 'func',
+  dev: false,
+  logLevel: 'func',
   logProcess: [],
   logFunc: [],
   logFile: [],

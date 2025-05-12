@@ -15,7 +15,7 @@ import { Resolver, useForm, UseFormReturn } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import GeneralAdvancedSettings from './advanced/GeneralAdvancedSettings'
 import CopyFileSettings from './copy-file/CopyFileSettings'
-import { DirectorySelector } from './DirectorySelector'
+import { FolderSelector } from './FolderSelector'
 import MirrorSettings from './mirror/MirrorSettings'
 import RuleFormLoading from './RuleFormLoading'
 import { RuleName } from './RuleName'
@@ -125,7 +125,7 @@ export function RuleForm({
         </div>
 
         <div className="flex flex-row items-start w-full justify-center mt-6 relative">
-          <DirectorySelector
+          <FolderSelector
             control={control}
             name="origin"
             buttonText="Select Origin Folder"
@@ -133,7 +133,7 @@ export function RuleForm({
             toolTip="Folder to copy from"
           />
           <Separator orientation="vertical" className="absolute top-0 bottom-0 left-1/2" />
-          <DirectorySelector
+          <FolderSelector
             control={control}
             name="target"
             buttonText="Select Target Folder"

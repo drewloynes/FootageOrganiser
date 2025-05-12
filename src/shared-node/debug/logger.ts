@@ -72,6 +72,11 @@ function logger(description, funcName, fileName, area = 'unknown', severity = 'i
 // Decide if it should be logged based on logging filters
 function shouldLog(funcName: string, fileName: string, area: string): boolean {
   let shouldLog: boolean = false
+
+  if (!loggerConfig.dev) {
+    return false
+  }
+
   if (
     loggerConfig.logProcess.length < 1 ||
     matchStrings(global.processName, loggerConfig.logProcess)
@@ -84,6 +89,7 @@ function shouldLog(funcName: string, fileName: string, area: string): boolean {
       }
     }
   }
+
   return shouldLog
 }
 

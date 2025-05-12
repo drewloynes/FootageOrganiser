@@ -54,6 +54,10 @@ export class ClientLogger {
   private shouldLog(level: CLIENT_LOG_LEVEL, func: string, file: string, area: string): boolean {
     let shouldLog: boolean = false
 
+    if (!CLIENT_LOG_CONFIG.dev) {
+      return false
+    }
+
     if (CLIENT_LOG_CONFIG.level.length < 1 || this.matchStrings(level, CLIENT_LOG_CONFIG.level)) {
       if (CLIENT_LOG_CONFIG.func.length < 1 || this.matchStrings(func, CLIENT_LOG_CONFIG.func)) {
         if (CLIENT_LOG_CONFIG.file.length < 1 || this.matchStrings(file, CLIENT_LOG_CONFIG.file)) {
