@@ -1,5 +1,5 @@
-import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared/utils/promise'
-import { StreamUpdate } from '@shared/utils/streamUpdates'
+import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared-node/utils/promise'
+import { StreamUpdate } from '@shared-node/utils/streamUpdates'
 import { DriveInfo } from '@worker/drives/driveInfo'
 import { Rules } from '@worker/rules/rules'
 import { Settings } from '@worker/settings/settings'

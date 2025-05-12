@@ -1,5 +1,5 @@
-import { CopyPaths } from '@shared/types/ruleTypes'
-import { sleep } from '@shared/utils/timer'
+import { CopyPaths } from '@shared-all/types/ruleTypes'
+import { sleep } from '@shared-node/utils/timer'
 import * as fs from 'fs'
 import path from 'path'
 

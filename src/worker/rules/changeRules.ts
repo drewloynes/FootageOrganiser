@@ -1,4 +1,4 @@
-import { ModifyRuleInfo, StoreRule } from '@shared/types/ruleTypes'
+import { ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
 import { endReevaluationSleepEarly } from '@worker/runWorker'
 import { CHANGE_TYPE } from '@worker/state-changes/change'
 import { addAwaitingChange } from '@worker/state-changes/changeState'

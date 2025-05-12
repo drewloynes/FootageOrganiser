@@ -1,4 +1,4 @@
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { motion } from 'framer-motion'
 import { Control, FieldPath } from 'react-hook-form'
 import { DynamicList } from './DynamicList'

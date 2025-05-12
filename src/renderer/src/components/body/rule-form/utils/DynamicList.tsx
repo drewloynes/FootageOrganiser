@@ -7,7 +7,7 @@ import {
   FormMessage
 } from '@renderer/components/ui/form'
 import { Input } from '@renderer/components/ui/input'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { useState } from 'react'
 import { Control, FieldPath } from 'react-hook-form'
 

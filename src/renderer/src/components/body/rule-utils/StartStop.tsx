@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { FullRule, ShortRule } from '@shared/types/ruleTypes'
+import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 import { Pause, Play, Rows4 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 

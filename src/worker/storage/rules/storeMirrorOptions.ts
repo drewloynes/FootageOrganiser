@@ -1,4 +1,4 @@
-import { StoreMirrorOptions } from '@shared/types/MirrorTypes'
+import { StoreMirrorOptions } from '@shared-all/types/MirrorTypes'
 import { MirrorOptions } from '@worker/rules/mirrorOptions'
 
 const fileName = 'storeMirrorOptions.ts'

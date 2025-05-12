@@ -1,3 +1,4 @@
+import 'update-electron-app'
 import initMainGlobals from './mainInitialisation'
 import { setupMain } from './mainSetup'
 

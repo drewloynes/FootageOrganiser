@@ -1,4 +1,4 @@
-import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared/utils/promise'
+import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared-node/utils/promise'
 
 export class MainGlobals {
   /* Global useful data for main */

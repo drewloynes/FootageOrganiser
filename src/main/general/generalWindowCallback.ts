@@ -1,4 +1,4 @@
-import { ShortPathInVolume } from '@shared/types/pathInVolumeTypes'
+import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { shell } from 'electron'
 import { app, dialog } from 'electron/main'
 import path from 'path'

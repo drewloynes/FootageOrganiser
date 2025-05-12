@@ -1,4 +1,4 @@
-import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared/types/copyFileTypes'
+import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared-all/types/copyFileTypes'
 import { z } from 'zod'
 import { validateDirectoryName } from './validateDirectory'
 import {
@@ -46,7 +46,7 @@ export function extraZodValidationCopyFileOptions(
     ctx.addIssue({
       path: [...currentPath, 'customDirectoryName'],
       code: z.ZodIssueCode.custom,
-      message: 'Custom directory name is not a valid directory name'
+      message: 'Custom Name is not a valid directory name'
     })
   }
 
@@ -58,7 +58,7 @@ export function extraZodValidationCopyFileOptions(
     ctx.addIssue({
       path: [...currentPath, 'deleteUnderOtherPaths'],
       code: z.ZodIssueCode.custom,
-      message: `Delete under other paths can't ne true when delete copied files is false`
+      message: `Delete under other paths can't be true when delete copied files is false`
     })
   }
 

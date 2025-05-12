@@ -1,8 +1,8 @@
+import { StoreRules } from '@shared-all/types/rulesTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Rule } from '@worker/rules/rule'
 import { Rules } from '@worker/rules/rules'
-import { StoreRules } from '@shared/types/rulesTypes'
 import { toRule, toStoreRule } from './storeRule'
-import { StoreRule } from '@shared/types/ruleTypes'
 
 const fileName = 'storeRules.ts'
 const area = 'store-rules'

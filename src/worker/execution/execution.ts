@@ -1,4 +1,4 @@
-import { RULE_STATUS_TYPE } from '@shared/types/ruleTypes'
+import { RULE_STATUS_TYPE } from '@shared-all/types/ruleTypes'
 import { Rule } from '@worker/rules/rule'
 import {
   abortIfStateAwaitingChanges,

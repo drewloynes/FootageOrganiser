@@ -1,5 +1,6 @@
-import { FullRule, ModifyRuleInfo, ShortRule, StoreRule } from '@shared/types/ruleTypes'
-import { STORE_RULE_ZOD_SCHEMA, validateRuleName } from '@shared/validation/validateRule'
+import { FullRule, ModifyRuleInfo, ShortRule, StoreRule } from '@shared-all/types/ruleTypes'
+import { STORE_RULE_ZOD_SCHEMA } from '@shared-all/validation/validateRule'
+import { validateRuleName } from '@shared-node/validation/validateRule'
 import { sendAsyncIpcMessageWorker, sendSyncIpcMessageWorker } from '../ipc/worker/workerIpcSender'
 
 const fileName: string = 'ruleWindowCallback.ts'

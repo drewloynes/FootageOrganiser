@@ -17,8 +17,8 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared/types/copyFileTypes'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared-all/types/copyFileTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { ArrowRight } from 'lucide-react'
 import { Control } from 'react-hook-form'
 import { TargetSubPathFormatFolderDisplay } from './TargetSubPathFormatFolderDisplay'

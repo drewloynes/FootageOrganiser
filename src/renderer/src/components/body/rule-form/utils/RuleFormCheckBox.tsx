@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 
 const fileName: string = 'RuleFormCheckBox.tsx'

@@ -1,4 +1,4 @@
-import { StorePathInVolume } from '@shared/types/pathInVolumeTypes'
+import { StorePathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { updateCurrentDriveInfo } from '@worker/drives/currentDriveInfo'
 import { PATH_IN_VOLUME_TYPE, PathInVolume } from '@worker/path/pathInVolume'
 

@@ -1,6 +1,6 @@
-import { Alert } from '@shared/types/alert'
-import { FullRule, ShortRule, StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { Alert } from '@shared-all/types/alert'
+import { FullRule, ShortRule, StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 
 import { contextBridge, ipcRenderer } from 'electron'
 

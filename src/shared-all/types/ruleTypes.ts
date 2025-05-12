@@ -3,7 +3,7 @@ import {
   FULL_RULE_ZOD_SCHEMA,
   SHORT_RULE_ZOD_SCHEMA,
   STORE_RULE_ZOD_SCHEMA
-} from '@shared/validation/validateRule'
+} from '@shared-all/validation/validateRule'
 import { z } from 'zod'
 
 export enum RULE_TYPE {

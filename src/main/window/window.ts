@@ -1,4 +1,5 @@
 import { is } from '@electron-toolkit/utils'
+import icon from '@resources/footage-organiser-logo-3.png?asset'
 import { BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 
@@ -43,8 +44,8 @@ function createWindow(): void {
     height: 800,
     minWidth: 1150,
     minHeight: 600,
-    icon: 'resources/footage-organiser-logo-3.png',
-    show: false,
+    icon: icon,
+    show: true,
     autoHideMenuBar: true,
     center: true,
     title: 'Footage Organiser',
@@ -68,6 +69,9 @@ function createWindow(): void {
   if (is.dev) {
     condLog(`In dev mode`, funcName, fileName, area)
     devModeWindowModifications()
+  } else {
+    condLog(`Not dev mode`, funcName, fileName, area)
+    getWindow()?.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   exitLog(funcName, fileName, area)

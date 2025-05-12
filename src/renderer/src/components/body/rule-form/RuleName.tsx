@@ -6,7 +6,7 @@ import {
   FormMessage
 } from '@renderer/components/ui/form'
 import { Input } from '@renderer/components/ui/input'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 
 const fileName: string = 'RuleName.tsx'

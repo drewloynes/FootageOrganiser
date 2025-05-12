@@ -1,4 +1,4 @@
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { Settings } from '@worker/settings/settings'
 
 const fileName = 'storeSettings.ts'

@@ -1,4 +1,4 @@
-import { Alert } from '@shared/types/alert'
+import { Alert } from '@shared-all/types/alert'
 import { Notification } from 'electron/main'
 
 const fileName: string = 'system.ts'

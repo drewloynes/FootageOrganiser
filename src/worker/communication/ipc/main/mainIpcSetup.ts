@@ -1,4 +1,4 @@
-import { endSleep, sleep } from '@shared/utils/timer'
+import { endSleep, sleep } from '@shared-node/utils/timer'
 import { parseMainIpcMessage } from './mainIpcReceiver'
 
 const fileName: string = 'mainIpcSetup.ts'

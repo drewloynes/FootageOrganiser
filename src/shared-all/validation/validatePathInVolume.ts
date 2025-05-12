@@ -3,7 +3,7 @@ import { validateDirNameFilter, validatePartialDirectoryPath } from './validateD
 import { validateFileNameFilter } from './validateFile'
 
 export const SHORT_PATH_IN_VOLUME_SCHEMA = {
-  volumeName: z.string().min(1),
+  volumeName: z.string().min(1, 'Folder has not been chosen'),
   pathFromVolumeRoot: z.string()
 }
 

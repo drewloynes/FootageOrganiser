@@ -1,6 +1,6 @@
 import { ScrollArea } from '@renderer/components/ui/scroll-area'
 import { Separator } from '@renderer/components/ui/separator'
-import { CopyPaths } from '@shared/types/ruleTypes'
+import { CopyPaths } from '@shared-all/types/ruleTypes'
 
 const fileName: string = 'ViewActionsList.tsx'
 const area: string = 'view-actions'

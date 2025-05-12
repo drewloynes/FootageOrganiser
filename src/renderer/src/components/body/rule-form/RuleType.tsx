@@ -6,7 +6,7 @@ import {
   FormMessage
 } from '@renderer/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/components/ui/select'
-import { RULE_TYPE, StoreRule } from '@shared/types/ruleTypes'
+import { RULE_TYPE, StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 
 const fileName: string = 'RuleType.tsx'

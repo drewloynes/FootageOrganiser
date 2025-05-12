@@ -1,5 +1,5 @@
 import { Button } from '@renderer/components/ui/button'
-import { FullRule } from '@shared/types/ruleTypes'
+import { FullRule } from '@shared-all/types/ruleTypes'
 import { Pause, Play } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'

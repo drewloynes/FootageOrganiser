@@ -1,4 +1,4 @@
-import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared/types/copyFileTypes'
+import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared-all/types/copyFileTypes'
 import { getVolumeNameFromPath } from '@worker/drives/currentDriveInfo'
 import * as fs from 'fs'
 import path from 'path'

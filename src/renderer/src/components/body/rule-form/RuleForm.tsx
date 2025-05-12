@@ -7,8 +7,8 @@ import {
 } from '@renderer/components/ui/collapsible'
 import { Form } from '@renderer/components/ui/form'
 import { Separator } from '@renderer/components/ui/separator'
-import { FullRule, STORE_RULE_DEFAULT_VALUES, StoreRule } from '@shared/types/ruleTypes'
-import { STORE_RULE_ZOD_SCHEMA } from '@shared/validation/validateRule'
+import { FullRule, STORE_RULE_DEFAULT_VALUES, StoreRule } from '@shared-all/types/ruleTypes'
+import { STORE_RULE_ZOD_SCHEMA } from '@shared-all/validation/validateRule'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Resolver, useForm, UseFormReturn } from 'react-hook-form'
@@ -37,6 +37,7 @@ export function RuleForm({
   log.rend(funcName, fileName, area)
 
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [openAdvancedSettings, setOpenAdvancedSettings] = useState(false)
 
   const navigate = useNavigate()
@@ -106,6 +107,7 @@ export function RuleForm({
   }
 
   const onError = (errors: any) => {
+    setError(true)
     console.log('Zod Errors:', errors)
   }
 
@@ -159,7 +161,10 @@ export function RuleForm({
           </CollapsibleContent>
         </Collapsible>
 
-        {!open && <Separator className="mt-2 mb-4" />}
+        <Separator className="mt-2 mb-4" />
+        {error && (
+          <div className="text-destructive text-sm">Some rule configuration is not valid</div>
+        )}
         <div className="flex justify-center mb-4">
           <Button type="submit" className="text-2xl px-4 mt-3 py-6 font-bold cursor-pointer">
             {newRule ? 'Create Rule' : 'Edit Rule'}

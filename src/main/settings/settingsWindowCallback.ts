@@ -1,5 +1,5 @@
-import { StoreSettings } from '@shared/types/settingsTypes'
-import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared/validation/validateSettings'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
+import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared-all/validation/validateSettings'
 import { sendAsyncIpcMessageWorker, sendSyncIpcMessageWorker } from '../ipc/worker/workerIpcSender'
 
 const fileName: string = 'settingsWindowCallback.ts'

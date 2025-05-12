@@ -4,7 +4,7 @@ import {
   RULE_STATUS_TYPE,
   ShortRule,
   UNEVALUATABLE_REASON
-} from '@shared/types/ruleTypes'
+} from '@shared-all/types/ruleTypes'
 import { CircleAlert, Info } from 'lucide-react'
 
 const fileName: string = 'RuleActionsAndErrors.tsx'

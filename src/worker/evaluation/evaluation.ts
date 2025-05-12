@@ -1,5 +1,5 @@
-import { RULE_STATUS_TYPE, RULE_TYPE } from '@shared/types/ruleTypes'
-import { pathExists } from '@shared/utils/filePaths'
+import { RULE_STATUS_TYPE, RULE_TYPE } from '@shared-all/types/ruleTypes'
+import { pathExists } from '@shared-node/utils/filePaths'
 import { Rule } from '@worker/rules/rule'
 import {
   abortIfStateAwaitingChanges,

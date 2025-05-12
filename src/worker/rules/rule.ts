@@ -5,8 +5,8 @@ import {
   RULE_TYPE,
   ShortRule,
   UNEVALUATABLE_REASON
-} from '@shared/types/ruleTypes'
-import { StreamUpdate } from '@shared/utils/streamUpdates'
+} from '@shared-all/types/ruleTypes'
+import { StreamUpdate } from '@shared-node/utils/streamUpdates'
 import { PathInVolume } from '@worker/path/pathInVolume'
 import { toStorePathInVolume } from '@worker/storage/path/storePathInVolume'
 import { toStoreCopyFileOptions } from '@worker/storage/rules/storeCopyFileOptions'

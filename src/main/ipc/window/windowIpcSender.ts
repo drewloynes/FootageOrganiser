@@ -1,6 +1,6 @@
 import { getWindow } from '@main/window/window'
-import { Alert } from '@shared/types/alert'
-import { FullRule, ShortRule } from '@shared/types/ruleTypes'
+import { Alert } from '@shared-all/types/alert'
+import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 
 const fileName: string = 'windowIpcSender.ts'
 const area: string = 'window-ipc'

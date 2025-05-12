@@ -5,7 +5,7 @@
     "src/renderer/src/**/**/**/**/*",
     "src/renderer/src/**/*.tsx",
     "src/global/rendererGlobals.d.ts",
-    "src/shared/**/*",
+    "src/shared-all/**/*",
     "src/lib/utils.ts",
   ],
   "compilerOptions": {
@@ -17,8 +17,8 @@
       "@renderer/*": [
          "src/renderer/src/*"
       ],
-      "@shared/*": [
-        "src/shared/*"
+      "@shared-all/*": [
+        "src/shared-all/*"
       ],
       "@/*": [
          "src/renderer/src/*"

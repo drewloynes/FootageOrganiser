@@ -1,5 +1,5 @@
-import { ModifyRuleInfo, StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 import {
   addRuleInCurrentRules,
   deleteRuleInCurrentRules,

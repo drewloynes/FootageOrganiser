@@ -1,7 +1,7 @@
 import { systemNotification } from '@main/utils/system'
-import { Alert } from '@shared/types/alert'
-import { FullRule, ShortRule } from '@shared/types/ruleTypes'
-import { AsyncIpcMessage, SyncIpcMessage } from '@shared/utils/ipc'
+import { Alert } from '@shared-all/types/alert'
+import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
+import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 import { app } from 'electron/main'
 import {
   sendAlertToWindow,

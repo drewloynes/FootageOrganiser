@@ -1,8 +1,8 @@
-import { toCopyFileOptions, toStoreCopyFileOptions } from './storeCopyFileOptions'
-import { Rule } from '@worker/rules/rule'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { PATH_IN_VOLUME_TYPE } from '@worker/path/pathInVolume'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { Rule } from '@worker/rules/rule'
 import { toPathInVolume, toStorePathInVolume } from '../path/storePathInVolume'
+import { toCopyFileOptions, toStoreCopyFileOptions } from './storeCopyFileOptions'
 import { toMirrorOptions, toStoreMirrorOptions } from './storeMirrorOptions'
 
 const fileName = 'storeRule.ts'
