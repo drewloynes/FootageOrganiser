@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.0.0
+
 Features:
 
 - Copy File rules (With customisable target sub-path and other paths to delete).
