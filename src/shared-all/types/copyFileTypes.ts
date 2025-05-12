@@ -1,4 +1,4 @@
-import { STORE_COPY_FILE_OPTIONS_ZOD_SCHEMA } from '@shared/validation/validateCopyFileOptions'
+import { STORE_COPY_FILE_OPTIONS_ZOD_SCHEMA } from '@shared-all/validation/validateCopyFileOptions'
 import { z } from 'zod'
 
 export enum TARGET_SUB_PATH_FORMAT_OPTIONS {

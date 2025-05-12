@@ -1,5 +1,5 @@
-import { pathExists } from '@shared/utils/filePaths'
-import { cloneStringArray, matchStringAgainstStringArray } from '@shared/utils/string'
+import { pathExists } from '@shared-node/utils/filePaths'
+import { cloneStringArray, matchStringAgainstStringArray } from '@shared-node/utils/string'
 import path from 'path'
 import { FullPath } from './fullPath'
 

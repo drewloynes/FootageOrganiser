@@ -4,7 +4,8 @@
     "electron.vite.config.*",
     "src/main/**/**/*",
     "src/preload/**/*",
-    "src/shared/**/*",
+    "src/shared-node/**/*",
+    "src/shared-all/**/*",
     "src/worker/**/**/**/*",
     "src/global/mainWorkerGlobals.d.ts"
   ],
@@ -16,14 +17,20 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": [
-        "src/shared/*"
+      "@shared-all/*": [
+        "src/shared-all/*"
+      ],
+      "@shared-node/*": [
+        "src/shared-node/*"
       ],
       "@worker/*": [
         "src/worker/*"
       ],
       "@main/*": [
         "src/main/*"
+      ],
+      "@resources/*": [
+        "resources/*"
       ]
     }
   }

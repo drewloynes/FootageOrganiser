@@ -1,4 +1,4 @@
-import { Alert } from '@shared/types/alert'
+import { Alert } from '@shared-all/types/alert'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog'
 

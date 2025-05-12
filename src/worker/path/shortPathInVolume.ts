@@ -1,4 +1,4 @@
-import { ShortPathInVolume } from '@shared/types/pathInVolumeTypes'
+import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { getDriveInfoFromPath, updateCurrentDriveInfo } from '@worker/drives/currentDriveInfo'
 import { DriveInfo } from '@worker/drives/driveInfo'
 

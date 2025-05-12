@@ -15,9 +15,9 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
-import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared/validation/validateSettings'
+import { CHECKSUM_TYPE } from '@shared-all/types/checksumTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
+import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared-all/validation/validateSettings'
 import { useEffect, useState } from 'react'
 import { Resolver, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'

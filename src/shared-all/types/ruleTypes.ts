@@ -3,7 +3,7 @@ import {
   FULL_RULE_ZOD_SCHEMA,
   SHORT_RULE_ZOD_SCHEMA,
   STORE_RULE_ZOD_SCHEMA
-} from '@shared/validation/validateRule'
+} from '@shared-all/validation/validateRule'
 import { z } from 'zod'
 
 export enum RULE_TYPE {
@@ -46,4 +46,35 @@ export type ModifyRuleInfo = {
   originalRuleName: string
   modifiedStoreRule: StoreRule
   error: string
+}
+
+export const STORE_RULE_DEFAULT_VALUES: StoreRule = {
+  name: '',
+  type: RULE_TYPE.COPYFILE,
+  origin: {
+    volumeName: '',
+    pathFromVolumeRoot: '',
+    filesToInclude: [],
+    filesToExclude: [],
+    dirsToInclude: [],
+    dirsToExclude: []
+  },
+  target: {
+    volumeName: '',
+    pathFromVolumeRoot: '',
+    filesToInclude: [],
+    filesToExclude: [],
+    dirsToInclude: [],
+    dirsToExclude: []
+  },
+  enableStartStopActions: true,
+  disabled: false,
+  copyFileOptions: {
+    targetSubPathFormat: [],
+    customDirectoryName: '',
+    deleteCopiedFiles: false,
+    deleteUnderOtherPaths: false,
+    otherPaths: []
+  },
+  mirrorOptions: { enableDeletingInTarget: false }
 }

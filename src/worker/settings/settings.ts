@@ -1,4 +1,4 @@
-import { CHECKSUM_TYPE } from '@shared/utils/checksum'
+import { CHECKSUM_TYPE } from '@shared-node/utils/checksum'
 
 const fileName: string = 'settings.ts'
 const area: string = 'settings'

@@ -1,10 +1,10 @@
+import { pathExists } from '@shared-node/utils/filePaths'
 import { sendSyncIpcMessageMain } from './communication/ipc/main/mainIpcSender'
 import { setupMainIpc } from './communication/ipc/main/mainIpcSetup'
-import { setCurrentSettings } from './settings/currentSettings'
 import { updateCurrentDriveInfo } from './drives/currentDriveInfo'
 import { setCurrentRules } from './rules/currentRules'
+import { setCurrentSettings } from './settings/currentSettings'
 import { startAutoDeleteOldLogs } from './storage/logs/storeLogs'
-import { pathExists } from '@shared/utils/filePaths'
 
 const fileName: string = 'workerSetup.ts'
 const area: string = 'worker'

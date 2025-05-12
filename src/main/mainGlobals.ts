@@ -1,34 +1,17 @@
-import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared/utils/promise'
-
-const fileName: string = 'mainGlobals.ts'
-const area: string = 'main'
+import { PromiseResolveRejectTimer, PromiseResolveTimer } from '@shared-node/utils/promise'
 
 export class MainGlobals {
   /* Global useful data for main */
   // Utility process of worker
-  workerPrcoess: Electron.UtilityProcess | undefined
+  workerPrcoess: Electron.UtilityProcess | undefined = undefined
   // Port to worker process
-  workerPort: Electron.MessagePortMain | undefined
+  workerPort: Electron.MessagePortMain | undefined = undefined
 
   /* Resolving promises */
   // Map for resolving normal SyncIpcMessages
-  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer>
+  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer> = new Map()
   // Map for resolving sleeps
-  currentSleeps: Map<string, PromiseResolveTimer>
-
-  constructor() {
-    const funcName: string = 'MainGlobals Constructor'
-    entryLog(funcName, fileName, area)
-
-    this.workerPrcoess = undefined
-    this.workerPort = undefined
-
-    this.awaitingIpcMessages = new Map()
-    this.currentSleeps = new Map()
-
-    exitLog(funcName, fileName, area)
-    return
-  }
+  currentSleeps: Map<string, PromiseResolveTimer> = new Map()
 }
 
 export default MainGlobals

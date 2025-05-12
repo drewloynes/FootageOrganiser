@@ -1,7 +1,7 @@
 import {
   SHORT_PATH_IN_VOLUME_ZOD_SCHEMA,
   STORE_PATH_IN_VOLUME_ZOD_SCHEMA
-} from '@shared/validation/validatePathInVolume'
+} from '@shared-all/validation/validatePathInVolume'
 import { z } from 'zod'
 
 export type ShortPathInVolume = z.infer<typeof SHORT_PATH_IN_VOLUME_ZOD_SCHEMA>

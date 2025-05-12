@@ -1,5 +1,5 @@
-import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared/types/ruleTypes'
-import { generateChecksum } from '@shared/utils/checksum'
+import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared-all/types/ruleTypes'
+import { generateChecksum } from '@shared-node/utils/checksum'
 import { updateCurrentDriveInfo } from '@worker/drives/currentDriveInfo'
 import { sendAlertToMain } from '@worker/general/alert'
 import { disableRule } from '@worker/rules/changeRules'

@@ -2,11 +2,13 @@
   "name": "footage-organiser",
   "productName": "Footage Organiser",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "license": "GPL-3.0",
+  "description": "Automate the transfer of footage and mirroring of drives.",
   "main": "./out/main/main.js",
-  "author": "Drew's Tools",
-  "homepage": "https://electron-vite.org",
+  "author": "Drew Loynes",
+  "homepage": "https://github.com/drewloynes/FootageOrganiser",
   "type": "module",
+  "repository": "github:drewloynes/FootageOrganiser",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -19,8 +21,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "build:mac": "electron-vite build && electron-builder --mac"
   },
   "dependencies": {
     "@dnd-kit/accessibility": "^3.1.1",
@@ -74,6 +75,7 @@
     "recharts": "^2.15.3",
     "semver": "^7.7.1",
     "sonner": "^2.0.3",
+    "update-electron-app": "^3.1.1",
     "uuid": "^11.1.0",
     "uuidv4": "^6.2.13",
     "vaul": "^1.1.2",

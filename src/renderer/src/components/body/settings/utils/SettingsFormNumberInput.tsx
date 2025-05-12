@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { Control } from 'react-hook-form'
 
 const fileName: string = 'SettingsFormNumberInput.tsx'

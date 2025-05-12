@@ -1,8 +1,8 @@
 import { ClientLogger } from '@renderer/utils/debug/clientLogger'
-import { Alert } from '@shared/types/alert'
-import { ShortPathInVolume } from '@shared/types/pathInVolumeTypes'
-import { FullRule, ShortRule, StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { Alert } from '@shared-all/types/alert'
+import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
+import { FullRule, ShortRule, StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 
 // Make file a module so declarations can be properly scoped and merged into global type space
 export {}

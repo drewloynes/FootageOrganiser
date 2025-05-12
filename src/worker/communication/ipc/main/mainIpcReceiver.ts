@@ -1,6 +1,6 @@
-import { ModifyRuleInfo, StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
-import { AsyncIpcMessage, SyncIpcMessage } from '@shared/utils/ipc'
+import { ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
+import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 import { getShortPathInVolumeFromPath } from '@worker/path/shortPathInVolume'
 import {
   activateRule,

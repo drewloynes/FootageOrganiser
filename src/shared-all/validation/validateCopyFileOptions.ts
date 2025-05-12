@@ -1,13 +1,10 @@
-import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared/types/copyFileTypes'
+import { TARGET_SUB_PATH_FORMAT_OPTIONS } from '@shared-all/types/copyFileTypes'
 import { z } from 'zod'
 import { validateDirectoryName } from './validateDirectory'
 import {
   extraZodValidationStorePathInVolume,
   STORE_PATH_IN_VOLUME_SCHEMA
 } from './validatePathInVolume'
-
-const fileName = 'validateCopyFileOptions.ts'
-const area = 'validation'
 
 export const STORE_COPY_FILE_OPTIONS_SCHEMA = {
   targetSubPathFormat: z.array(z.nativeEnum(TARGET_SUB_PATH_FORMAT_OPTIONS)),
@@ -21,6 +18,7 @@ export const STORE_COPY_FILE_OPTIONS_ZOD_SCHEMA = z
   .object(STORE_COPY_FILE_OPTIONS_SCHEMA)
   .superRefine(extraZodValidationCopyFileOptions)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationCopyFileOptions(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   copyFileOptionsData: any,
@@ -48,7 +46,7 @@ export function extraZodValidationCopyFileOptions(
     ctx.addIssue({
       path: [...currentPath, 'customDirectoryName'],
       code: z.ZodIssueCode.custom,
-      message: 'Custom directory name is not a valid directory name'
+      message: 'Custom Name is not a valid directory name'
     })
   }
 
@@ -60,7 +58,7 @@ export function extraZodValidationCopyFileOptions(
     ctx.addIssue({
       path: [...currentPath, 'deleteUnderOtherPaths'],
       code: z.ZodIssueCode.custom,
-      message: `Delete under other paths can't ne true when delete copied files is false`
+      message: `Delete under other paths can't be true when delete copied files is false`
     })
   }
 

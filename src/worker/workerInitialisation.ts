@@ -1,4 +1,4 @@
-import * as logger from '@shared/debug/logger'
+import * as logger from '@shared-node/debug/logger'
 import WorkerGlobals from '@worker/workerGlobals'
 
 export function initWorkerGlobals(): void {

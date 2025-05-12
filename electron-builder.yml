@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: footage-organiser
+appId: footageorganiser
+productName: Footage Organiser
 directories:
   buildResources: build
 files:

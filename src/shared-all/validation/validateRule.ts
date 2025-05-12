@@ -1,4 +1,4 @@
-import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared/types/ruleTypes'
+import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared-all/types/ruleTypes'
 import { z } from 'zod'
 import {
   extraZodValidationCopyFileOptions,
@@ -10,16 +10,13 @@ import {
   STORE_PATH_IN_VOLUME_SCHEMA
 } from './validatePathInVolume'
 
-const fileName = 'validateRule.ts'
-const area = 'validation'
-
 export const COPY_PATHS_SCHEMA = {
   from: z.string().min(1),
   to: z.string().min(1)
 }
 
 export const STORE_RULE_SCHEMA = {
-  name: z.string().min(1),
+  name: z.string().min(1, 'Name must be at last one character'),
   type: z.nativeEnum(RULE_TYPE),
   origin: z.object(STORE_PATH_IN_VOLUME_SCHEMA),
   target: z.object(STORE_PATH_IN_VOLUME_SCHEMA),
@@ -59,6 +56,7 @@ export const SHORT_RULE_ZOD_SCHEMA = z.object(SHORT_RULE_SCHEMA)
 
 export const FULL_RULE_ZOD_SCHEMA = z.object(FULL_RULE_SCHEMA)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationStoreRule(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storeRuleData: any,
@@ -79,8 +77,10 @@ export function extraZodValidationStoreRule(
 
   // The path of target cant be inside path of origin
   if (
+    storeRuleData.origin.volumeName !== '' &&
+    storeRuleData.target.volumeName !== '' &&
     storeRuleData.origin.volumeName === storeRuleData.target.volumeName &&
-    storeRuleData.target.pathFromVolumeRoot.startsWith(storeRuleData.origin.pathFromVolumeRoots)
+    storeRuleData.target.pathFromVolumeRoot.startsWith(storeRuleData.origin.pathFromVolumeRoot)
   ) {
     ctx.addIssue({
       path: [...currentPath, 'target'],
@@ -88,18 +88,4 @@ export function extraZodValidationStoreRule(
       message: 'Target path can not be inside origin path'
     })
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function validateRuleName(ruleNameData: any): boolean {
-  const funcName = 'validateRuleName'
-  entryLog(funcName, fileName, area)
-
-  if (!z.string().min(1).safeParse(ruleNameData).success) {
-    warnExitLog('ruleNameData is not a valid string', funcName, fileName, area)
-    return false
-  }
-
-  exitLog(funcName, fileName, area)
-  return true
 }

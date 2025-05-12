@@ -1,11 +1,7 @@
+import * as LabelPrimitive from '@radix-ui/react-label'
 import { Button } from '@renderer/components/ui/button'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@renderer/components/ui/form'
+import { FormControl, FormField, FormItem, useFormField } from '@renderer/components/ui/form'
+import { Label } from '@renderer/components/ui/label'
 import { Separator } from '@renderer/components/ui/separator'
 import {
   Tooltip,
@@ -13,8 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { ShortPathInVolume } from '@shared/types/pathInVolumeTypes'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { cn } from '@renderer/utils/utils'
+import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control, FieldPath, useController } from 'react-hook-form'
 
 const fileName: string = 'DirectorySelector.tsx'
@@ -108,6 +105,62 @@ export function DirectorySelector({
           <Separator className="mt-2" />
         </FormItem>
       )}
+    />
+  )
+}
+
+// Rework some ShadCN components to work with nested error objects
+function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
+  const { error, formMessageId } = useFormField()
+  let body = error ? String(error?.message ?? '') : props.children
+
+  // Set volume name error
+  if (
+    error &&
+    'volumeName' in error &&
+    typeof error.volumeName === 'object' &&
+    error.volumeName !== null &&
+    'message' in error.volumeName
+  ) {
+    body = error.volumeName.message as string
+  }
+
+  if (!body) {
+    return null
+  }
+
+  return (
+    <p
+      data-slot="form-message"
+      id={formMessageId}
+      className={cn('text-destructive text-sm', className)}
+      {...props}
+    >
+      {body}
+    </p>
+  )
+}
+
+function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+  let { error, formItemId } = useFormField()
+
+  // Set error back to undefined if not changed in this component
+  if (
+    error &&
+    !('volumeName' in error) &&
+    !('pathFromVolumeRoot' in error) &&
+    !('message' in error)
+  ) {
+    error = undefined
+  }
+
+  return (
+    <Label
+      data-slot="form-label"
+      data-error={!!error}
+      className={cn('data-[error=true]:text-destructive', className)}
+      htmlFor={formItemId}
+      {...props}
     />
   )
 }

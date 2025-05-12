@@ -1,21 +1,22 @@
-import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
+import { CHECKSUM_TYPE } from '@shared-all/types/checksumTypes'
 import { z } from 'zod'
-
-const fileName = 'validateSettings.ts'
-const area = 'validation'
 
 export const STORE_SETTINGS_SCHEMA = {
   footageOrganiserVersion: z.string(),
-  actionsCutoffInGBs: z.number().min(1),
-  deleteOldLogsInDays: z.number().min(1).int(),
+  actionsCutoffInGBs: z.coerce.number().min(1, 'Must be at least 1 GB').int('Must be an integer'),
+  deleteOldLogsInDays: z.coerce.number().min(1, 'Must be at least 1 day').int('Must be an integer'),
   checksumMethod: z.nativeEnum(CHECKSUM_TYPE),
-  reevaluateSleepTime: z.number().min(1).int()
+  reevaluateSleepTime: z.coerce
+    .number()
+    .min(1, 'Must be at least 1 minute')
+    .int('Must be an integer')
 }
 
 export const STORE_SETTINGS_ZOD_SCHEMA = z
   .object(STORE_SETTINGS_SCHEMA)
   .superRefine(extraZodValidationStoreRule)
 
+// Cant have logs - Used in all processes
 export function extraZodValidationStoreRule(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storeSettingsData: any,

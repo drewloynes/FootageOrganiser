@@ -1,9 +1,9 @@
-import { RULE_STATUS_TYPE, RULE_TYPE } from '@shared/types/ruleTypes'
-import { pathExists } from '@shared/utils/filePaths'
+import { RULE_STATUS_TYPE, RULE_TYPE } from '@shared-all/types/ruleTypes'
+import { pathExists } from '@shared-node/utils/filePaths'
 import { Rule } from '@worker/rules/rule'
 import {
   abortIfStateAwaitingChanges,
-  processErrorFofrStageChanges
+  processErrorForStateChanges
 } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -43,7 +43,7 @@ export async function evaluateCurrentRules(): Promise<boolean> {
     }
   } catch (err) {
     condLog(`Caught error`, funcName, fileName, area)
-    await processErrorFofrStageChanges(err)
+    await processErrorForStateChanges(err)
   }
 
   glob.workerGlobals.ruleInUse = undefined

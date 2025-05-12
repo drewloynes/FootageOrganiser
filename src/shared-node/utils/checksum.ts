@@ -1,4 +1,4 @@
-import { CHECKSUM_TYPE } from '@shared/types/checksumTypes'
+import { CHECKSUM_TYPE } from '@shared-all/types/checksumTypes'
 import { CRC32Stream } from 'crc32-stream'
 import * as crypto from 'crypto'
 import * as fs from 'fs'

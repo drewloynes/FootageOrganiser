@@ -1,4 +1,4 @@
-import { CopyPaths } from '@shared/types/ruleTypes'
+import { CopyPaths } from '@shared-all/types/ruleTypes'
 import {
   getDriveInfoFromPath,
   getVolumeNameFromPath,

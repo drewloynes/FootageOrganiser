@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { FullRule, ShortRule } from '@shared/types/ruleTypes'
+import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 import { Power, PowerOff } from 'lucide-react'
 
 const fileName: string = 'ActivateDisable.tsx'

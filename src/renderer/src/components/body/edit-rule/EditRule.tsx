@@ -12,7 +12,7 @@ import {
 import { Badge } from '@renderer/components/ui/badge'
 import { ScrollArea } from '@renderer/components/ui/scroll-area'
 import { Separator } from '@renderer/components/ui/separator'
-import { FullRule, RULE_STATUS_TYPE } from '@shared/types/ruleTypes'
+import { FullRule, RULE_STATUS_TYPE } from '@shared-all/types/ruleTypes'
 import { Delete } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'

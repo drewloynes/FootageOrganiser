@@ -7,9 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control, useFieldArray, UseFormWatch } from 'react-hook-form'
-import DirectorySelector from '../DirectorySelector'
+import { DirectorySelector } from '../DirectorySelector'
 import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'
 import TargetSubPathFormat from './TargetSubPathFormat'

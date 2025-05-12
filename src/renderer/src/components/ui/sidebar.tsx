@@ -23,7 +23,7 @@ import {
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
 import { useIsMobile } from '@renderer/hooks/use-mobile'
-import { cn } from '@renderer/utils'
+import { cn } from '@renderer/utils/utils'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

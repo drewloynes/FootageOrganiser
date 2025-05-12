@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@renderer/components/ui/tooltip'
-import { StoreRule } from '@shared/types/ruleTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'

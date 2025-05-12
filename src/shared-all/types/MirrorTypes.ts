@@ -1,4 +1,4 @@
-import { STORE_MIRROR_OPTIONS_ZOD_SCHEMA } from '@shared/validation/validateMirrorOptions'
+import { STORE_MIRROR_OPTIONS_ZOD_SCHEMA } from '@shared-all/validation/validateMirrorOptions'
 import { z } from 'zod'
 
 export type StoreMirrorOptions = z.infer<typeof STORE_MIRROR_OPTIONS_ZOD_SCHEMA>

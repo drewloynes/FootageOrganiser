@@ -1,17 +1,17 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Route, HashRouter as Router, Routes } from 'react-router-dom'
 import AlertPopUp from './components/AlertPopUp'
-import DraggableTopBar from './components/DraggableTopBar'
-import RootLayout from './components/RootLayout'
 import About from './components/body/About'
 import CreateRule from './components/body/CreateRule'
+import EditRule from './components/body/edit-rule/EditRule'
 import FootOrgBody from './components/body/FootOrgBody'
 import FootOrgHeader from './components/body/FootOrgHeader'
-import TermsAndConditions from './components/body/TermsAndConditions'
-import EditRule from './components/body/edit-rule/EditRule'
 import Help from './components/body/help/Help.'
 import Settings from './components/body/settings/Settings'
-import ApprovalList from './components/body/view-actions/ViewActions'
+import TermsAndConditions from './components/body/TermsAndConditions'
+import ViewActions from './components/body/view-actions/ViewActions'
 import ViewAllRules from './components/body/view-all/ViewAllRules'
+import DraggableTopBar from './components/DraggableTopBar'
+import RootLayout from './components/RootLayout'
 import FootOrgSidebar from './components/sidebar/FootOrgSidebar'
 
 const fileName: string = 'App.tsx'
@@ -33,7 +33,7 @@ function App() {
             <Route path="/" element={<ViewAllRules />} />
             <Route path="/create-rule" element={<CreateRule />} />
             <Route path="/edit-rule/:ruleName" element={<EditRule />} />
-            <Route path="/approval-list/:ruleName" element={<ApprovalList />} />
+            <Route path="/view-actions/:ruleName" element={<ViewActions />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />

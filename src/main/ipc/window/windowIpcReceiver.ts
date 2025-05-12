@@ -24,8 +24,8 @@ import {
   stopRuleStream
 } from '@main/rules/rulesWindowCallbacks'
 import { getSettings, modifySettings } from '@main/settings/settingsWindowCallback'
-import { StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { app, ipcMain } from 'electron'
 
 const fileName: string = 'windowIpcReceiver.ts'

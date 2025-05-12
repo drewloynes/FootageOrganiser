@@ -1,8 +1,8 @@
-import { AsyncIpcMessage } from '@shared/utils/ipc'
+import { AsyncIpcMessage } from '@shared-node/utils/ipc'
+import { sleep } from '@shared-node/utils/timer'
 import { MessageChannelMain } from 'electron/main'
 import { parseWorkerIpcMessage } from './workerIpcReceiver'
 import { sendSyncIpcMessageWorker } from './workerIpcSender'
-import { sleep } from '@shared/utils/timer'
 
 const fileName: string = 'workerIpcSetup.ts'
 const area: string = 'worker-ipc'

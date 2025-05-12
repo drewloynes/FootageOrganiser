@@ -1,10 +1,11 @@
-import { ModifyRuleInfo, StoreRule } from '@shared/types/ruleTypes'
-import { StoreSettings } from '@shared/types/settingsTypes'
+import { ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
+import { StoreSettings } from '@shared-all/types/settingsTypes'
 import {
   addRuleInCurrentRules,
   deleteRuleInCurrentRules,
   evaluateAllCurrentRules,
-  modifyRuleInCurrentRules
+  modifyRuleInCurrentRules,
+  stopRuleInCurrentRules
 } from '@worker/rules/currentRules'
 import { Rule } from '@worker/rules/rule'
 import { modifyCurrentSettings } from '@worker/settings/currentSettings'
@@ -42,8 +43,8 @@ export function abortIfStateAwaitingChanges(): void {
   return
 }
 
-export async function processErrorFofrStageChanges(error): Promise<void> {
-  const funcName = 'processErrorFofrStageChanges'
+export async function processErrorForStateChanges(error): Promise<void> {
+  const funcName = 'processErrorForStateChanges'
   entryLog(funcName, fileName, area)
 
   // Aborting executing rule early due to a change in state - apply any changes in state now
@@ -106,6 +107,11 @@ async function applyAwaitingStateChange(change: Change): Promise<void> {
     case CHANGE_TYPE.DELETE_RULE: {
       condLog('Delete rule change', funcName, fileName, area)
       await deleteRuleInCurrentRules(change.dataForChange as string)
+      break
+    }
+    case CHANGE_TYPE.STOP_RULE: {
+      condLog('Stop rule change', funcName, fileName, area)
+      stopRuleInCurrentRules(change.dataForChange as string)
       break
     }
     case CHANGE_TYPE.MODIFY_SETTINGS: {

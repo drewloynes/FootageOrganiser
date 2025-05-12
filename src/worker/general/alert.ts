@@ -1,4 +1,4 @@
-import { Alert } from '@shared/types/alert'
+import { Alert } from '@shared-all/types/alert'
 import { sendAsyncIpcMessageMain } from '@worker/communication/ipc/main/mainIpcSender'
 
 const fileName: string = 'alert.ts'

@@ -1,4 +1,4 @@
-import * as logger from '@shared/debug/logger'
+import * as logger from '@shared-node/debug/logger'
 import MainGlobals from './mainGlobals'
 
 export function initMainGlobals(): void {

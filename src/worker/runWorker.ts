@@ -1,4 +1,4 @@
-import { endSleep, sleep } from '@shared/utils/timer'
+import { endSleep, sleep } from '@shared-node/utils/timer'
 import { evaluateCurrentRules } from './evaluation/evaluation'
 import { executeCurrentRules } from './execution/execution'
 import { setSilentEvaluateCurrentRules } from './rules/currentRules'

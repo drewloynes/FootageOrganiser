@@ -1,4 +1,4 @@
-import { AsyncIpcMessage, SyncIpcMessage } from '@shared/utils/ipc'
+import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 
 const fileName: string = 'workerIpcSender.ts'
 const area: string = 'worker-ipc'

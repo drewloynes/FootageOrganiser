@@ -1,5 +1,7 @@
 import { electronApp, optimizer } from '@electron-toolkit/utils'
+import icon from '@resources/footage-organiser-logo-3.png?asset'
 import { app, BrowserWindow, Menu, Tray } from 'electron'
+import path from 'path'
 import { setupWindowIpc } from './ipc/window/windowIpcSetup'
 import { openWindow } from './window/window'
 import setupWorkerProcess from './worker/workerProcess'
@@ -19,26 +21,34 @@ export function setupMain(): void {
     app.quit()
   }
 
-  // Setup all callbacks for electron app
+  // Setup all callbacks for electron app if its the only instance
+  const gotTheLock = app.requestSingleInstanceLock()
 
-  // Called when Electron has finished initialization
-  app.on('ready', ready)
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    // Called when Electron has finished initialization
+    app.on('ready', ready)
 
-  // Called when Electron creates a browser window
-  app.on('browser-window-created', browserWindowCreated)
+    // Called when Electron creates a browser window
+    app.on('browser-window-created', browserWindowCreated)
 
-  // Mac OS Only
-  // Emitted when the application is activated. Various actions can trigger this event,
-  // such as launching the application for the first time, attempting to re-launch the
-  // application when it's already running, or clicking on the application's
-  // dock or taskbar icon.
-  app.on('activate', activate)
+    // Mac OS Only
+    // Emitted when the application is activated. Various actions can trigger this event,
+    // such as launching the application for the first time, attempting to re-launch the
+    // application when it's already running, or clicking on the application's
+    // dock or taskbar icon.
+    app.on('activate', activate)
 
-  // Do not quit when all windows clsoed - Allow the app to run in the background
-  app.on('window-all-closed', windowAllClosed)
+    // Do not quit when all windows clsoed - Allow the app to run in the background
+    app.on('window-all-closed', windowAllClosed)
 
-  // Called after app quitting function is called
-  app.on('before-quit', beforeQuit)
+    // A second instance of the app was created (And immediately failed)
+    app.on('second-instance', openWindow)
+
+    // Called after app quitting function is called
+    app.on('before-quit', beforeQuit)
+  }
 
   exitLog(funcName, fileName, area)
   return
@@ -51,7 +61,14 @@ async function ready() {
   // Windows: Set Application User Model ID
   electronApp.setAppUserModelId('com.footage-organiser')
 
-  const tray = new Tray('resources/footage-organiser-logo-3.png')
+  condLog(
+    path.join(__dirname, 'resources', 'footage-organiser-logo-3.png'),
+    funcName,
+    fileName,
+    area
+  )
+
+  const tray = new Tray(icon)
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'Open', click: openWindow },
