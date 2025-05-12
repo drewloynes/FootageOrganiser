@@ -1,0 +1,37 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": [
+    "electron.vite.config.*",
+    "src/main/**/**/*",
+    "src/preload/**/*",
+    "src/shared-node/**/*",
+    "src/shared-all/**/*",
+    "src/worker/**/**/**/*",
+    "src/global/mainWorkerGlobals.d.ts"
+  ],
+  "compilerOptions": {
+    "composite": true,
+     "moduleResolution": "bundler",
+    "types": [
+      "electron-vite/node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@shared-all/*": [
+        "src/shared-all/*"
+      ],
+      "@shared-node/*": [
+        "src/shared-node/*"
+      ],
+      "@worker/*": [
+        "src/worker/*"
+      ],
+      "@main/*": [
+        "src/main/*"
+      ],
+      "@resources/*": [
+        "resources/*"
+      ]
+    }
+  }
+}
