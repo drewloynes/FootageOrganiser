@@ -14,10 +14,10 @@ import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control, FieldPath, useController } from 'react-hook-form'
 
-const fileName: string = 'DirectorySelector.tsx'
+const fileName: string = 'FolderSelector.tsx'
 const area: string = 'rule-form'
 
-export function DirectorySelector({
+export function FolderSelector({
   control,
   name,
   buttonText,
@@ -30,7 +30,7 @@ export function DirectorySelector({
   label: string
   toolTip: string
 }) {
-  const funcName: string = 'DirectorySelector'
+  const funcName: string = 'FolderSelector'
   log.rend(funcName, fileName, area)
 
   const {
@@ -165,4 +165,4 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPri
   )
 }
 
-export default DirectorySelector
+export default FolderSelector

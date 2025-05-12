@@ -9,7 +9,7 @@ import {
 } from '@renderer/components/ui/tooltip'
 import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control, useFieldArray, UseFormWatch } from 'react-hook-form'
-import { DirectorySelector } from '../DirectorySelector'
+import { FolderSelector } from '../FolderSelector'
 import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'
 import TargetSubPathFormat from './TargetSubPathFormat'
@@ -69,7 +69,7 @@ export function CopyFileSettings({
             {fields.map((field, index) => (
               <Card key={field.id} className="mb-4">
                 <CardContent>
-                  <DirectorySelector
+                  <FolderSelector
                     control={control}
                     name={`copyFileOptions.otherPaths.${index}`}
                     buttonText="Select Other Folder"

@@ -1,6 +1,6 @@
 import { ScrollArea } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
-import RuleForm from './rule-form/RuleForm'
+import { RuleForm } from './rule-form/RuleForm'
 
 const fileName: string = 'CreateNewRule.tsx'
 const area: string = 'body'
