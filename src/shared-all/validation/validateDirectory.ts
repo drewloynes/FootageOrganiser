@@ -53,11 +53,6 @@ export function validateDirectoryName(directoryName: string): boolean {
 //
 // Cant have logs - Used in all processes
 export function validatePartialDirectoryPath(partialDirectoryPath: string): boolean {
-  // Path to a directory doesnt end with / or \\
-  if (partialDirectoryPath.endsWith('/') || partialDirectoryPath.endsWith('\\')) {
-    return false
-  }
-
   const directoryNames: string[] = partialDirectoryPath.split(/[/\\]/).filter(Boolean)
   for (const directoryName of directoryNames) {
     if (!validateDirectoryName(directoryName)) {
