@@ -9,6 +9,11 @@ export function modifySettings(newSettings: StoreSettings): void {
   const funcName: string = 'modifySettings'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (STORE_SETTINGS_ZOD_SCHEMA.safeParse(newSettings).success) {
     condLog('Settings are valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('modify-settings', newSettings)
@@ -21,6 +26,11 @@ export function modifySettings(newSettings: StoreSettings): void {
 export async function getSettings(): Promise<StoreSettings | undefined> {
   const funcName: string = 'getSettings'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return undefined
+  }
 
   const settings: StoreSettings | undefined = (await sendSyncIpcMessageWorker(
     'get-settings',

@@ -7,7 +7,6 @@ function sendIpcMessageMain(message: AsyncIpcMessage | SyncIpcMessage): void {
   const funcName: string = 'sendIpcMessageMain'
   entryLog(funcName, fileName, area)
 
-  glob.workerGlobals.mainPort?.start()
   glob.workerGlobals.mainPort?.postMessage(message)
   ipcSentLog(`Worker->Main Message: ${message.type}`, funcName, fileName, area)
 

@@ -14,6 +14,11 @@ export async function chooseDirectory(): Promise<ShortPathInVolume | undefined> 
 
   let shortPathInVolume: ShortPathInVolume | undefined = undefined
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return shortPathInVolume
+  }
+
   const window: Electron.BrowserWindow | undefined = getWindow()
   if (!window) {
     condExitLog(`Window not found`, funcName, fileName, area)

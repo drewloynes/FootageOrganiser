@@ -9,8 +9,6 @@ import { Change } from './state-changes/change'
 
 export class WorkerGlobals {
   /* Global useful data for worker */
-  // Is the worker setup
-  workerSetup: boolean = false
   // Port to main process
   mainPort: Electron.MessagePortMain | undefined = undefined
   // Location of appdata, where we write to disk

@@ -10,6 +10,11 @@ export function addRule(newRule: StoreRule): void {
   const funcName: string = 'addRule'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (STORE_RULE_ZOD_SCHEMA.safeParse(newRule).success) {
     condLog('Rule is valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('add-rule', newRule)
@@ -22,6 +27,11 @@ export function addRule(newRule: StoreRule): void {
 export function modifyRule(oldRuleName: string, newRule: StoreRule): void {
   const funcName: string = 'modifyRule'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
 
   if (validateRuleName(oldRuleName) && STORE_RULE_ZOD_SCHEMA.safeParse(newRule).success) {
     condLog('Rule and rule name are valid', funcName, fileName, area)
@@ -41,6 +51,11 @@ export function deleteRule(ruleName: string): void {
   const funcName: string = 'deleteRule'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('delete-rule', ruleName)
@@ -53,6 +68,11 @@ export function deleteRule(ruleName: string): void {
 export function startRule(ruleName: string): void {
   const funcName: string = 'startRule'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
 
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
@@ -67,6 +87,11 @@ export function stopRule(ruleName: string): void {
   const funcName: string = 'stopRule'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('stop-rule', ruleName)
@@ -80,6 +105,11 @@ export function stopAllRules(): void {
   const funcName: string = 'stopAllRules'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   sendAsyncIpcMessageWorker('stop-all-rules', {})
 
   exitLog(funcName, fileName, area)
@@ -89,6 +119,11 @@ export function stopAllRules(): void {
 export function activateRule(ruleName: string): void {
   const funcName: string = 'activateRule'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
 
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
@@ -103,6 +138,11 @@ export function disableRule(ruleName: string): void {
   const funcName: string = 'disableRule'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('disable-rule', ruleName)
@@ -116,6 +156,11 @@ export function disableAllRules(): void {
   const funcName: string = 'disableAllRules'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   sendAsyncIpcMessageWorker('disable-all-rules', {})
 
   exitLog(funcName, fileName, area)
@@ -126,6 +171,11 @@ export function evaluateAllRules(): void {
   const funcName: string = 'evaluateAllRules'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   sendAsyncIpcMessageWorker('evaluate-all-rules', {})
 
   exitLog(funcName, fileName, area)
@@ -135,6 +185,11 @@ export function evaluateAllRules(): void {
 export function startRuleStream(ruleName: string): void {
   const funcName: string = 'startRuleStream'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
 
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
@@ -149,6 +204,11 @@ export function stopRuleStream(ruleName: string): void {
   const funcName: string = 'startRuleStream'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   if (validateRuleName(ruleName)) {
     condLog('Rulename is valid', funcName, fileName, area)
     sendAsyncIpcMessageWorker('stop-rule-stream', ruleName)
@@ -162,6 +222,11 @@ export function stopEveryRuleStream(): void {
   const funcName: string = 'stopEveryRuleStream'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   sendAsyncIpcMessageWorker('stop-every-rule-stream', {})
 
   exitLog(funcName, fileName, area)
@@ -171,6 +236,11 @@ export function stopEveryRuleStream(): void {
 export function startAllRulesStream(): void {
   const funcName: string = 'startAllRulesStream'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
 
   sendAsyncIpcMessageWorker('start-all-rules-stream', {})
 
@@ -182,6 +252,11 @@ export function stopAllRulesStream(): void {
   const funcName: string = 'stopAllRulesStream'
   entryLog(funcName, fileName, area)
 
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return
+  }
+
   sendAsyncIpcMessageWorker('stop-all-rules-stream', {})
 
   exitLog(funcName, fileName, area)
@@ -191,6 +266,11 @@ export function stopAllRulesStream(): void {
 export async function getRule(ruleName: string): Promise<FullRule | undefined> {
   const funcName: string = 'getRule'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return undefined
+  }
 
   let rule: FullRule | undefined = undefined
   if (validateRuleName(ruleName)) {
@@ -205,6 +285,11 @@ export async function getRule(ruleName: string): Promise<FullRule | undefined> {
 export async function getAllRules(): Promise<ShortRule[]> {
   const funcName: string = 'getAllRules'
   entryLog(funcName, fileName, area)
+
+  if (!glob.mainGlobals.workerSetup) {
+    condExitLog('Worker not setup yet', funcName, fileName, area)
+    return []
+  }
 
   const allRules: ShortRule[] = (await sendSyncIpcMessageWorker('get-all-rules', {})) as ShortRule[]
 

@@ -47,6 +47,8 @@ function setupMainIpcEvents(): void {
     debugLog('Main-Worker Worker Port Closed', funcName, fileName, area)
   })
 
+  glob.workerGlobals.mainPort?.start()
+
   exitLog(funcName, fileName, area)
   return
 }

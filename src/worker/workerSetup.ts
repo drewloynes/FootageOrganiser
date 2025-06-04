@@ -1,7 +1,10 @@
 import { pathExists } from '@shared-node/utils/filePaths'
-import { sendSyncIpcMessageMain } from './communication/ipc/main/mainIpcSender'
+import {
+  sendAsyncIpcMessageMain,
+  sendSyncIpcMessageMain
+} from './communication/ipc/main/mainIpcSender'
 import { setupMainIpc } from './communication/ipc/main/mainIpcSetup'
-import { updateCurrentDriveInfo } from './drives/currentDriveInfo'
+import { autoUpdateCurrentDriveInfo, updateCurrentDriveInfo } from './drives/currentDriveInfo'
 import { setCurrentRules } from './rules/currentRules'
 import { setCurrentSettings } from './settings/currentSettings'
 import { startAutoDeleteOldLogs } from './storage/logs/storeLogs'
@@ -20,10 +23,11 @@ export async function setupWorker(): Promise<void> {
   }
 
   await fillWorkerGlobals()
-  // Don't await this async function - Want it to run in the background permenantly
+  // Don't await this async function - Want it to run in the background permanently
   startAutoDeleteOldLogs()
 
-  glob.workerGlobals.workerSetup = true
+  // Tell main process worker is setup
+  sendAsyncIpcMessageMain('worker-setup', {})
 
   exitLog(funcName, fileName, area)
   return
@@ -35,6 +39,7 @@ async function fillWorkerGlobals(): Promise<void> {
 
   await setStorageLocation()
   await updateCurrentDriveInfo()
+  autoUpdateCurrentDriveInfo()
   await setCurrentSettings()
   await setCurrentRules()
 

@@ -1,4 +1,5 @@
 import { systemNotification } from '@main/utils/system'
+import { workerSetupComplete } from '@main/worker/workerProcess'
 import { Alert } from '@shared-all/types/alert'
 import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
@@ -36,10 +37,7 @@ export function parseWorkerIpcMessage(message: AsyncIpcMessage | SyncIpcMessage)
     // Sync from main
     case 'worker-setup': {
       condLog('Received worker-setup IPC message', funcName, fileName, area)
-      SyncIpcMessage.receiveSentSyncIpc(
-        message as SyncIpcMessage,
-        glob.mainGlobals.awaitingIpcMessages
-      )
+      workerSetupComplete()
       break
     }
     // Sync from main

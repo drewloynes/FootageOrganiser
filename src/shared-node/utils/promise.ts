@@ -6,6 +6,6 @@ export interface PromiseResolveRejectTimer {
 }
 
 export interface PromiseResolveTimer {
-  resolve: (value: unknown) => void
+  resolve: (value: boolean) => void
   timer: NodeJS.Timeout
 }
