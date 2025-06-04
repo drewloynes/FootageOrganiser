@@ -1,5 +1,5 @@
 import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
-import { getDriveInfoFromPath, updateCurrentDriveInfo } from '@worker/drives/currentDriveInfo'
+import { getDriveInfoFromPath } from '@worker/drives/currentDriveInfo'
 import { DriveInfo } from '@worker/drives/driveInfo'
 
 const fileName: string = 'shortPathInVolume.ts'
@@ -10,8 +10,6 @@ export async function getShortPathInVolumeFromPath(
 ): Promise<ShortPathInVolume | undefined> {
   const funcName: string = 'getShortPathInVolumeFromPath'
   entryLog(funcName, fileName, area)
-
-  await updateCurrentDriveInfo()
 
   let shortPathInVolume: ShortPathInVolume | undefined = undefined
   const driveInfo: DriveInfo | undefined = getDriveInfoFromPath(path)

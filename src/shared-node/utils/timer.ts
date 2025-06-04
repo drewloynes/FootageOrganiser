@@ -11,7 +11,7 @@ export async function sleep(
   const funcName: string = 'sleep'
   entryLog(funcName, fileName, area)
 
-  const promise = await new Promise((resolve) => {
+  const promise = new Promise<boolean>((resolve) => {
     // Time out promise or let it end manually through the map
     const timer = setTimeout(() => {
       resolve(true)
@@ -24,7 +24,7 @@ export async function sleep(
   })
 
   exitLog(funcName, fileName, area)
-  return promise as Promise<boolean> // True if slept for entire time, otherwise false
+  return promise // True if slept for entire time, otherwise false
 }
 
 export function endSleep(

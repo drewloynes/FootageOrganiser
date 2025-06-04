@@ -52,12 +52,6 @@ export async function parseMainIpcMessage(
       break
     }
     // Sync from main
-    case 'worker-setup': {
-      condLog('Received worker-setup IPC message', funcName, fileName, area)
-      replySyncIpcMessageMain(message as SyncIpcMessage, glob.workerGlobals.workerSetup)
-      break
-    }
-    // Sync from main
     case 'get-short-path-in-volume': {
       condLog('Received get-short-path-in-volume IPC message', funcName, fileName, area)
       replySyncIpcMessageMain(

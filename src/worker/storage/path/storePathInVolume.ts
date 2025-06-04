@@ -1,5 +1,4 @@
 import { StorePathInVolume } from '@shared-all/types/pathInVolumeTypes'
-import { updateCurrentDriveInfo } from '@worker/drives/currentDriveInfo'
 import { PATH_IN_VOLUME_TYPE, PathInVolume } from '@worker/path/pathInVolume'
 
 const fileName: string = 'storePathInVolume.ts'
@@ -12,7 +11,6 @@ export async function toPathInVolume(
   const funcName = 'toPathInVolume'
   entryLog(funcName, fileName, area)
 
-  await updateCurrentDriveInfo() // Update drive info before creating RulePath
   const rulePath: PathInVolume = new PathInVolume(
     storePathInVolume.volumeName,
     storePathInVolume.pathFromVolumeRoot,

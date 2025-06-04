@@ -17,7 +17,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "node ./scripts/setProd.cjs && electron-vite preview",
     "dev": "electron-vite dev",
-    "build": "node  ./scripts/setProd.cjs && npm run typecheck && electron-vite build",
+    "build": "node ./scripts/setProd.cjs && npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "node ./scripts/setProd.cjs && npm run build && electron-builder --dir",
     "build:win": "node ./scripts/setProd.cjs && npm run build && electron-builder --win",

@@ -4,7 +4,7 @@ import { app, BrowserWindow, Menu, Tray } from 'electron'
 import path from 'path'
 import { setupWindowIpc } from './ipc/window/windowIpcSetup'
 import { openWindow } from './window/window'
-import setupWorkerProcess from './worker/workerProcess'
+import { setupWorkerProcess } from './worker/workerProcess'
 import { stopAllStreams } from './worker/workerUtils'
 
 const fileName: string = 'mainSetup.ts'
@@ -78,11 +78,8 @@ async function ready() {
   tray.setToolTip('Footage Organiser')
   tray.on('click', () => openWindow())
 
-  await setupWorkerProcess()
+  setupWorkerProcess()
   setupWindowIpc()
-
-  // Open window after app is fully setup
-  openWindow()
 
   exitLog(funcName, fileName, area)
   return
@@ -129,9 +126,9 @@ function beforeQuit(): void {
   const funcName: string = 'beforeQuit'
   entryLog(funcName, fileName, area)
 
-  if (glob.mainGlobals.workerPrcoess) {
+  if (glob.mainGlobals.workerProcess) {
     condLog(`Worker process exists - kill it`, funcName, fileName, area)
-    glob.mainGlobals.workerPrcoess.kill()
+    glob.mainGlobals.workerProcess.kill()
   }
 
   exitLog(funcName, fileName, area)
