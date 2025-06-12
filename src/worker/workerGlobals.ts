@@ -3,7 +3,7 @@ import { StreamUpdate } from '@shared-node/utils/streamUpdates'
 import { DriveInfo } from '@worker/drives/driveInfo'
 import { Rules } from '@worker/rules/rules'
 import { Settings } from '@worker/settings/settings'
-import { sendCurrentRulesStreamToMain } from './rules/currentRules'
+import { sendRulesStreamToMainCurrentRules } from './rules/currentRules'
 import { Rule } from './rules/rule'
 import { Change } from './state-changes/change'
 
@@ -16,7 +16,7 @@ export class WorkerGlobals {
   // Last received information on the drives connected to the OS
   currentDriveInfo: DriveInfo[] | undefined = undefined
   // Stream object for streaming all rules to the main process
-  streamAllRulesToMain: StreamUpdate = new StreamUpdate(200, sendCurrentRulesStreamToMain)
+  streamAllRulesToMain: StreamUpdate = new StreamUpdate(200, sendRulesStreamToMainCurrentRules)
   // The rule currently being evaluated or executed on - Unddfined when not evaluating or executing
   ruleInUse: Rule | undefined = undefined
   // List of changes to make at next mvailable moment (When a rule is not in use)
@@ -35,8 +35,6 @@ export class WorkerGlobals {
   upcomingSettings: Settings | undefined = undefined
   // Current rules used by worker
   currentRules: Rules | undefined = undefined
-  // Current rules is about to change to these rules
-  upcomingRules: Rules | undefined = undefined
 }
 
 export default WorkerGlobals

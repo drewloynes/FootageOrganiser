@@ -22,20 +22,20 @@ export async function executeCurrentRules(): Promise<void> {
     return
   }
 
-  for (const rule of glob.workerGlobals.currentRules.ruleList) {
-    condLog(`Attempt to execute on rule: ${rule.name}`, funcName, fileName, area)
+  try {
+    for (const rule of glob.workerGlobals.currentRules.ruleList) {
+      condLog(`Attempt to execute on rule: ${rule.name}`, funcName, fileName, area)
 
-    if (!rule.startActions || rule.evaluateRule || rule.disabled) {
-      condLog(`Skip rule ${rule.name}`, funcName, fileName, area)
-      continue
-    }
+      if (!rule.startActions || rule.evaluateRule || rule.disabled) {
+        condLog(`Skip rule ${rule.name}`, funcName, fileName, area)
+        continue
+      }
 
-    glob.workerGlobals.ruleInUse = rule
-    rule.setStatus(RULE_STATUS_TYPE.EXECUTING_ACTIONS)
-    rule.setExecutingAction('')
-    rule.setActionsProgress(0)
+      glob.workerGlobals.ruleInUse = rule
+      rule.setStatus(RULE_STATUS_TYPE.EXECUTING_ACTIONS)
+      rule.setExecutingAction('')
+      rule.setActionsProgress(0)
 
-    try {
       await executeMakeDirectories(rule)
       await executeCopyFiles(rule)
       await executeDeleteFiles(rule)
@@ -45,10 +45,10 @@ export async function executeCurrentRules(): Promise<void> {
       rule.setExecutingAction('')
       rule.setActionsProgress(0)
       rule.setSilentEvaluate()
-    } catch (err) {
-      condLog(`Caught error`, funcName, fileName, area)
-      await processErrorForStateChanges(err)
     }
+  } catch (err) {
+    condLog(`Caught error`, funcName, fileName, area)
+    await processErrorForStateChanges(err)
   }
 
   glob.workerGlobals.ruleInUse = undefined
@@ -77,7 +77,11 @@ async function executeMakeDirectories(rule: Rule): Promise<void> {
       await mkdir(directory, { recursive: true })
     } catch {
       errorLog(`Make directory failed: ${directory}`, funcName, fileName, area)
-      executionFailed(rule, 'Creating Folder Failed', `Failed to create the folder ${directory}`)
+      await executionFailed(
+        rule,
+        'Creating Folder Failed',
+        `Failed to create the folder ${directory}`
+      )
     }
 
     addActionLog(rule.name, ACTION_TYPE.MAKE_DIRECTORY, directory)
@@ -115,7 +119,7 @@ async function executeCopyFiles(rule: Rule): Promise<void> {
       await copyFile(files.from, files.to, fs.constants.COPYFILE_EXCL)
     } catch {
       errorLog(`Copy file failed from ${files.from} to ${files.to}`, funcName, fileName, area)
-      executionFailed(
+      await executionFailed(
         rule,
         'Copying Files Failed',
         `Failed to copy file from ${files.from} to ${files.to}`
@@ -152,7 +156,7 @@ async function executeDeleteFiles(rule: Rule): Promise<void> {
       await unlink(file)
     } catch {
       errorLog(`Deleting file failed ${file}`, funcName, fileName, area)
-      executionFailed(rule, 'Deleting File Failed', `Failed to delete the file ${file}`)
+      await executionFailed(rule, 'Deleting File Failed', `Failed to delete the file ${file}`)
     }
 
     addActionLog(rule.name, ACTION_TYPE.DELETE_FILE, file)
@@ -182,7 +186,11 @@ async function executeDeleteDirectories(rule: Rule): Promise<void> {
       await rm(directory, { recursive: true, force: true })
     } catch {
       errorLog(`Delete directory failed ${directory}`, funcName, fileName, area)
-      executionFailed(rule, 'Deleting Folder Failed', `Failed to delete the folder ${directory}`)
+      await executionFailed(
+        rule,
+        'Deleting Folder Failed',
+        `Failed to delete the folder ${directory}`
+      )
     }
 
     addActionLog(rule.name, ACTION_TYPE.DELETE_DIRECTORY, directory)
