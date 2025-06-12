@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.1.0
+
 Features:
 
 - Automatically reevaluates when connected drives change.
