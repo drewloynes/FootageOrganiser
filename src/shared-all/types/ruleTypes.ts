@@ -48,6 +48,11 @@ export type ModifyRuleInfo = {
   error: string
 }
 
+export type DisableRuleInfo = {
+  ruleName: string
+  error: string
+}
+
 export const STORE_RULE_DEFAULT_VALUES: StoreRule = {
   name: '',
   type: RULE_TYPE.COPYFILE,

@@ -1,8 +1,18 @@
 import { StoreRules } from '@shared-all/types/rulesTypes'
-import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
+import {
+  DisableRuleInfo,
+  FullRule,
+  ModifyRuleInfo,
+  ShortRule,
+  StoreRule
+} from '@shared-all/types/ruleTypes'
 import { STORE_RULES_ZOD_SCHEMA } from '@shared-all/validation/validateRules'
 import { pathExists } from '@shared-node/utils/filePaths'
 import { sendAsyncIpcMessageMain } from '@worker/communication/ipc/main/mainIpcSender'
+import { endReevaluationSleepEarly } from '@worker/runWorker'
+import { CHANGE_TYPE } from '@worker/state-changes/change'
+import { addAwaitingChange } from '@worker/state-changes/changeState'
+import { toRule, toStoreRule } from '@worker/storage/rules/storeRule'
 import { toRules, toStoreRules } from '@worker/storage/rules/storeRules'
 import { loadData, saveData } from '@worker/storage/storeData'
 import { join } from 'path'
@@ -95,22 +105,14 @@ function getCurrentRules(): Rules | undefined {
   const funcName = 'getCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let rules: Rules | undefined = undefined
-  // Use upcoming rules if availavle
-  if (glob.workerGlobals.upcomingRules) {
-    condLog(`Upcoming rules is set`, funcName, fileName, area)
-    rules = glob.workerGlobals.upcomingRules
-  } else if (glob.workerGlobals.currentRules) {
-    condLog(`Current rules is set`, funcName, fileName, area)
-    rules = glob.workerGlobals.currentRules
-  }
+  let rules: Rules | undefined = glob.workerGlobals.currentRules
 
   exitLog(funcName, fileName, area)
   return rules
 }
 
-export function getAllCurrentRulesToSend(): ShortRule[] {
-  const funcName = 'getAllCurrentRulesToSend'
+export function getAllRulesToSendCurrentRules(): ShortRule[] {
+  const funcName = 'getAllRulesToSendCurrentRules'
   entryLog(funcName, fileName, area)
 
   const currentRules: Rules | undefined = getCurrentRules()
@@ -126,8 +128,8 @@ export function getAllCurrentRulesToSend(): ShortRule[] {
   return rulesToSend
 }
 
-export function getRuleToSend(ruleName: string): FullRule | undefined {
-  const funcName = 'getRuleToSend'
+export function getRuleToSendCurrentRules(ruleName: string): FullRule | undefined {
+  const funcName = 'getRuleToSendCurrentRules'
   entryLog(funcName, fileName, area)
 
   const currentRules: Rules | undefined = getCurrentRules()
@@ -142,22 +144,22 @@ export function getRuleToSend(ruleName: string): FullRule | undefined {
   return ruleToSend
 }
 
-export function sendCurrentRulesStreamToMain(_ignore: undefined) {
-  const funcName = 'sendCurrentRulesStreamToMain'
+export function sendRulesStreamToMainCurrentRules(_ignore: undefined) {
+  const funcName = 'sendRulesStreamToMainCurrentRules'
   entryLog(funcName, fileName, area)
 
-  const rulesToSend: ShortRule[] = getAllCurrentRulesToSend()
+  const rulesToSend: ShortRule[] = getAllRulesToSendCurrentRules()
   sendAsyncIpcMessageMain('stream-current-rules', rulesToSend)
 
   exitLog(funcName, fileName, area)
   return
 }
 
-export function sendRuleStreamToMain(rule: Rule) {
-  const funcName = 'sendRuleStreamToMain'
+export function sendRuleStreamToMainCurrentRules(rule: Rule) {
+  const funcName = 'sendRuleStreamToMainCurrentRules'
   entryLog(funcName, fileName, area)
 
-  const ruleToSend: FullRule | undefined = getRuleToSend(rule.name)
+  const ruleToSend: FullRule | undefined = getRuleToSendCurrentRules(rule.name)
   if (ruleToSend) {
     condLog(`Rule defined`, funcName, fileName, area)
     sendAsyncIpcMessageMain('stream-rule', ruleToSend)
@@ -171,26 +173,10 @@ export function streamUpdateCurrentRules(): void {
   const funcName = 'streamUpdateCurrentRules'
   entryLog(funcName, fileName, area)
 
-  if (glob.workerGlobals.upcomingRules) {
-    condLog(`Upcoming rules is set`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.upcomingRules)
-  } else {
-    condLog(`Upcoming rules is not set`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
-  }
+  glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
 
   exitLog(funcName, fileName, area)
   return
-}
-
-export function findRuleInCurrentRules(ruleName: string): Rule | undefined {
-  const funcName = 'findRuleInCurrentRules'
-  entryLog(funcName, fileName, area)
-
-  const foundRule: Rule | undefined = glob.workerGlobals.currentRules?.findRule(ruleName)
-
-  exitLog(funcName, fileName, area)
-  return foundRule
 }
 
 export function setSilentEvaluateCurrentRules(): void {
@@ -211,15 +197,23 @@ export function setSilentEvaluateCurrentRules(): void {
   return
 }
 
-export async function addRuleInCurrentRules(newRule: Rule): Promise<boolean> {
-  const funcName = 'addRuleInCurrentRules'
+export async function addRuleCurrentRules(newStoreRule: StoreRule): Promise<boolean> {
+  const funcName = 'addRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
   let ruleAdded: boolean = false
+
+  const newRule: Rule | undefined = await toRule(newStoreRule)
+  if (!newRule) {
+    debugExitLog(`Rule couldn't be created from StoreRule`, funcName, fileName, area)
+    return ruleAdded
+  }
+
   if (glob.workerGlobals.currentRules?.addRule(newRule)) {
     infoLog(`Rule: ${newRule.name} added to current rules`, funcName, fileName, area)
     glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
     await saveCurrentRules()
+    endReevaluationSleepEarly()
     ruleAdded = true
   }
 
@@ -227,137 +221,103 @@ export async function addRuleInCurrentRules(newRule: Rule): Promise<boolean> {
   return ruleAdded
 }
 
-export async function modifyRuleInCurrentRules(
+export async function modifyRuleCurrentRules(
   originalRuleName: string,
-  modifiedRule: Rule
+  modifiedStoreRule: StoreRule,
+  error: string = ''
 ): Promise<boolean> {
-  const funcName = 'modifyRuleInCurrentRules'
+  const funcName = 'modifyRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
   let ruleModified: boolean = false
-  if (glob.workerGlobals.currentRules?.modifyRule(originalRuleName, modifiedRule)) {
-    infoLog(`Rule: ${originalRuleName} has been modified`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
-    await saveCurrentRules()
-    ruleModified = true
+
+  const modifiedRule: Rule | undefined = await toRule(modifiedStoreRule)
+  if (!modifiedRule) {
+    debugExitLog(`Rule couldn't be created from StoreRule`, funcName, fileName, area)
+    return ruleModified
+  }
+
+  // Error may persist through modification.
+  modifiedRule.setError(error)
+
+  if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === originalRuleName) {
+    condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
+    const modifyRuleInfo: ModifyRuleInfo = {
+      originalRuleName: originalRuleName,
+      modifiedStoreRule: modifiedStoreRule,
+      error: error
+    }
+    addAwaitingChange(CHANGE_TYPE.MODIFY_RULE, modifyRuleInfo)
+    setRuleAwaitingChangesCurrentRules(true, originalRuleName)
+  } else {
+    condLog(`Can change rule immediately`, funcName, fileName, area)
+
+    if (glob.workerGlobals.currentRules?.modifyRule(originalRuleName, modifiedRule)) {
+      infoLog(`Rule: ${originalRuleName} has been modified`, funcName, fileName, area)
+      glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+      await saveCurrentRules()
+      endReevaluationSleepEarly()
+      ruleModified = true
+    }
   }
 
   exitLog(funcName, fileName, area)
   return ruleModified
 }
 
-export async function deleteRuleInCurrentRules(deleteRuleName: string): Promise<boolean> {
-  const funcName = 'deleteRuleInCurrentRules'
+export async function deleteRuleCurrentRules(deleteRuleName: string): Promise<boolean> {
+  const funcName = 'deleteRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
   let ruleDeleted: boolean = false
-  if (glob.workerGlobals.currentRules?.deleteRule(deleteRuleName)) {
-    infoLog(`Rule: ${deleteRuleName} has been deleted`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
-    await saveCurrentRules()
-    ruleDeleted = true
+
+  if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === deleteRuleName) {
+    condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
+    addAwaitingChange(CHANGE_TYPE.DELETE_RULE, deleteRuleName)
+    setRuleAwaitingChangesCurrentRules(true, deleteRuleName)
+  } else {
+    condLog(`Can delete rule immediately`, funcName, fileName, area)
+
+    if (glob.workerGlobals.currentRules?.deleteRule(deleteRuleName)) {
+      infoLog(`Rule: ${deleteRuleName} has been deleted`, funcName, fileName, area)
+      glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+      await saveCurrentRules()
+      ruleDeleted = true
+    }
   }
 
   exitLog(funcName, fileName, area)
   return ruleDeleted
 }
 
-export async function stopRuleInCurrentRules(ruleName: string): Promise<boolean> {
-  const funcName = 'stopRuleInCurrentRules'
+export function stopRuleCurrentRules(ruleName: string): boolean {
+  const funcName = 'stopRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
   let ruleStopped: boolean = false
-  if (glob.workerGlobals.currentRules?.stopRule(ruleName)) {
-    infoLog(`Rule: ${ruleName} has been stopped`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
-    ruleStopped = true
+
+  if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === ruleName) {
+    condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
+    addAwaitingChange(CHANGE_TYPE.STOP_RULE, ruleName)
+    setRuleAwaitingChangesCurrentRules(true, ruleName)
+  } else {
+    condLog(`Can stop rule ${ruleName} immediately`, funcName, fileName, area)
+
+    if (glob.workerGlobals.currentRules?.stopRule(ruleName)) {
+      infoLog(`Rule: ${ruleName} has been stopped`, funcName, fileName, area)
+      glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+      ruleStopped = true
+    }
   }
+
+  endReevaluationSleepEarly()
 
   exitLog(funcName, fileName, area)
   return ruleStopped
 }
 
-export async function startRuleInCurrentRules(ruleName: string): Promise<boolean> {
-  const funcName = 'startRuleInCurrentRules'
-  entryLog(funcName, fileName, area)
-
-  let ruleStarted: boolean = false
-  if (glob.workerGlobals.currentRules?.startRule(ruleName)) {
-    infoLog(`Rule: ${ruleName} has been started`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
-    ruleStarted = true
-  }
-
-  exitLog(funcName, fileName, area)
-  return ruleStarted
-}
-
-export function startAllRulesStream(): void {
-  const funcName = 'startAllRulesStream'
-  entryLog(funcName, fileName, area)
-
-  if (glob.workerGlobals.upcomingRules) {
-    condLog(`Upcoming rules exist`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.start(glob.workerGlobals.upcomingRules)
-  } else {
-    condLog(`Upcoming rules do not exist`, funcName, fileName, area)
-    glob.workerGlobals.streamAllRulesToMain.start(glob.workerGlobals.currentSettings)
-  }
-
-  exitLog(funcName, fileName, area)
-  return
-}
-
-export function startRuleStream(ruleName: string): void {
-  const funcName = 'startRuleStream'
-  entryLog(funcName, fileName, area)
-
-  if (glob.workerGlobals.upcomingRules) {
-    condLog(`Upcoming rules exist`, funcName, fileName, area)
-    const rule = glob.workerGlobals.upcomingRules.findRule(ruleName)
-    if (rule) {
-      condLog(`Rule found`, funcName, fileName, area)
-      rule.streamToMain.start(rule)
-    }
-  } else {
-    condLog(`Upcoming rules do not exist`, funcName, fileName, area)
-    const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
-    if (rule) {
-      condLog(`Rule found`, funcName, fileName, area)
-      rule.streamToMain.start(rule)
-    }
-  }
-
-  exitLog(funcName, fileName, area)
-  return
-}
-
-export function stopRuleStream(ruleName: string): void {
-  const funcName = 'stopRuleStream'
-  entryLog(funcName, fileName, area)
-
-  if (glob.workerGlobals.upcomingRules) {
-    condLog(`Upcoming rules exist`, funcName, fileName, area)
-    const rule = glob.workerGlobals.upcomingRules.findRule(ruleName)
-    if (rule) {
-      condLog(`Rule found`, funcName, fileName, area)
-      rule.streamToMain.stop()
-    }
-  } else {
-    condLog(`Upcoming rules do not exist`, funcName, fileName, area)
-    const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
-    if (rule) {
-      condLog(`Rule found`, funcName, fileName, area)
-      rule.streamToMain.stop()
-    }
-  }
-
-  exitLog(funcName, fileName, area)
-  return
-}
-
-export function stopEveryRuleStream(): void {
-  const funcName = 'stopEveryRuleStream'
+export function stopAllRulesCurrentRules(): void {
+  const funcName = 'stopAllRulesCurrentRules'
   entryLog(funcName, fileName, area)
 
   if (!glob.workerGlobals.currentRules) {
@@ -367,20 +327,222 @@ export function stopEveryRuleStream(): void {
 
   for (const rule of glob.workerGlobals.currentRules.ruleList) {
     condLog(`For rule: ${rule.name}`, funcName, fileName, area)
-    stopRuleStream(rule.name)
+    stopRuleCurrentRules(rule.name)
   }
 
   exitLog(funcName, fileName, area)
   return
 }
 
-export async function evaluateAllCurrentRules(): Promise<void> {
-  const funcName = 'evaluateAllCurrentRules'
+export function startRuleCurrentRules(ruleName: string): boolean {
+  const funcName = 'startRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  if (glob.workerGlobals.currentRules) {
-    condLog(`Set all current rules to reevaluate`, funcName, fileName, area)
-    glob.workerGlobals.currentRules.evaluateAllRules()
+  let ruleStarted: boolean = false
+  if (glob.workerGlobals.currentRules?.startRule(ruleName)) {
+    infoLog(`Rule: ${ruleName} has been started`, funcName, fileName, area)
+    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+    endReevaluationSleepEarly()
+    ruleStarted = true
+  }
+
+  exitLog(funcName, fileName, area)
+  return ruleStarted
+}
+
+export async function activateRuleCurrentRules(ruleName: string): Promise<void> {
+  const funcName = 'activateRuleCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
+  if (!rule) {
+    condExitLog(`Rule doesn't exist`, funcName, fileName, area)
+    return
+  }
+
+  if (rule.disabled) {
+    condLog(`Rule ${rule.name} is currently disabled`, funcName, fileName, area)
+    const newRule = rule.clone()
+    newRule.setDisabled(false)
+    const newStoreRule = toStoreRule(newRule)
+    await modifyRuleCurrentRules(rule.name, newStoreRule)
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export async function disableRuleCurrentRules(ruleName: string, error: string = ''): Promise<void> {
+  const funcName = 'disableRuleCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
+  if (!rule) {
+    condExitLog(`Rule doesn't exist`, funcName, fileName, area)
+    return
+  }
+
+  if (!rule.disabled) {
+    condLog(`Rule ${rule.name} is currently active`, funcName, fileName, area)
+
+    if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === ruleName) {
+      condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
+      const disableRuleInfo: DisableRuleInfo = {
+        ruleName: ruleName,
+        error: error
+      }
+      addAwaitingChange(CHANGE_TYPE.DISABLE_RULE, disableRuleInfo)
+      setRuleAwaitingChangesCurrentRules(true, ruleName)
+    } else {
+      condLog(`Can disable rule ${ruleName} immediately`, funcName, fileName, area)
+
+      const newRule = rule.clone()
+      newRule.setDisabled(true)
+      const newStoreRule = toStoreRule(newRule)
+      await modifyRuleCurrentRules(rule.name, newStoreRule, error) // Maintain the error state
+    }
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export async function disableAllRulesCurrentRules(): Promise<void> {
+  const funcName = 'disableAllRulesCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  if (!glob.workerGlobals.currentRules) {
+    condExitLog(`Current rules doesn't exist`, funcName, fileName, area)
+    return
+  }
+
+  for (const rule of glob.workerGlobals.currentRules.ruleList) {
+    condLog(`For rule: ${rule.name}`, funcName, fileName, area)
+    await disableRuleCurrentRules(rule.name)
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function startAllRulesStreamCurrentRules(): void {
+  const funcName = 'startAllRulesStreamCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  glob.workerGlobals.streamAllRulesToMain.start(glob.workerGlobals.currentSettings)
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function stopAllRulesStreamCurrentRules(): void {
+  const funcName = 'stopAllRulesStreamCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  glob.workerGlobals.streamAllRulesToMain.stop()
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function startRuleStreamCurrentRules(ruleName: string): void {
+  const funcName = 'startRuleStreamCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
+  if (rule) {
+    condLog(`Rule found`, funcName, fileName, area)
+    rule.streamToMain.start(rule)
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function stopRuleStreamCurrentRules(ruleName: string): void {
+  const funcName = 'stopRuleStreamCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
+  if (rule) {
+    condLog(`Rule found`, funcName, fileName, area)
+    rule.streamToMain.stop()
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function stopEveryRuleStreamCurrentRules(): void {
+  const funcName = 'stopEveryRuleStreamCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  if (!glob.workerGlobals.currentRules) {
+    condExitLog(`Current rules doesn't exist`, funcName, fileName, area)
+    return
+  }
+
+  for (const rule of glob.workerGlobals.currentRules.ruleList) {
+    condLog(`For rule: ${rule.name}`, funcName, fileName, area)
+    stopRuleStreamCurrentRules(rule.name)
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function evaluateRuleCurrentRules(ruleName: string): void {
+  const funcName = 'evaluateRuleCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === ruleName) {
+    condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
+    addAwaitingChange(CHANGE_TYPE.EVALUATE_RULE, ruleName)
+    setRuleAwaitingChangesCurrentRules(true, ruleName)
+  } else {
+    condLog(`Set to evaluate all current rules immediately`, funcName, fileName, area)
+
+    const rule = glob.workerGlobals.currentRules?.findRule(ruleName)
+    if (rule) {
+      condLog(`Rule found in current rules`, funcName, fileName, area)
+      rule.setEvaluate()
+      glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+      endReevaluationSleepEarly()
+    }
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function evaluateAllRulesCurrentRules(): void {
+  const funcName = 'evaluateAllRulesCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  if (!glob.workerGlobals.currentRules) {
+    condExitLog(`Current rules doesn't exist`, funcName, fileName, area)
+    return
+  }
+
+  for (const rule of glob.workerGlobals.currentRules.ruleList) {
+    condLog(`For rule: ${rule.name}`, funcName, fileName, area)
+    evaluateRuleCurrentRules(rule.name)
+    glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
+  }
+
+  exitLog(funcName, fileName, area)
+  return
+}
+
+export function setRuleAwaitingChangesCurrentRules(
+  awaitingChanges: boolean,
+  ruleName: string
+): void {
+  const funcName = 'setRuleAwaitingChangesCurrentRules'
+  entryLog(funcName, fileName, area)
+
+  if (glob.workerGlobals.currentRules?.setAwaitingChanges(awaitingChanges, ruleName)) {
+    condLog(`Awaiting changes set for ${ruleName}`, funcName, fileName, area)
     glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
   }
 

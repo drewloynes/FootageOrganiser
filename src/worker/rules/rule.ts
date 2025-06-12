@@ -12,7 +12,7 @@ import { toStorePathInVolume } from '@worker/storage/path/storePathInVolume'
 import { toStoreCopyFileOptions } from '@worker/storage/rules/storeCopyFileOptions'
 import { toStoreMirrorOptions } from '@worker/storage/rules/storeMirrorOptions'
 import { CopyFileOptions } from './copyFileOptions'
-import { sendRuleStreamToMain, streamUpdateCurrentRules } from './currentRules'
+import { sendRuleStreamToMainCurrentRules, streamUpdateCurrentRules } from './currentRules'
 import { MirrorOptions } from './mirrorOptions'
 
 const fileName = 'rule.ts'
@@ -38,6 +38,8 @@ export class Rule {
   startActions: boolean = true
   // Whether the rule is requiring evaluation
   evaluateRule: boolean = true
+  // Whether the rule is awaiting changes (e.g. it is to be stopped, deleted or modified once it is no longer in use)
+  #awaitingChanges: boolean = false
 
   // Queues for making or deleting directorys
   // - Lists of directorie paths to make or delete
@@ -64,7 +66,7 @@ export class Rule {
   #error: string = ''
 
   // StreamUpdate object for streaming rule to main
-  streamToMain: StreamUpdate = new StreamUpdate(200, sendRuleStreamToMain)
+  streamToMain: StreamUpdate = new StreamUpdate(200, sendRuleStreamToMainCurrentRules)
 
   constructor(
     ruleName: string,
@@ -136,6 +138,10 @@ export class Rule {
     return this.#disabled
   }
 
+  get awaitingChanges() {
+    return this.#awaitingChanges
+  }
+
   get status() {
     return this.#status
   }
@@ -162,6 +168,7 @@ export class Rule {
 
     clonedRule.startActions = this.startActions
     clonedRule.evaluateRule = this.evaluateRule
+    clonedRule.#awaitingChanges = this.#awaitingChanges
     clonedRule.#status = this.#status
     clonedRule.#unevaluateableReason = this.#unevaluateableReason
     clonedRule.#checksumAction = this.#checksumAction
@@ -193,6 +200,7 @@ export class Rule {
       disabled: this.disabled,
       startActions: this.startActions,
       evaluateRule: this.evaluateRule,
+      awaitingChanges: this.awaitingChanges,
       status: this.#status,
       unevaluateableReason: this.#unevaluateableReason,
       checksumAction: this.#checksumAction,
@@ -219,6 +227,16 @@ export class Rule {
 
     exitLog(funcName, fileName, area)
     return sendableObjectAllDetail
+  }
+
+  setAwaitingChanges(awaitingChanges: boolean): void {
+    const funcName = 'setAwaitingChanges'
+    entryLog(funcName, fileName, area)
+
+    this.#awaitingChanges = awaitingChanges
+
+    exitLog(funcName, fileName, area)
+    return
   }
 
   setStatus(status: RULE_STATUS_TYPE): void {
@@ -426,6 +444,8 @@ export class Rule {
   stop(): void {
     const funcName = 'stop'
     entryLog(funcName, fileName, area)
+
+    this.setAwaitingChanges(false)
 
     if (this.evaluateRule) {
       condExitLog(`Rule is requiring evaluation - skip`, funcName, fileName, area)

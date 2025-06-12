@@ -20,6 +20,7 @@ import RuleForm from '../rule-form/RuleForm'
 import { ActivateDisableBig } from '../rule-utils/ActivateDisable'
 import { RuleActionsAndErrors } from '../rule-utils/RuleActionsAndErrors'
 import { StartStopBig } from '../rule-utils/StartStop'
+import EditRuleAwaitingChangesForm from './EditRuleAwaitingChangesForm'
 import EditRuleLoading from './EditRuleLoading'
 
 const fileName: string = 'EditRule.tsx'
@@ -120,7 +121,10 @@ export function EditRule() {
       <Separator className="mt-4 mb-0 bg-gray-300" />
 
       <ScrollArea className="flex-1 px-6 text-center min-h-0">
-        <RuleForm newRule={false} initialRuleName={ruleName} showDisableRule={false} />
+        {!rule.awaitingChanges && (
+          <RuleForm newRule={false} initialRuleName={ruleName} showDisableRule={false} />
+        )}
+        {rule.awaitingChanges && <EditRuleAwaitingChangesForm />}
       </ScrollArea>
     </div>
   )

@@ -8,7 +8,7 @@ type LoggingConfiguration = {
 }
 
 const loggerConfig: LoggingConfiguration = {
-  dev: false,
+  dev: true,
   logLevel: 'func',
   logProcess: [],
   logFunc: [],

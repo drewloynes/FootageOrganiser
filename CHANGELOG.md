@@ -10,6 +10,10 @@ Fixes:
 
 - Constant checking of drives. (Startup goes from 11 seconds to 1 second)
 
+- No more annoying upcoming rules / lying about current state. Now using a method of awaiting changes and greying out buttons when awaitng changes.
+
+- Crashing when execution fails - Awaits the execution failure handler now
+
 ## 1.0.0
 
 Features:
