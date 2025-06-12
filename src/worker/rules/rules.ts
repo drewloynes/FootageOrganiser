@@ -172,16 +172,20 @@ export class Rules {
     return ruleStarted
   }
 
-  evaluateAllRules() {
-    const funcName = 'evaluateAllRules'
+  setAwaitingChanges(awaitingChanges: boolean, ruleName: string): boolean {
+    const funcName = 'setAwaitingChanges'
     entryLog(funcName, fileName, area)
 
-    for (const rule of this.ruleList) {
-      condLog(`Set reevaluate rule`, funcName, fileName, area)
-      rule.setEvaluate()
+    let awaitingChangesSet: boolean = false
+    const rule: Rule | undefined = this.findRule(ruleName)
+    if (rule) {
+      condLog(`Rule ${rule.name} found`, funcName, fileName, area)
+      rule.setAwaitingChanges(awaitingChanges)
+      awaitingChangesSet = true
+      streamUpdateCurrentRules()
     }
 
     exitLog(funcName, fileName, area)
-    return this
+    return awaitingChangesSet
   }
 }

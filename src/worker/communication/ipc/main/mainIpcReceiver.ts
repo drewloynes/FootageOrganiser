@@ -3,24 +3,23 @@ import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 import { getShortPathInVolumeFromPath } from '@worker/path/shortPathInVolume'
 import {
-  activateRule,
-  addRule,
-  deleteRule,
-  disableAllRules,
-  disableRule,
-  evaluateAllRules,
-  modifyRule,
-  startRule,
-  stopAllRules,
-  stopRule
-} from '@worker/rules/changeRules'
-import {
-  getAllCurrentRulesToSend,
-  getRuleToSend,
-  startAllRulesStream,
-  startRuleStream,
-  stopEveryRuleStream,
-  stopRuleStream
+  activateRuleCurrentRules,
+  addRuleCurrentRules,
+  deleteRuleCurrentRules,
+  disableAllRulesCurrentRules,
+  disableRuleCurrentRules,
+  evaluateAllRulesCurrentRules,
+  getAllRulesToSendCurrentRules,
+  getRuleToSendCurrentRules,
+  modifyRuleCurrentRules,
+  startAllRulesStreamCurrentRules,
+  startRuleCurrentRules,
+  startRuleStreamCurrentRules,
+  stopAllRulesCurrentRules,
+  stopAllRulesStreamCurrentRules,
+  stopEveryRuleStreamCurrentRules,
+  stopRuleCurrentRules,
+  stopRuleStreamCurrentRules
 } from '@worker/rules/currentRules'
 import { modifySettings } from '@worker/settings/changeSettings'
 import { getCurrentSettingsToSend } from '@worker/settings/currentSettings'
@@ -63,104 +62,110 @@ export async function parseMainIpcMessage(
     // Async message
     case 'evaluate-all-rules': {
       condLog('evaluate-all-rules message received', funcName, fileName, area)
-      evaluateAllRules()
+      evaluateAllRulesCurrentRules()
       break
     }
     // Async message
     case 'add-rule': {
       condLog('add-rule message received', funcName, fileName, area)
-      await addRule(message.data as StoreRule)
+      await addRuleCurrentRules(message.data as StoreRule)
       break
     }
     // Async message
     case 'modify-rule': {
       condLog('modify-rule message received', funcName, fileName, area)
       const modifyRuleInfo: ModifyRuleInfo = message.data as ModifyRuleInfo
-      await modifyRule(modifyRuleInfo.originalRuleName, modifyRuleInfo.modifiedStoreRule)
+      await modifyRuleCurrentRules(
+        modifyRuleInfo.originalRuleName,
+        modifyRuleInfo.modifiedStoreRule
+      )
       break
     }
     // Async message
     case 'delete-rule': {
       condLog('delete-rule message received', funcName, fileName, area)
-      await deleteRule(message.data as string)
+      await deleteRuleCurrentRules(message.data as string)
       break
     }
     // Async message
     case 'start-rule': {
       condLog('start-rule message received', funcName, fileName, area)
-      startRule(message.data as string)
+      startRuleCurrentRules(message.data as string)
       break
     }
     // Async message
     case 'stop-rule': {
       condLog('stop-rule message received', funcName, fileName, area)
-      stopRule(message.data as string)
+      stopRuleCurrentRules(message.data as string)
       break
     }
     // Async message
     case 'stop-all-rules': {
       condLog('stop-all-rules message received', funcName, fileName, area)
-      stopAllRules()
+      stopAllRulesCurrentRules()
       break
     }
     // Async message
     case 'activate-rule': {
       condLog('activate-rule message received', funcName, fileName, area)
-      await activateRule(message.data as string)
+      await activateRuleCurrentRules(message.data as string)
       break
     }
     // Async message
     case 'disable-rule': {
       condLog('disable-rule message received', funcName, fileName, area)
-      await disableRule(message.data as string)
+      await disableRuleCurrentRules(message.data as string)
       break
     }
     // Async message
     case 'disable-all-rules': {
       condLog('disable-all-rules message received', funcName, fileName, area)
-      await disableAllRules()
+      await disableAllRulesCurrentRules()
       break
     }
     // Sync from main
     case 'get-all-rules': {
       condLog('get-all-rules message received', funcName, fileName, area)
-      replySyncIpcMessageMain(message as SyncIpcMessage, getAllCurrentRulesToSend())
+      replySyncIpcMessageMain(message as SyncIpcMessage, getAllRulesToSendCurrentRules())
       break
     }
     // Sync from main
     case 'get-rule': {
       condLog('get-rule message received', funcName, fileName, area)
-      replySyncIpcMessageMain(message as SyncIpcMessage, getRuleToSend(message.data as string))
+      replySyncIpcMessageMain(
+        message as SyncIpcMessage,
+        getRuleToSendCurrentRules(message.data as string)
+      )
       break
     }
     // Async stream programming message
     case 'start-all-rules-stream': {
       condLog('start-all-rules-stream message received', funcName, fileName, area)
-      startAllRulesStream()
+      startAllRulesStreamCurrentRules()
       break
     }
     // Async stream programming message
     case 'stop-all-rules-stream': {
       condLog('stop-all-rules-stream message received', funcName, fileName, area)
-      glob.workerGlobals.streamAllRulesToMain.stop()
+      stopAllRulesStreamCurrentRules()
       break
     }
     // Async stream programming message
     case 'start-rule-stream': {
       condLog('start-rule-stream message received', funcName, fileName, area)
-      startRuleStream(message.data as string)
+      startRuleStreamCurrentRules(message.data as string)
       break
     }
     // Async stream programming message
     case 'stop-rule-stream': {
       condLog('stop-rule-stream message received', funcName, fileName, area)
-      stopRuleStream(message.data as string)
+      stopRuleStreamCurrentRules(message.data as string)
       break
     }
     // Async stream programming message
     case 'stop-every-rule-stream': {
       condLog('stop-every-rule-stream message received', funcName, fileName, area)
-      stopEveryRuleStream()
+      stopEveryRuleStreamCurrentRules()
       break
     }
     // Async message

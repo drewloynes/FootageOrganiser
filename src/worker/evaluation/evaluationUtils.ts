@@ -1,7 +1,7 @@
 import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared-all/types/ruleTypes'
 import { generateChecksum } from '@shared-node/utils/checksum'
 import { sendAlertToMain } from '@worker/general/alert'
-import { disableRule } from '@worker/rules/changeRules'
+import { disableRuleCurrentRules } from '@worker/rules/currentRules'
 import { Rule } from '@worker/rules/rule'
 import { abortIfStateAwaitingChanges } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
@@ -133,7 +133,7 @@ export async function deleteFileUnderOriginPath(
     const alertMessage = `The checksum has failed between paths ${originFilePath} and ${targetFilePath}`
     sendAlertToMain('Checksum Failed', alertMessage)
     // This will always throw an error to exit the evaluation
-    disableRule(rule.name, alertMessage)
+    await disableRuleCurrentRules(rule.name, alertMessage)
     abortIfStateAwaitingChanges()
   }
 
