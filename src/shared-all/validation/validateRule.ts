@@ -30,6 +30,7 @@ export const SHORT_RULE_SCHEMA = {
   ...STORE_RULE_SCHEMA,
   startActions: z.boolean(),
   evaluateRule: z.boolean(),
+  awaitingChanges: z.boolean(),
   status: z.nativeEnum(RULE_STATUS_TYPE),
   unevaluateableReason: z.nativeEnum(UNEVALUATABLE_REASON),
   checksumAction: z.string(),

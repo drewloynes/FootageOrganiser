@@ -24,6 +24,7 @@ export async function modifySettings(newStoreSettings: StoreSettings): Promise<v
   if (
     glob.workerGlobals.upcomingSettings ||
     (glob.workerGlobals.currentSettings &&
+      glob.workerGlobals.ruleInUse &&
       glob.workerGlobals.currentSettings.checksumMethod !== newSettings.checksumMethod)
   ) {
     condLog(`Upcoming settings is being set or changing checksum`, funcName, fileName, area)
@@ -34,7 +35,6 @@ export async function modifySettings(newStoreSettings: StoreSettings): Promise<v
 
     const shouldRunDeleteOldLogs: boolean =
       glob.workerGlobals.currentSettings?.deleteOldLogsInDays !== newSettings.deleteOldLogsInDays
-
     await modifyCurrentSettings(newSettings)
     endReevaluationSleepEarly()
 

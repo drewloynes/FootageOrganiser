@@ -78,7 +78,7 @@ async function saveCurrentSettings(): Promise<void> {
   entryLog(funcName, fileName, area)
 
   if (!glob.workerGlobals.currentSettings) {
-    errorExitLog('Current settings are undefiend', funcName, fileName, area)
+    errorExitLog('Current settings are undefined', funcName, fileName, area)
     return
   }
 

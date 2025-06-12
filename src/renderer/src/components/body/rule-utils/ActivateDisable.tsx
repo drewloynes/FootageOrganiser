@@ -47,7 +47,7 @@ export function ActivateDisableSmall({
           </Tooltip>
         </TooltipProvider>
       )}
-      {!rule.disabled && (
+      {!rule.disabled && !rule.awaitingChanges && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger
@@ -66,6 +66,18 @@ export function ActivateDisableSmall({
             </TooltipTrigger>
             <TooltipContent>
               <p>Disable</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      {!rule.disabled && rule.awaitingChanges && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-pointer p-3 bg-gray-600 text-white rounded-full">
+              <PowerOff className="!size-[30px]" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Cant Disable Rule Right Now</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -103,7 +115,7 @@ export function ActivateDisableBig({
           </Tooltip>
         </TooltipProvider>
       )}
-      {!rule.disabled && (
+      {!rule.disabled && !rule.awaitingChanges && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger
@@ -118,6 +130,19 @@ export function ActivateDisableBig({
             </TooltipTrigger>
             <TooltipContent>
               <p>Disable Rule</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      {!rule.disabled && rule.awaitingChanges && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-pointer p-3 text-white bg-gray-600 rounded-full flex flex-row items-center font-bold border-1 border-black">
+              <PowerOff className="!size-[30px] mr-3" />
+              Disable
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Cant Disable Rule Right Now</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

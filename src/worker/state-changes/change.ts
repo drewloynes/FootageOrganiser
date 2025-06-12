@@ -2,12 +2,12 @@ const fileName: string = 'changes.ts'
 const area: string = 'state-changes'
 
 export enum CHANGE_TYPE {
-  ADD_RULE = 'add-rule',
   MODIFY_RULE = 'modify-rule',
   DELETE_RULE = 'delete-rule',
   STOP_RULE = 'stop-rule',
-  MODIFY_SETTINGS = 'modify-settings',
-  EVALUTE_ALL_RULES = 'evaluate-all-rules'
+  DISABLE_RULE = 'disable-rule',
+  EVALUATE_RULE = 'evaluate-rule',
+  MODIFY_SETTINGS = 'modify-settings'
 }
 
 export class Change {

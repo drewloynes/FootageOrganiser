@@ -1,11 +1,12 @@
-import { ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
+import { DisableRuleInfo, ModifyRuleInfo, StoreRule } from '@shared-all/types/ruleTypes'
 import { StoreSettings } from '@shared-all/types/settingsTypes'
 import {
-  addRuleInCurrentRules,
-  deleteRuleInCurrentRules,
-  evaluateAllCurrentRules,
-  modifyRuleInCurrentRules,
-  stopRuleInCurrentRules
+  deleteRuleCurrentRules,
+  disableRuleCurrentRules,
+  evaluateAllRulesCurrentRules,
+  evaluateRuleCurrentRules,
+  modifyRuleCurrentRules,
+  stopRuleCurrentRules
 } from '@worker/rules/currentRules'
 import { Rule } from '@worker/rules/rule'
 import { modifyCurrentSettings } from '@worker/settings/currentSettings'
@@ -50,6 +51,7 @@ export async function processErrorForStateChanges(error): Promise<void> {
   // Aborting executing rule early due to a change in state - apply any changes in state now
   if (error === 'abort-rule-in-use') {
     condLog(`Caught aborting rule in use`, funcName, fileName, area)
+    glob.workerGlobals.ruleInUse = undefined
     await applyAwaitingStateChanges()
   } else {
     condLog(`Caught unknown error`, funcName, fileName, area)
@@ -70,7 +72,6 @@ async function applyAwaitingStateChanges(): Promise<void> {
   }
 
   glob.workerGlobals.awaitingChanges = []
-  glob.workerGlobals.upcomingRules = undefined
   glob.workerGlobals.upcomingSettings = undefined
 
   exitLog(funcName, fileName, area)
@@ -82,15 +83,6 @@ async function applyAwaitingStateChange(change: Change): Promise<void> {
   entryLog(funcName, fileName, area)
 
   switch (change.type) {
-    case CHANGE_TYPE.ADD_RULE: {
-      condLog('Add rule change', funcName, fileName, area)
-      const newRule: Rule | undefined = await toRule(change.dataForChange as StoreRule)
-      if (newRule) {
-        condLog('New rule created from store rule', funcName, fileName, area)
-        await addRuleInCurrentRules(newRule)
-      }
-      break
-    }
     case CHANGE_TYPE.MODIFY_RULE: {
       condLog('Modify rule change', funcName, fileName, area)
       const modifyRuleInfo: ModifyRuleInfo = change.dataForChange as ModifyRuleInfo
@@ -100,18 +92,24 @@ async function applyAwaitingStateChange(change: Change): Promise<void> {
       if (modifiedRule) {
         condLog('New rule created from store rule', funcName, fileName, area)
         modifiedRule.setError(modifyRuleInfo.error)
-        await modifyRuleInCurrentRules(modifyRuleInfo.originalRuleName as string, modifiedRule)
+        await modifyRuleCurrentRules(modifyRuleInfo.originalRuleName as string, modifiedRule)
       }
       break
     }
     case CHANGE_TYPE.DELETE_RULE: {
       condLog('Delete rule change', funcName, fileName, area)
-      await deleteRuleInCurrentRules(change.dataForChange as string)
+      await deleteRuleCurrentRules(change.dataForChange as string)
       break
     }
     case CHANGE_TYPE.STOP_RULE: {
       condLog('Stop rule change', funcName, fileName, area)
-      stopRuleInCurrentRules(change.dataForChange as string)
+      stopRuleCurrentRules(change.dataForChange as string)
+      break
+    }
+    case CHANGE_TYPE.DISABLE_RULE: {
+      condLog('Disable rule change', funcName, fileName, area)
+      const disableRuleInfo: DisableRuleInfo = change.dataForChange as DisableRuleInfo
+      await disableRuleCurrentRules(disableRuleInfo.ruleName, disableRuleInfo.error)
       break
     }
     case CHANGE_TYPE.MODIFY_SETTINGS: {
@@ -121,14 +119,14 @@ async function applyAwaitingStateChange(change: Change): Promise<void> {
       )
       if (modifiedSettings) {
         condLog('New settings create from store settings', funcName, fileName, area)
-        modifyCurrentSettings(modifiedSettings)
-        evaluateAllCurrentRules()
+        await modifyCurrentSettings(modifiedSettings)
+        evaluateAllRulesCurrentRules()
       }
       break
     }
-    case CHANGE_TYPE.EVALUTE_ALL_RULES: {
-      condLog('Evaluate all rules', funcName, fileName, area)
-      evaluateAllCurrentRules()
+    case CHANGE_TYPE.EVALUATE_RULE: {
+      condLog('Evaluate rule', funcName, fileName, area)
+      evaluateRuleCurrentRules(change.dataForChange as string)
     }
     default: {
       debugLog('Change type unidentified', funcName, fileName, area)
