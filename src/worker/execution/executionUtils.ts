@@ -6,7 +6,7 @@ import {
 } from '@worker/drives/currentDriveInfo'
 import { DriveInfo } from '@worker/drives/driveInfo'
 import { sendAlertToMain } from '@worker/general/alert'
-import { disableRule } from '@worker/rules/changeRules'
+import { disableRuleCurrentRules } from '@worker/rules/currentRules'
 import { Rule } from '@worker/rules/rule'
 import { abortIfStateAwaitingChanges } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
@@ -51,7 +51,7 @@ export async function handleOutOfDriveSpace(rule: Rule, files: CopyPaths) {
   sendAlertToMain('Drive Space Full', alertMessage)
   rule.setActionsProgress(100)
   // This will always throw an error to exit the execution
-  disableRule(rule.name, alertMessage)
+  await disableRuleCurrentRules(rule.name, alertMessage)
   abortIfStateAwaitingChanges()
 
   exitLog(funcName, fileName, area)
@@ -63,8 +63,8 @@ export async function executionFailed(rule: Rule, title: string, message: string
   entryLog(funcName, fileName, area)
 
   sendAlertToMain(title, message)
+  await disableRuleCurrentRules(rule.name, message)
   // This will always throw an error to exit the evaluation
-  disableRule(rule.name, message)
   abortIfStateAwaitingChanges()
 
   exitLog(funcName, fileName, area)

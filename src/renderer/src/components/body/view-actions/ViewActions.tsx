@@ -73,7 +73,7 @@ export default function ViewActions() {
             Start
           </Button>
         )}
-        {rule.enableStartStopActions && rule.startActions && (
+        {rule.enableStartStopActions && rule.startActions && !rule.awaitingChanges && (
           <Button
             className="text-xl px-3 py-1 ml-4 mr-0 cursor-pointer rounded-full bg-red-700  hover:bg-red-600 text-white flex flex-row items-center font-bold"
             onClick={() => {
@@ -81,6 +81,12 @@ export default function ViewActions() {
               navigate(`/`)
             }}
           >
+            <Pause className="!size-[30px]" />
+            Stop
+          </Button>
+        )}
+        {rule.enableStartStopActions && rule.startActions && rule.awaitingChanges && (
+          <Button className="text-xl px-3 py-1 ml-4 mr-0 cursor-pointer rounded-full bg-gray-600   text-white flex flex-row items-center font-bold">
             <Pause className="!size-[30px]" />
             Stop
           </Button>

@@ -63,7 +63,7 @@ export function StartStopSmall({
             </Tooltip>
           </TooltipProvider>
         )}
-        {rule.enableStartStopActions && rule.startActions && (
+        {rule.enableStartStopActions && rule.startActions && !rule.awaitingChanges && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger
@@ -84,6 +84,18 @@ export function StartStopSmall({
               </TooltipTrigger>
               <TooltipContent>
                 <p>Stop Executing Actions</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {rule.enableStartStopActions && rule.startActions && rule.awaitingChanges && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className=" p-3 ml-4 mr-0 cursor-pointer rounded-full bg-gray-600  text-white ">
+                <Pause className="!size-[30px]" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Cant Stop Rule Right Now</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -133,7 +145,7 @@ export function StartStopBig({
           </Tooltip>
         </TooltipProvider>
       )}
-      {rule.enableStartStopActions && rule.startActions && (
+      {rule.enableStartStopActions && rule.startActions && !rule.awaitingChanges && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger
@@ -148,6 +160,19 @@ export function StartStopBig({
             </TooltipTrigger>
             <TooltipContent>
               <p>Stop Executing Actions</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      {rule.enableStartStopActions && rule.startActions && rule.awaitingChanges && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className=" p-3 ml-4 mr-0 cursor-pointer rounded-full bg-gray-600 text-white flex flex-row items-center font-bold">
+              <Pause className="!size-[30px]" />
+              Stop
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Cant Stop Rule Right Now</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
