@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 1.1.1
+
+Tooling:
+
+- Changed to use pnpm rather than yarn.
+
+Fixes:
+
+- Many dependency bumps (Including zod v4 major bump).
+
 ## 1.1.0
 
 Features:
