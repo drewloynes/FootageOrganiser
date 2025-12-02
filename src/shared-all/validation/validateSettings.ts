@@ -25,7 +25,7 @@ export function extraZodValidationStoreRule(
   if (!validateSemverFormat(storeSettingsData.footageOrganiserVersion)) {
     ctx.addIssue({
       path: ['footageOrganiserVersion'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Current version of settings is not semver'
     })
   }

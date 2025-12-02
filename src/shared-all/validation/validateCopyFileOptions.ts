@@ -22,8 +22,7 @@ export const STORE_COPY_FILE_OPTIONS_ZOD_SCHEMA = z
 export function extraZodValidationCopyFileOptions(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   copyFileOptionsData: any,
-  ctx: z.RefinementCtx,
-  currentPath: (string | number)[] = []
+  ctx: z.RefinementCtx
 ): void {
   // targetSubPathFormat array must not contain duplicates
   if (
@@ -32,8 +31,7 @@ export function extraZodValidationCopyFileOptions(
       copyFileOptionsData.targetSubPathFormat.length
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'targetSubPathFormat'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Target sub-path format must not contain duplicates'
     })
   }
@@ -44,8 +42,7 @@ export function extraZodValidationCopyFileOptions(
     !validateDirectoryName(copyFileOptionsData.customDirectoryName)
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'customDirectoryName'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Custom Name is not a valid directory name'
     })
   }
@@ -56,18 +53,13 @@ export function extraZodValidationCopyFileOptions(
     copyFileOptionsData.deleteUnderOtherPaths === true
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'deleteUnderOtherPaths'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: `Delete under other paths can't be true when delete copied files is false`
     })
   }
 
   for (const otherPathData of copyFileOptionsData.otherPaths) {
-    extraZodValidationStorePathInVolume(otherPathData, ctx, [
-      ...currentPath,
-      'otherPaths',
-      copyFileOptionsData.otherPaths.indexOf(otherPathData)
-    ])
+    extraZodValidationStorePathInVolume(otherPathData, ctx)
   }
 
   return

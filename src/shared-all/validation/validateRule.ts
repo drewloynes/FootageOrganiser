@@ -61,20 +61,16 @@ export const FULL_RULE_ZOD_SCHEMA = z.object(FULL_RULE_SCHEMA)
 export function extraZodValidationStoreRule(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storeRuleData: any,
-  ctx: z.RefinementCtx,
-  currentPath: (string | number)[] = []
+  ctx: z.RefinementCtx
 ): void {
   // Check origin
-  extraZodValidationStorePathInVolume(storeRuleData.origin, ctx, [...currentPath, 'origin'])
+  extraZodValidationStorePathInVolume(storeRuleData.origin, ctx)
 
   // Check target
-  extraZodValidationStorePathInVolume(storeRuleData.target, ctx, [...currentPath, 'target'])
+  extraZodValidationStorePathInVolume(storeRuleData.target, ctx)
 
   // Check copy path options
-  extraZodValidationCopyFileOptions(storeRuleData.copyFileOptions, ctx, [
-    ...currentPath,
-    'copyFileOptions'
-  ])
+  extraZodValidationCopyFileOptions(storeRuleData.copyFileOptions, ctx)
 
   // The path of target cant be inside path of origin
   if (
@@ -84,8 +80,7 @@ export function extraZodValidationStoreRule(
     storeRuleData.target.pathFromVolumeRoot.startsWith(storeRuleData.origin.pathFromVolumeRoot)
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'target'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Target path can not be inside origin path'
     })
   }

@@ -27,14 +27,12 @@ export const STORE_PATH_IN_VOLUME_ZOD_SCHEMA = z
 export function extraZodValidationShortPathInVolume(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   shortPathInVolumeData: any,
-  ctx: z.RefinementCtx,
-  currentPath: (string | number)[] = []
+  ctx: z.RefinementCtx
 ): void {
   // pathFromVolumeRoot must be a valid partial directory path
   if (!validatePartialDirectoryPath(shortPathInVolumeData.pathFromVolumeRoot)) {
     ctx.addIssue({
-      path: [...currentPath, 'pathFromVolumeRoot'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Path from the volume root is not a valid directory path'
     })
   }
@@ -44,10 +42,9 @@ export function extraZodValidationShortPathInVolume(
 export function extraZodValidationStorePathInVolume(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storePathInVolumeData: any,
-  ctx: z.RefinementCtx,
-  currentPath: (string | number)[] = []
+  ctx: z.RefinementCtx
 ): void {
-  extraZodValidationShortPathInVolume(storePathInVolumeData, ctx, currentPath)
+  extraZodValidationShortPathInVolume(storePathInVolumeData, ctx)
 
   // filesToInclude array must contain valid file name filter strings
   if (
@@ -56,8 +53,7 @@ export function extraZodValidationStorePathInVolume(
     )
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'filesToInclude'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Files to include contains invalid file name filters'
     })
   }
@@ -69,8 +65,7 @@ export function extraZodValidationStorePathInVolume(
     )
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'filesToExclude'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Files to exclude contains invalid file name filters'
     })
   }
@@ -82,8 +77,7 @@ export function extraZodValidationStorePathInVolume(
     )
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'dirsToInclude'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Folders to include contains invalid folder name filters'
     })
   }
@@ -95,8 +89,7 @@ export function extraZodValidationStorePathInVolume(
     )
   ) {
     ctx.addIssue({
-      path: [...currentPath, 'dirsToExclude'],
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Folders to exclude contains invalid folder name filters'
     })
   }
