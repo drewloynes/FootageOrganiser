@@ -23,29 +23,29 @@ This application is fully open source. Pull requests and contributions are welco
 #### Install
 
 ```bash
-$ yarn
+$ pnpm
 ```
 
 #### Development
 
 ```bash
-$ yarn dev
+$ pnpm dev
 ```
 
 #### Production
 
 ```bash
-$ yarn start
+$ pnpm start
 ```
 
 #### Build
 
 ```bash
 # For windows
-$ yarn build:win
+$ pnpm build:win
 
 # For macOS
-$ yarn build:mac
+$ pnpm build:mac
 ```
 
 ### Design

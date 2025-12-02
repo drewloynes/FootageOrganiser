@@ -21,7 +21,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Set Production Environment
         run: node ./scripts/setProd.cjs
@@ -32,4 +32,4 @@ jobs:
       - name: Electron Builder (publish)
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: yarn electron-builder --publish always
+        run: pnpm run publish
