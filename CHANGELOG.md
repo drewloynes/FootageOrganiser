@@ -10,7 +10,7 @@ Tooling:
 
 Fixes:
 
-- Many dependency bumps (Including zod v4 major bump).
+- Many dependency bumps (Including zod v4 major bump) - 5 months of updates.
 
 ## 1.1.0
 
