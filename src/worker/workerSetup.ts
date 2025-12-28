@@ -39,7 +39,7 @@ async function fillWorkerGlobals(): Promise<void> {
 
   await setStorageLocation()
   await updateCurrentDriveInfo()
-  autoUpdateCurrentDriveInfo()
+  void autoUpdateCurrentDriveInfo()
   await setCurrentSettings()
   await setCurrentRules()
 

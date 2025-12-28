@@ -32,7 +32,7 @@ export async function updateCurrentDriveInfo(): Promise<boolean> {
   const siDrives: si.Systeminformation.FsSizeData[] = await si.fsSize()
   // Attempt to fill in currentDriveInfo
   for (const siDrive of siDrives) {
-    condLog(`For drived mounted:'${siDrive.mount}'`, funcName, fileName, area)
+    condLog(`For drive mounted:'${siDrive.mount}'`, funcName, fileName, area)
 
     // Get volume name using exec commands
     // - Windows: Get it using the mounted drive letter

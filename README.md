@@ -23,7 +23,7 @@ This application is fully open source. Pull requests and contributions are welco
 #### Install
 
 ```bash
-$ pnpm
+$ pnpm install
 ```
 
 #### Development
@@ -58,6 +58,43 @@ This is an electron application with 3 processes:
 
 ### Logs
 
-I've designed this with what looks to be pretty aggressive logging. This speeds up debugging as all the logs to immediately identify problems are already there. When building for production, these logs are automatically turned off.
+I've designed this with what looks to be pretty aggressive logging. This speeds up debugging as all the logs to immediately identify problems are already there.
 
 Please follow the logging convention.
+
+A logs folder will be created, writing all these logs to disk. Remember to delete this every so often, otherwise it can start to eat up storage.
+
+You can modify what logs are filtered in etc using:
+
+```typescript
+const loggerConfig: LoggingConfiguration = {
+  dev: true,
+  logLevel: 'func',
+  logProcess: [],
+  logFunc: [],
+  logFile: [],
+  logArea: []
+}
+```
+
+Inside loggerConfig.ts
+
+```typescript
+const CLIENT_LOG_CONFIG: ClientLoggingConfiguration = {
+  dev: true,
+  level: [],
+  func: [],
+  file: [],
+  area: []
+}
+```
+
+Inside clientLoggerConfig.ts
+
+The dev value will automatically change to false when running not in dev, using scripts/setProd.cjs.
+
+## Code Signing
+
+There is none. I don't want to spend the money and go through the annoying process of getting this app signed. This does mean there will be warnings when first using the app.
+
+Likewise, the app has not been setup for the Microsoft or Apple stores for similar reasons of avoiding bureaucracy.

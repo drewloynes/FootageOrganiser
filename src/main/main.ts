@@ -1,4 +1,4 @@
-import 'update-electron-app'
+import 'source-map-support/register'
 import initMainGlobals from './mainInitialisation'
 import { setupMain } from './mainSetup'
 

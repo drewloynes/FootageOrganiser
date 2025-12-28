@@ -7,31 +7,21 @@
     "src/shared-node/**/*",
     "src/shared-all/**/*",
     "src/worker/**/**/**/*",
-    "src/global/mainWorkerGlobals.d.ts"
+    "src/global/mainWorkerGlobals.d.ts",
+    "package.json"
   ],
   "compilerOptions": {
+    "sourceMap": true,
     "composite": true,
-     "moduleResolution": "bundler",
-    "types": [
-      "electron-vite/node"
-    ],
+    "moduleResolution": "bundler",
+    "types": ["electron-vite/node"],
     "baseUrl": ".",
     "paths": {
-      "@shared-all/*": [
-        "src/shared-all/*"
-      ],
-      "@shared-node/*": [
-        "src/shared-node/*"
-      ],
-      "@worker/*": [
-        "src/worker/*"
-      ],
-      "@main/*": [
-        "src/main/*"
-      ],
-      "@resources/*": [
-        "resources/*"
-      ]
+      "@shared-all/*": ["src/shared-all/*"],
+      "@shared-node/*": ["src/shared-node/*"],
+      "@worker/*": ["src/worker/*"],
+      "@main/*": ["src/main/*"],
+      "@resources/*": ["resources/*"]
     }
   }
 }

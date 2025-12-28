@@ -6,7 +6,7 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.wordWrap": "on",
-  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreview": true,
   "markdownlint.config": {
     "MD041": false
   }

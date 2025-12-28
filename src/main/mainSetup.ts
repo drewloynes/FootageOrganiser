@@ -1,6 +1,5 @@
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import icon from '@resources/footage-organiser-logo-3.png?asset'
-import { app, BrowserWindow, Menu, Tray } from 'electron'
+import { app, BrowserWindow, Menu, nativeImage, Tray } from 'electron'
 import path from 'path'
 import { setupWindowIpc } from './ipc/window/windowIpcSetup'
 import { openWindow } from './window/window'
@@ -9,6 +8,8 @@ import { stopAllStreams } from './worker/workerUtils'
 
 const fileName: string = 'mainSetup.ts'
 const area: string = 'main'
+
+let tray: Tray | undefined
 
 export function setupMain(): void {
   const funcName: string = 'setupMain'
@@ -19,6 +20,11 @@ export function setupMain(): void {
   if (!supportedPlatforms.includes(process.platform)) {
     condLog(`Platform ${process.platform} not supported`, funcName, fileName, area)
     app.quit()
+  }
+
+  // Default make the app a background agent on mac
+  if (process.platform === 'darwin') {
+    app.setActivationPolicy('accessory')
   }
 
   // Setup all callbacks for electron app if its the only instance
@@ -58,8 +64,10 @@ async function ready() {
   const funcName: string = 'ready'
   entryLog(funcName, fileName, area)
 
-  // Windows: Set Application User Model ID
-  electronApp.setAppUserModelId('com.footage-organiser')
+  if (process.platform === 'win32') {
+    // Windows: Set Application User Model ID
+    electronApp.setAppUserModelId('com.footage-organiser')
+  }
 
   condLog(
     path.join(__dirname, 'resources', 'footage-organiser-logo-3.png'),
@@ -68,7 +76,17 @@ async function ready() {
     area
   )
 
-  const tray = new Tray(icon)
+  const iconName =
+    process.platform === 'darwin' ? 'iconTemplate.png' : 'footage-organiser-logo-3.png'
+  const iconPath = path.join(app.getAppPath(), 'resources', iconName)
+  const trayIcon = nativeImage.createFromPath(iconPath)
+  // Make sure mac uses templating mode
+  if (process.platform === 'darwin') {
+    trayIcon.setTemplateImage(true)
+  }
+
+  tray = new Tray(trayIcon)
+
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'Open', click: openWindow },
@@ -88,6 +106,11 @@ async function ready() {
 function browserWindowCreated(_, window) {
   const funcName: string = 'browserWindowCreated'
   entryLog(funcName, fileName, area)
+
+  // Transition into normal app when window is open on mac
+  if (process.platform === 'darwin') {
+    app.setActivationPolicy('regular')
+  }
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -114,6 +137,11 @@ function activate() {
 function windowAllClosed() {
   const funcName: string = 'windowAllClosed'
   entryLog(funcName, fileName, area)
+
+  // Transition into background agent when no windows are open on mac
+  if (process.platform === 'darwin') {
+    app.setActivationPolicy('accessory') // Transitions back to Tray-only
+  }
 
   // Keep the app running
   stopAllStreams()
