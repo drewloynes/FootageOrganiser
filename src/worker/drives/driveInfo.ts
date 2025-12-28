@@ -12,6 +12,7 @@ export class DriveInfo {
   // Drive details - Taken from system information library
   mount: string
   fs: string
+  type: string
   size: number
   used: number
   available: number
@@ -23,6 +24,7 @@ export class DriveInfo {
     this.volumeName = volumeName
     this.mount = siDriveInfo.mount
     this.fs = siDriveInfo.fs
+    this.type = siDriveInfo.type
     this.size = siDriveInfo.size
     this.used = siDriveInfo.used
     this.available = siDriveInfo.available

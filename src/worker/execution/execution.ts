@@ -75,8 +75,9 @@ async function executeMakeDirectories(rule: Rule): Promise<void> {
 
     try {
       await mkdir(directory, { recursive: true })
-    } catch {
+    } catch (error) {
       errorLog(`Make directory failed: ${directory}`, funcName, fileName, area)
+      console.log(error)
       await executionFailed(
         rule,
         'Creating Folder Failed',

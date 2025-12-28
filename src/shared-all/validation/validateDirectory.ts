@@ -19,7 +19,7 @@ const ASCII_CONTROL_CHARACTERS = /[\x00-\x1F]/
 
 const ENDS_WITH_DOT_OR_SPACE = /[. ]$/
 
-// Make sure the directory name is valid in noth windows and mac
+// Make sure the directory name is valid in both windows and mac
 export function validateDirectoryName(directoryName: string): boolean {
   if (directoryName.length < 1) {
     return false

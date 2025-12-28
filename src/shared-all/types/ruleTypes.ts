@@ -31,7 +31,9 @@ export enum UNEVALUATABLE_REASON {
   RULE_DISABLED = 'Rule Disabled',
   ZERO_EXISTING_TARGET_PATHS = 'Zero Existing Target Paths',
   ZERO_EXISTING_ORIGIN_PATHS = 'Zero Existing Origin Paths',
-  MIRROR_MULTIPLE_ORIGIN_PATHS = 'Mirror Rule Has Multiple Origin Paths'
+  MIRROR_MULTIPLE_ORIGIN_PATHS = 'Mirror Rule Has Multiple Origin Paths',
+  TARGET_PATH_FORMAT_NOT_COMPATIBLE = 'Target path drive format is not compatible wth OS',
+  ORIGIN_PATH_FORMAT_NOT_COMPATIBLE = 'Origin path drive format is not compatible wth OS'
 }
 
 export type CopyPaths = z.infer<typeof COPY_PATHS_ZOD_SCHEMA>
