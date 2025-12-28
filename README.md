@@ -40,6 +40,7 @@ In order to run the Footage Organiser, you must:
 
 - Open the Terminal App.
 - Enter the command `xattr -cr "/Applications/Footage Organiser.app”`.
+  - You will likeily have to delete and re-add the quotes "" in the command as Macs will copy them incorrectly.
 
 ### Updating
 
