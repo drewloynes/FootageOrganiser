@@ -16,7 +16,7 @@ interface ClientLoggingConfiguration {
 }
 
 const CLIENT_LOG_CONFIG: ClientLoggingConfiguration = {
-  dev: true,
+  dev: false,
   level: [],
   func: [],
   file: [],
