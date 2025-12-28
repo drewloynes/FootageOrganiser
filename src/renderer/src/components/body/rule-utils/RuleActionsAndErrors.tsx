@@ -29,7 +29,35 @@ export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): 
         </div>
       )}
       {rule.error === '' &&
-        (rule.unevaluateableReason === UNEVALUATABLE_REASON.ZERO_EXISTING_ORIGIN_PATHS ||
+        (rule.unevaluateableReason === UNEVALUATABLE_REASON.ZERO_EXISTING_BOTH_PATHS ) && (
+          <div>
+            <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
+            <div className="flex flex-row items-center ml-4 mr-4">
+              <h3 className="text-white text-xl text-left bg-gray-600 rounded-[30px] mr-3 flex flex-row items-center">
+                <Info className="!size-[25px]" />
+              </h3>
+              <div className="flex items-center text-sm break-all">
+                Can't find origin and target folders
+              </div>
+            </div>
+          </div>
+        )}
+      {rule.error === '' &&
+        (rule.unevaluateableReason === UNEVALUATABLE_REASON.ZERO_EXISTING_ORIGIN_PATHS ) && (
+          <div>
+            <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
+            <div className="flex flex-row items-center ml-4 mr-4">
+              <h3 className="text-white text-xl text-left bg-gray-600 rounded-[30px] mr-3 flex flex-row items-center">
+                <Info className="!size-[25px]" />
+              </h3>
+              <div className="flex items-center text-sm break-all">
+                Can't find origin folder
+              </div>
+            </div>
+          </div>
+        )}
+      {rule.error === '' &&
+        (
           rule.unevaluateableReason === UNEVALUATABLE_REASON.ZERO_EXISTING_TARGET_PATHS) && (
           <div>
             <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
@@ -38,7 +66,21 @@ export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): 
                 <Info className="!size-[25px]" />
               </h3>
               <div className="flex items-center text-sm break-all">
-                Can't find origin / target folder
+                Can't find target folder
+              </div>
+            </div>
+          </div>
+        )}
+      {rule.error === '' &&
+        rule.unevaluateableReason === UNEVALUATABLE_REASON.BOTH_PATHS_FORMAT_NOT_COMPATIBLE && (
+          <div>
+            <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
+            <div className="flex flex-row items-center ml-4 mr-4">
+              <h3 className="text-white text-xl text-left bg-gray-600 rounded-[30px] mr-3 flex flex-row items-center">
+                <Info className="!size-[25px]" />
+              </h3>
+              <div className="flex items-center text-sm break-all">
+                Format of origin and target folders is not compatible with the current operating system
               </div>
             </div>
           </div>
@@ -52,7 +94,7 @@ export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): 
                 <Info className="!size-[25px]" />
               </h3>
               <div className="flex items-center text-sm break-all">
-                Format of target folder is not compatible with the OS
+                Format of target folder is not compatible with the current operating system
               </div>
             </div>
           </div>
@@ -66,7 +108,7 @@ export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): 
                 <Info className="!size-[25px]" />
               </h3>
               <div className="flex items-center text-sm break-all">
-                Format of origin folder is not compatible with the OS
+                Format of origin folder is not compatible with the current operating system
               </div>
             </div>
           </div>

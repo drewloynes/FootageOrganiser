@@ -21,14 +21,18 @@ export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
   rule.origin.updateFullPathList()
   rule.target.updateFullPathList()
 
-  if (rule.origin.countExistingFullPaths < 1) {
+    if (rule.origin.countExistingFullPaths < 1 && rule.target.countExistingFullPaths < 1) {
+    condLog(`No full paths exist`, funcName, fileName, area)
+    isEvaluateable = false
+    rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ZERO_EXISTING_BOTH_PATHS)
+  } else if (rule.origin.countExistingFullPaths < 1) {
     condLog(`No origin full paths exist`, funcName, fileName, area)
     isEvaluateable = false
-    rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ZERO_EXISTING_TARGET_PATHS)
+    rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ZERO_EXISTING_ORIGIN_PATHS)
   } else if (rule.target.countExistingFullPaths < 1) {
     condLog(`No target full paths exist`, funcName, fileName, area)
     isEvaluateable = false
-    rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ZERO_EXISTING_ORIGIN_PATHS)
+    rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ZERO_EXISTING_TARGET_PATHS)
   } else if (rule.origin.countExistingFullPaths > 1 && rule.type === RULE_TYPE.MIRROR) {
     condLog(`Too many origin paths for a mirror rule`, funcName, fileName, area)
     // Mirror rules can only work if they mirror from 1 and only 1 path
@@ -36,11 +40,18 @@ export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
     rule.setUnevaluateableReason(UNEVALUATABLE_REASON.MIRROR_MULTIPLE_ORIGIN_PATHS)
   } else {
     // Check the path drives formats are compatible with the OS
-    if (!isPathFormatCompatible(rule.target)) {
+    const isTargetCompatible = isPathFormatCompatible(rule.target)
+    const isOriginCompatible = isPathFormatCompatible(rule.origin)
+
+    if (!isTargetCompatible && !isOriginCompatible) {
+      condLog(`Both paths format not compatible`, funcName, fileName, area)
+      isEvaluateable = false
+      rule.setUnevaluateableReason(UNEVALUATABLE_REASON.BOTH_PATHS_FORMAT_NOT_COMPATIBLE)
+    } else if (!isTargetCompatible) {
       condLog(`Target path format not compatible`, funcName, fileName, area)
       isEvaluateable = false
       rule.setUnevaluateableReason(UNEVALUATABLE_REASON.TARGET_PATH_FORMAT_NOT_COMPATIBLE)
-    } else if (!isPathFormatCompatible(rule.origin)) {
+    } else if (!isOriginCompatible) {
       condLog(`Origin path format not compatible`, funcName, fileName, area)
       isEvaluateable = false
       rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ORIGIN_PATH_FORMAT_NOT_COMPATIBLE)
@@ -77,6 +88,11 @@ export function ignoreSystemObject(systemObject: fs.Dirent): boolean {
     )
     ignore = true
   }
+
+  if (systemObject.name.includes("Trashes")) {
+    condLog(`Trashes found with name ${systemObject.name}`, funcName, fileName, area)
+  }
+
 
   // Skip any hidden objects on mac - begin with .
   if (systemObject.name.startsWith('.')) {
