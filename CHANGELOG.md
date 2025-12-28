@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+Feature:
+
+- Inform when a drive format is not compatible with the OS.
+
+Fixes:
+
+- Ignore hidden files and folders on Mac.
+
+- Storing drive format - correcting it for Mac.
+
 ## 1.2.0
 
 Fixes:

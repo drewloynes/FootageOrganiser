@@ -178,7 +178,7 @@ async function recurseAddActions(
     }
 
     if (systemObject.isDirectory()) {
-      condLog(`System obkect is directory`, funcName, fileName, area)
+      condLog(`System object is directory`, funcName, fileName, area)
 
       // Try to add actions for this directory
       if (pathInVolume.type === PATH_IN_VOLUME_TYPE.ORIGIN) {

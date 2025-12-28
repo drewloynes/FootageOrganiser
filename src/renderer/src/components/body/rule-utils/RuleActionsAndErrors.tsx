@@ -44,6 +44,34 @@ export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): 
           </div>
         )}
       {rule.error === '' &&
+        rule.unevaluateableReason === UNEVALUATABLE_REASON.TARGET_PATH_FORMAT_NOT_COMPATIBLE && (
+          <div>
+            <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
+            <div className="flex flex-row items-center ml-4 mr-4">
+              <h3 className="text-white text-xl text-left bg-gray-600 rounded-[30px] mr-3 flex flex-row items-center">
+                <Info className="!size-[25px]" />
+              </h3>
+              <div className="flex items-center text-sm break-all">
+                Format of target folder is not compatible with the OS
+              </div>
+            </div>
+          </div>
+        )}
+      {rule.error === '' &&
+        rule.unevaluateableReason === UNEVALUATABLE_REASON.ORIGIN_PATH_FORMAT_NOT_COMPATIBLE && (
+          <div>
+            <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />
+            <div className="flex flex-row items-center ml-4 mr-4">
+              <h3 className="text-white text-xl text-left bg-gray-600 rounded-[30px] mr-3 flex flex-row items-center">
+                <Info className="!size-[25px]" />
+              </h3>
+              <div className="flex items-center text-sm break-all">
+                Format of origin folder is not compatible with the OS
+              </div>
+            </div>
+          </div>
+        )}
+      {rule.error === '' &&
         rule.unevaluateableReason === UNEVALUATABLE_REASON.MIRROR_MULTIPLE_ORIGIN_PATHS && (
           <div>
             <div className="w-[100%] h-[1px] bg-gray-300 mt-4 mb-3" />

@@ -1,5 +1,6 @@
 import { RULE_STATUS_TYPE, RULE_TYPE, UNEVALUATABLE_REASON } from '@shared-all/types/ruleTypes'
 import { generateChecksum } from '@shared-node/utils/checksum'
+import { isPathFormatCompatible } from '@worker/drives/currentDriveInfo'
 import { sendAlertToMain } from '@worker/general/alert'
 import { disableRuleCurrentRules } from '@worker/rules/currentRules'
 import { Rule } from '@worker/rules/rule'
@@ -33,6 +34,17 @@ export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
     // Mirror rules can only work if they mirror from 1 and only 1 path
     isEvaluateable = false
     rule.setUnevaluateableReason(UNEVALUATABLE_REASON.MIRROR_MULTIPLE_ORIGIN_PATHS)
+  } else {
+    // Check the path drives formats are compatible with the OS
+    if (!isPathFormatCompatible(rule.target)) {
+      condLog(`Target path format not compatible`, funcName, fileName, area)
+      isEvaluateable = false
+      rule.setUnevaluateableReason(UNEVALUATABLE_REASON.TARGET_PATH_FORMAT_NOT_COMPATIBLE)
+    } else if (!isPathFormatCompatible(rule.origin)) {
+      condLog(`Origin path format not compatible`, funcName, fileName, area)
+      isEvaluateable = false
+      rule.setUnevaluateableReason(UNEVALUATABLE_REASON.ORIGIN_PATH_FORMAT_NOT_COMPATIBLE)
+    }
   }
 
   if (!isEvaluateable) {
@@ -44,16 +56,36 @@ export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
   return isEvaluateable
 }
 
+// Must skip all windows / mac objects as hard drives may be used across both
 export function ignoreSystemObject(systemObject: fs.Dirent): boolean {
   const funcName = 'ignoreSystemObject'
   entryLog(funcName, fileName, area)
 
   let ignore = false
-  if (
-    (systemObject.name === '$RECYCLE.BIN' || systemObject.name === 'System Volume Information') &&
-    process.platform === 'win32'
-  ) {
-    condLog(`Obyject is Windows special system object name`, funcName, fileName, area)
+
+  // Skip windows special object names
+  if (systemObject.name === '$RECYCLE.BIN') {
+    condLog(`$RECYCLE.BIN is Windows special system object name`, funcName, fileName, area)
+    ignore = true
+  }
+  if (systemObject.name === 'System Volume Information') {
+    condLog(
+      `System Volume Information is Windows special system object name`,
+      funcName,
+      fileName,
+      area
+    )
+    ignore = true
+  }
+
+  // Skip any hidden objects on mac - begin with .
+  if (systemObject.name.startsWith('.')) {
+    condLog(
+      `Starting with . ${systemObject.name} is Mac hidden object name`,
+      funcName,
+      fileName,
+      area
+    )
     ignore = true
   }
 
@@ -61,19 +93,21 @@ export function ignoreSystemObject(systemObject: fs.Dirent): boolean {
   return ignore
 }
 
+// Must skip all windows / mac objects as hard drives may be used across both
 export function ignoreFile(pathToFile: string): boolean {
   const funcName = 'ignoreFile'
   entryLog(funcName, fileName, area)
 
   let ignore = false
   const nameOfFile: string = path.basename(pathToFile)
-  if (nameOfFile === 'desktop.ini' && process.platform === 'win32') {
-    condLog(`File name is desktop.ini files on windows`, funcName, fileName, area)
+
+  if (nameOfFile === 'desktop.ini') {
+    condLog(`File name is desktop.ini files from windows`, funcName, fileName, area)
     ignore = true
   }
 
-  if (nameOfFile === '.DS_Store' && process.platform === 'darwin') {
-    condLog(`File name is .DS_Store files on mac`, funcName, fileName, area)
+  if (nameOfFile === '.DS_Store') {
+    condLog(`File name is .DS_Store files from mac`, funcName, fileName, area)
     ignore = true
   }
 

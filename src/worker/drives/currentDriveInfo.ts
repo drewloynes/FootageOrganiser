@@ -1,9 +1,10 @@
 import { sleep } from '@shared-node/utils/timer'
 import { DriveInfo } from '@worker/drives/driveInfo'
-import { macGetVolNameFromFs } from '@worker/drives/macOs'
 import { winGetVolNameFromMount } from '@worker/drives/winOs'
+import { PathInVolume } from '@worker/path/pathInVolume'
 import { endReevaluationSleepEarly } from '@worker/runWorker'
 import si from 'systeminformation'
+import { macGetAllDriveInfoFromFs } from './macOs'
 
 const fileName = 'currentDriveInfo.ts'
 const area = 'drive-info'
@@ -14,7 +15,7 @@ export async function autoUpdateCurrentDriveInfo(): Promise<void> {
 
   const sleepTime = 10000 // Time to sleep before recalculating drive info - 10 seconds
   while (true) {
-    condLog(`Start infinite updateCurrentDriveInfo loop`, funcName, fileName, area)
+    condLog(`Infinite updateCurrentDriveInfo loop`, funcName, fileName, area)
     await sleep(sleepTime)
     const connectedDrivesChanged = await updateCurrentDriveInfo()
     if (connectedDrivesChanged) {
@@ -36,34 +37,45 @@ export async function updateCurrentDriveInfo(): Promise<boolean> {
 
     // Get volume name using exec commands
     // - Windows: Get it using the mounted drive letter
-    // - Mac: Get it using the file system of the drive
-    let volumeName: string | undefined = undefined
+    // - Mac: Get it using the file system of the drive (Also need to fix the drive format for Mac)
+    let volumeNameToSet: string | undefined = undefined
     switch (process.platform) {
       case 'win32': {
         condLog(`Windows: Get Volume Name`, funcName, fileName, area)
-        volumeName = await winGetVolNameFromMount(siDrive.mount)
+        volumeNameToSet = await winGetVolNameFromMount(siDrive.mount)
         break
       }
       case 'darwin': {
-        condLog(`Mac: Get Volume Name`, funcName, fileName, area)
+        condLog(`Mac: Get Volume Name and Drive Format`, funcName, fileName, area)
         // Only care about Macintosh HD and external mounted drives
         // - These are under paths '/' and '/Volumes'
+        // Need to also take the drive format for Mac
+        // - siDrive always says external volumes are HFS format.
+        // - (Mac HD is always APFS)
+        // - Need to get the correct drive format for external drives
         if (siDrive.mount === '/' || siDrive.mount.startsWith('/Volumes')) {
           condLog(`External Drive or Mac HD`, funcName, fileName, area)
-          volumeName = await macGetVolNameFromFs(siDrive.fs)
+          const [volumeName, driveFormat] = await macGetAllDriveInfoFromFs(siDrive.fs)
+          volumeNameToSet = volumeName
+          // Got a drive format? set it
+          if (driveFormat) {
+            condLog(`Setting drive type to: ${driveFormat}`, funcName, fileName, area)
+            siDrive.type = driveFormat
+          }
         }
+
         break
       }
     }
 
-    if (volumeName === undefined) {
+    if (volumeNameToSet === undefined) {
       condLog(`volumeName was not defined`, funcName, fileName, area)
       // Sometimes (for OS reasons) there is a drive without a volume name
       // That is okay. We can skip these drives
       continue
     }
 
-    newCurrentDriveInfo.push(new DriveInfo(volumeName, siDrive))
+    newCurrentDriveInfo.push(new DriveInfo(volumeNameToSet, siDrive))
   }
 
   // find if connected drives has changed
@@ -148,4 +160,37 @@ export function hasConnectDrivesChanged(newCurrentDriveInfo: DriveInfo[]): boole
 
   exitLog(funcName, fileName, area)
   return false
+}
+
+export function isPathFormatCompatible(pathInVolume: PathInVolume): boolean {
+  const funcName = 'isPathFormatCompatible'
+  entryLog(funcName, fileName, area)
+
+  let isCompatible = true
+
+  const OS_FS_COMPATIBILITY: Record<string, string[]> = {
+    win32: ['ntfs', 'fat32', 'exfat'],
+    darwin: ['apfs', 'hfs+', 'exfat', 'fat32'], // macOS
+    linux: ['ext4', 'ext3', 'xfs', 'btrfs', 'exfat', 'fat32', 'ntfs']
+  }
+  const supportedFs = OS_FS_COMPATIBILITY[process.platform] || []
+
+  for (const fullPath of pathInVolume.fullPathList) {
+    condLog(`For fullPath`, funcName, fileName, area)
+
+    const driveInfo = getDriveInfoFromPath(fullPath.path)
+    if (driveInfo && !supportedFs.includes(driveInfo.type.toLowerCase())) {
+      condLog(
+        `Volume ${driveInfo.volumeName} format ${driveInfo.type} is not compatible with OS`,
+        funcName,
+        fileName,
+        area
+      )
+      isCompatible = false
+      break
+    }
+  }
+
+  exitLog(funcName, fileName, area)
+  return isCompatible
 }
