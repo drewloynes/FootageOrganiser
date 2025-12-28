@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.1
+
 Feature:
 
 - Inform when a drive format is not compatible with the OS.
