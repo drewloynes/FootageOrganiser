@@ -6,11 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ActionCopyList, ActionList } from './ViewActionsList'
 import ViewActionsLoading from './ViewActionsLoading'
 
-const fileName: string = 'ViewActions.tsx'
-const area: string = 'view-actions'
+const fileName = 'ViewActions.tsx'
+const area = 'view-actions'
 
-export default function ViewActions() {
-  const funcName: string = 'ViewActions'
+export default function ViewActions(): React.ReactElement {
+  const funcName = 'ViewActions'
   log.rend(funcName, fileName, area)
 
   let { ruleName } = useParams<{ ruleName: string }>()
@@ -22,7 +22,7 @@ export default function ViewActions() {
   if (ruleName === undefined) {
     log.cond('Rule name not defined', funcName, fileName, area)
     ruleName = ''
-    navigate(`/`)
+    void navigate(`/`)
   }
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function ViewActions() {
             className="px-3 py-1 ml-4 mr-0 cursor-pointer rounded-full text-xl bg-green-700  hover:bg-green-600 text-white flex flex-row items-center font-bold"
             onClick={() => {
               window.electron.startRule(rule.name)
-              navigate(`/`)
+              void navigate(`/`)
             }}
           >
             <Play className="!size-[30px]" />
@@ -78,7 +78,7 @@ export default function ViewActions() {
             className="text-xl px-3 py-1 ml-4 mr-0 cursor-pointer rounded-full bg-red-700  hover:bg-red-600 text-white flex flex-row items-center font-bold"
             onClick={() => {
               window.electron.stopRule(rule.name)
-              navigate(`/`)
+              void navigate(`/`)
             }}
           >
             <Pause className="!size-[30px]" />

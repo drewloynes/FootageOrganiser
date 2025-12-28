@@ -1,5 +1,5 @@
-const fileName: string = 'changes.ts'
-const area: string = 'state-changes'
+const fileName = 'changes.ts'
+const area = 'state-changes'
 
 export enum CHANGE_TYPE {
   MODIFY_RULE = 'modify-rule',
@@ -17,7 +17,7 @@ export class Change {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(type: CHANGE_TYPE, dataForChange: any) {
-    const funcName: string = 'Change Constructor'
+    const funcName = 'Change Constructor'
     entryLog(funcName, fileName, area)
 
     this.type = type

@@ -1,7 +1,7 @@
 import { PromiseResolveRejectTimer } from './promise'
 
-const fileName: string = 'ipc.ts'
-const area: string = 'utils'
+const fileName = 'ipc.ts'
+const area = 'utils'
 
 // Asynchronous messages (Not awaiting a reply)
 export class AsyncIpcMessage {
@@ -27,7 +27,7 @@ export class SyncIpcMessage {
   }
 
   static generateId(): string {
-    const funcName: string = 'generateId'
+    const funcName = 'generateId'
     entryLog(funcName, fileName, area)
 
     const id: string = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -46,7 +46,7 @@ export class SyncIpcMessage {
     sendIpcMessage: (message: SyncIpcMessage) => void,
     promiseResovleRejectMap: Map<string, PromiseResolveRejectTimer>
   ): Promise<unknown> {
-    const funcName: string = 'sendSyncIpc'
+    const funcName = 'sendSyncIpc'
     entryLog(funcName, fileName, area)
 
     const sendIpcMessagePromise = new Promise((resolve, reject) => {
@@ -80,7 +80,7 @@ export class SyncIpcMessage {
     data: unknown,
     sendIpcMessage: (message: SyncIpcMessage) => void
   ): void {
-    const funcName: string = 'replySyncIpc'
+    const funcName = 'replySyncIpc'
     entryLog(funcName, fileName, area)
 
     const replyMessage = new SyncIpcMessage(
@@ -98,7 +98,7 @@ export class SyncIpcMessage {
     syncIpcMessage: SyncIpcMessage,
     promiseResovleRejectMap: Map<string, PromiseResolveRejectTimer>
   ): void {
-    const funcName: string = 'receiveSentSyncIpc'
+    const funcName = 'receiveSentSyncIpc'
     entryLog(funcName, fileName, area)
 
     if (promiseResovleRejectMap.has(syncIpcMessage.id)) {

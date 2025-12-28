@@ -1,8 +1,8 @@
 import { StorePathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { PATH_IN_VOLUME_TYPE, PathInVolume } from '@worker/path/pathInVolume'
 
-const fileName: string = 'storePathInVolume.ts'
-const area: string = 'store'
+const fileName = 'storePathInVolume.ts'
+const area = 'store'
 
 export async function toPathInVolume(
   storePathInVolume: StorePathInVolume,

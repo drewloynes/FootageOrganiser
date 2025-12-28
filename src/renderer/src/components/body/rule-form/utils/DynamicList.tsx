@@ -11,8 +11,8 @@ import { StoreRule } from '@shared-all/types/ruleTypes'
 import { useState } from 'react'
 import { Control, FieldPath } from 'react-hook-form'
 
-const fileName: string = 'DynamicList.tsx'
-const area: string = 'rule-form'
+const fileName = 'DynamicList.tsx'
+const area = 'rule-form'
 
 export function DynamicList({
   control,
@@ -22,8 +22,8 @@ export function DynamicList({
   control: Control<StoreRule>
   name: FieldPath<StoreRule>
   label: string
-}) {
-  const funcName: string = 'DynamicList'
+}): React.ReactElement {
+  const funcName = 'DynamicList'
   log.rend(funcName, fileName, area)
 
   const [newItem, setNewItem] = useState('')
@@ -40,7 +40,7 @@ export function DynamicList({
         const value: string[] = field.value || []
         const onChange = field.onChange
 
-        const addToList = () => {
+        const addToList = (): void => {
           log.cond('Add item to list', funcName, fileName, area)
           const trimmed = newItem.trim()
           if (trimmed) {
@@ -50,7 +50,7 @@ export function DynamicList({
           }
         }
 
-        const removeFromList = (index: number) => {
+        const removeFromList = (index: number): void => {
           log.cond('Remove item from list', funcName, fileName, area)
           const updated = value.filter((_: string, i: number) => i !== index)
           onChange(updated)

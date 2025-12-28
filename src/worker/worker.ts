@@ -4,9 +4,9 @@ import { setupWorker } from '@worker/workerSetup'
 import 'source-map-support/register'
 import { runWorker } from './runWorker'
 
-const fileName: string = 'worker.ts'
-const area: string = 'worker'
-const funcName: string = 'Worker Entry'
+const fileName = 'worker.ts'
+const area = 'worker'
+const funcName = 'Worker Entry'
 
 initWorkerGlobals()
 infoLog('Initialisation of worker globals complete', funcName, fileName, area)

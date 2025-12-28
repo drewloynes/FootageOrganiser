@@ -9,8 +9,8 @@ import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 import { Pause, Play, Rows4 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const fileName: string = 'StartStop.tsx'
-const area: string = 'rule-utils'
+const fileName = 'StartStop.tsx'
+const area = 'rule-utils'
 
 export function StartStopSmall({
   rule,
@@ -20,8 +20,8 @@ export function StartStopSmall({
   rule: ShortRule
   allRules: ShortRule[]
   setAllRules: React.Dispatch<ShortRule[]>
-}) {
-  const funcName: string = 'StartStopSmall'
+}): React.ReactElement {
+  const funcName = 'StartStopSmall'
   log.rend(funcName, fileName, area)
 
   const navigate = useNavigate()
@@ -111,8 +111,8 @@ export function StartStopBig({
 }: {
   rule: FullRule
   setRule: React.Dispatch<FullRule>
-}) {
-  const funcName: string = 'StartStopBig'
+}): React.ReactElement {
+  const funcName = 'StartStopBig'
   log.rend(funcName, fileName, area)
 
   const navigate = useNavigate()

@@ -2,13 +2,13 @@ import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { getDriveInfoFromPath } from '@worker/drives/currentDriveInfo'
 import { DriveInfo } from '@worker/drives/driveInfo'
 
-const fileName: string = 'shortPathInVolume.ts'
-const area: string = 'path'
+const fileName = 'shortPathInVolume.ts'
+const area = 'path'
 
 export async function getShortPathInVolumeFromPath(
   path: string
 ): Promise<ShortPathInVolume | undefined> {
-  const funcName: string = 'getShortPathInVolumeFromPath'
+  const funcName = 'getShortPathInVolumeFromPath'
   entryLog(funcName, fileName, area)
 
   let shortPathInVolume: ShortPathInVolume | undefined = undefined

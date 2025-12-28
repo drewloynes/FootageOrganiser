@@ -25,13 +25,13 @@ import { modifySettings } from '@worker/settings/changeSettings'
 import { getCurrentSettingsToSend } from '@worker/settings/currentSettings'
 import { replySyncIpcMessageMain } from './mainIpcSender'
 
-const fileName: string = 'mainIpcReceiver.ts'
-const area: string = 'ipc'
+const fileName = 'mainIpcReceiver.ts'
+const area = 'ipc'
 
 export async function parseMainIpcMessage(
   message: AsyncIpcMessage | SyncIpcMessage
 ): Promise<void> {
-  const funcName: string = 'parseMainIpcMessage'
+  const funcName = 'parseMainIpcMessage'
   entryLog(funcName, fileName, area)
 
   switch (message.type) {

@@ -1,14 +1,14 @@
 import { PromiseResolveTimer } from './promise'
 
-const fileName: string = 'timer.ts'
-const area: string = 'utils'
+const fileName = 'timer.ts'
+const area = 'utils'
 
 export async function sleep(
   ms: number,
   id: string | undefined = undefined,
   promiseResolveTimerMap: Map<string, PromiseResolveTimer> | undefined = undefined
 ): Promise<boolean> {
-  const funcName: string = 'sleep'
+  const funcName = 'sleep'
   entryLog(funcName, fileName, area)
 
   const promise = new Promise<boolean>((resolve) => {
@@ -31,10 +31,10 @@ export function endSleep(
   id: string,
   promiseResolveTimerMap: Map<string, PromiseResolveTimer>
 ): boolean {
-  const funcName: string = 'endSleep'
+  const funcName = 'endSleep'
   entryLog(funcName, fileName, area)
 
-  let sleepEnded: boolean = false
+  let sleepEnded = false
   if (promiseResolveTimerMap.has(id)) {
     condLog(`Sleep for '${id}' found in ResolveTimer map`, funcName, fileName, area)
     const resolveTimerEntry = promiseResolveTimerMap.get(id)

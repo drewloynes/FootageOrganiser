@@ -42,13 +42,13 @@ export type ShortRule = z.infer<typeof SHORT_RULE_ZOD_SCHEMA>
 
 export type FullRule = z.infer<typeof FULL_RULE_ZOD_SCHEMA>
 
-export type ModifyRuleInfo = {
+export interface ModifyRuleInfo {
   originalRuleName: string
   modifiedStoreRule: StoreRule
   error: string
 }
 
-export type DisableRuleInfo = {
+export interface DisableRuleInfo {
   ruleName: string
   error: string
 }

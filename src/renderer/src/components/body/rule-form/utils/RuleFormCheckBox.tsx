@@ -15,8 +15,8 @@ import {
 import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 
-const fileName: string = 'RuleFormCheckBox.tsx'
-const area: string = 'rule-form'
+const fileName = 'RuleFormCheckBox.tsx'
+const area = 'rule-form'
 
 export function RuleFormCheckBox({
   control,
@@ -35,8 +35,8 @@ export function RuleFormCheckBox({
   label?: string
   tooltip?: string
   className?: string
-}) {
-  const funcName: string = 'RuleFormCheckBox'
+}): React.ReactElement {
+  const funcName = 'RuleFormCheckBox'
   log.rend(funcName, fileName, area)
 
   return (

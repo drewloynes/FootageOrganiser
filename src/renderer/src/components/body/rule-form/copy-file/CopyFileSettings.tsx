@@ -14,8 +14,8 @@ import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'
 import TargetSubPathFormat from './TargetSubPathFormat'
 
-const fileName: string = 'CopyFileSettings.tsx'
-const area: string = 'rule-form'
+const fileName = 'CopyFileSettings.tsx'
+const area = 'rule-form'
 
 export function CopyFileSettings({
   control,
@@ -23,8 +23,8 @@ export function CopyFileSettings({
 }: {
   control: Control<StoreRule>
   watch: UseFormWatch<StoreRule>
-}) {
-  const funcName: string = 'CopyFileSettings'
+}): React.ReactElement {
+  const funcName = 'CopyFileSettings'
   log.rend(funcName, fileName, area)
 
   const isDeleteFilesChecked = watch('copyFileOptions.deleteCopiedFiles')

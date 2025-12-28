@@ -1,5 +1,5 @@
-const fileName: string = 'string.ts'
-const area: string = 'utils'
+const fileName = 'string.ts'
+const area = 'utils'
 
 export function matchStringAgainstStringArray(string: string, stringArray: string[]): boolean {
   const funcName = 'matchStringAgainstStringArray'

@@ -1,11 +1,11 @@
 import { Skeleton } from '@renderer/components/ui/skeleton'
 import { motion } from 'framer-motion'
 
-const fileName: string = 'EditRuleLoading.tsx'
-const area: string = 'edit-rule'
+const fileName = 'EditRuleLoading.tsx'
+const area = 'edit-rule'
 
-function EditRuleLoading() {
-  const funcName: string = 'EditRuleLoading'
+function EditRuleLoading(): React.ReactElement {
+  const funcName = 'EditRuleLoading'
   log.rend(funcName, fileName, area)
 
   return (

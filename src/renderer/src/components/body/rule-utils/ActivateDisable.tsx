@@ -7,8 +7,8 @@ import {
 import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 import { Power, PowerOff } from 'lucide-react'
 
-const fileName: string = 'ActivateDisable.tsx'
-const area: string = 'rule-utils'
+const fileName = 'ActivateDisable.tsx'
+const area = 'rule-utils'
 
 export function ActivateDisableSmall({
   rule,
@@ -18,8 +18,8 @@ export function ActivateDisableSmall({
   rule: ShortRule
   allRules: ShortRule[]
   setAllRules: React.Dispatch<ShortRule[]>
-}) {
-  const funcName: string = 'ActivateDisableSmall'
+}): React.ReactElement {
+  const funcName = 'ActivateDisableSmall'
   log.rend(funcName, fileName, area)
 
   return (
@@ -92,8 +92,8 @@ export function ActivateDisableBig({
 }: {
   rule: FullRule
   setRule: React.Dispatch<FullRule>
-}) {
-  const funcName: string = 'ActivateDisableBig'
+}): React.ReactElement {
+  const funcName = 'ActivateDisableBig'
   log.rend(funcName, fileName, area)
 
   return (

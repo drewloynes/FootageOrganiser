@@ -1,11 +1,11 @@
 import { ScrollArea } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
 
-const fileName: string = 'TermsAndConditions.tsx'
-const area: string = 'body'
+const fileName = 'TermsAndConditions.tsx'
+const area = 'body'
 
-const TermsAndConditions = () => {
-  const funcName: string = 'TermsAndConditions'
+const TermsAndConditions = (): React.ReactElement => {
+  const funcName = 'TermsAndConditions'
   log.rend(funcName, fileName, area)
 
   return (

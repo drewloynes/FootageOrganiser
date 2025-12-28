@@ -1,5 +1,5 @@
-const fileName: string = 'streamUpdates.ts'
-const area: string = 'utils'
+const fileName = 'streamUpdates.ts'
+const area = 'utils'
 
 export class StreamUpdate {
   // ID for the setInterval
@@ -29,8 +29,8 @@ export class StreamUpdate {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  start(initialMessageData: any) {
-    const funcName: string = 'start'
+  start(initialMessageData: any): void {
+    const funcName = 'start'
     entryLog(funcName, fileName, area)
 
     if (this.intervalId) {
@@ -48,7 +48,7 @@ export class StreamUpdate {
   }
 
   private async attemptSend(): Promise<void> {
-    const funcName: string = 'attemptSend'
+    const funcName = 'attemptSend'
     entryLog(funcName, fileName, area)
 
     try {
@@ -57,7 +57,7 @@ export class StreamUpdate {
         this.messageSendingFunciton(this.messageData)
         this.updatesToStream = false
       }
-    } catch (err) {
+    } catch {
       errorLog('messageSendingFunction failed', funcName, fileName, area)
     }
 
@@ -65,8 +65,8 @@ export class StreamUpdate {
     return
   }
 
-  stop() {
-    const funcName: string = 'stop'
+  stop(): void {
+    const funcName = 'stop'
     entryLog(funcName, fileName, area)
 
     this.messageData = undefined
@@ -83,8 +83,8 @@ export class StreamUpdate {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateData(messageData: any) {
-    const funcName: string = 'updateData'
+  updateData(messageData: any): void {
+    const funcName = 'updateData'
     entryLog(funcName, fileName, area)
 
     if (this.intervalId) {

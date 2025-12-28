@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 
-const fileName: string = 'EditRuleAwaitingChangesForm.tsx'
-const area: string = 'edit-rule'
+const fileName = 'EditRuleAwaitingChangesForm.tsx'
+const area = 'edit-rule'
 
-function EditRuleAwaitingChangesForm() {
-  const funcName: string = 'EditRuleAwaitingChangesForm'
+function EditRuleAwaitingChangesForm(): React.ReactElement {
+  const funcName = 'EditRuleAwaitingChangesForm'
   log.rend(funcName, fileName, area)
 
   return (

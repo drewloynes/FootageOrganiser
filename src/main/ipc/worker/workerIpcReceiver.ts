@@ -11,11 +11,11 @@ import {
 } from '../window/windowIpcSender'
 import { replySyncIpcMessageWorker } from './workerIpcSender'
 
-const fileName: string = 'workerIpcReceiver.ts'
-const area: string = 'worker-ipc'
+const fileName = 'workerIpcReceiver.ts'
+const area = 'worker-ipc'
 
-export function parseWorkerIpcMessage(message: AsyncIpcMessage | SyncIpcMessage): void {
-  const funcName: string = 'parseWorkerIpcMessage'
+export async function parseWorkerIpcMessage(message: AsyncIpcMessage | SyncIpcMessage): Promise<void> {
+  const funcName = 'parseWorkerIpcMessage'
   entryLog(funcName, fileName, area)
 
   switch (message.type) {
@@ -37,7 +37,7 @@ export function parseWorkerIpcMessage(message: AsyncIpcMessage | SyncIpcMessage)
     // Sync from main
     case 'worker-setup': {
       condLog('Received worker-setup IPC message', funcName, fileName, area)
-      workerSetupComplete()
+      await workerSetupComplete()
       break
     }
     // Sync from main

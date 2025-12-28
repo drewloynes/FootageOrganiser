@@ -1,10 +1,10 @@
 import * as fs from 'fs'
 
-const fileName: string = 'filePaths.ts'
-const area: string = 'utils'
+const fileName = 'filePaths.ts'
+const area = 'utils'
 
 export function pathExists(path: string): boolean {
-  const funcName: string = 'pathExists'
+  const funcName = 'pathExists'
   entryLog(funcName, fileName, area)
 
   const exists: boolean = fs.existsSync(path)

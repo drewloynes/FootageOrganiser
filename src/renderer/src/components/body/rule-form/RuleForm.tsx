@@ -21,8 +21,8 @@ import RuleFormLoading from './RuleFormLoading'
 import { RuleName } from './RuleName'
 import { RuleType } from './RuleType'
 
-const fileName: string = 'RuleForm.tsx'
-const area: string = 'rule-form'
+const fileName = 'RuleForm.tsx'
+const area = 'rule-form'
 
 export function RuleForm({
   newRule,
@@ -32,8 +32,8 @@ export function RuleForm({
   newRule: boolean
   initialRuleName?: string
   showDisableRule?: boolean
-}) {
-  const funcName: string = 'RuleForm'
+}): React.ReactElement {
+  const funcName = 'RuleForm'
   log.rend(funcName, fileName, area)
 
   const [loading, setLoading] = useState(true)
@@ -55,7 +55,7 @@ export function RuleForm({
   useEffect(() => {
     log.cond('useEffect: Set form defaults', funcName, fileName, area)
 
-    const fetchRuleSetDefaults = async () => {
+    const fetchRuleSetDefaults = async (): Promise<void> => {
       log.ipcSent(`Request rule data: ${initialRuleName}`, funcName, fileName, area)
       const fullRuleData: FullRule | undefined = await window.electron.getRule(initialRuleName)
       log.ipcRec('Rule data received', funcName, fileName, area, fullRuleData)
@@ -66,7 +66,7 @@ export function RuleForm({
 
     if (!newRule) {
       log.cond('Request rule data- Set defaults', funcName, fileName, area)
-      fetchRuleSetDefaults()
+      void fetchRuleSetDefaults()
     } else {
       log.cond('No loading needed', funcName, fileName, area)
       reset(STORE_RULE_DEFAULT_VALUES)
@@ -74,10 +74,10 @@ export function RuleForm({
     }
   }, [])
 
-  const onSubmit = (ruleData: StoreRule) => {
+  const onSubmit = (ruleData: StoreRule): void => {
     log.cond('Rule-Form Submitted', funcName, fileName, area)
 
-    const submitAddRule = async (ruleData: StoreRule) => {
+    const submitAddRule = async (ruleData: StoreRule): Promise<void> => {
       try {
         log.ipcSent('add-rule', funcName, fileName, area, ruleData)
         window.electron.addRule(ruleData)
@@ -86,7 +86,7 @@ export function RuleForm({
       }
     }
 
-    const submitEditRule = async (ruleData: StoreRule) => {
+    const submitEditRule = async (ruleData: StoreRule): Promise<void> => {
       try {
         log.ipcSent('edit-rule', funcName, fileName, area, ruleData)
         window.electron.modifyRule(initialRuleName, ruleData)
@@ -97,16 +97,17 @@ export function RuleForm({
 
     if (newRule) {
       log.cond('Add Rule', funcName, fileName, area)
-      submitAddRule(ruleData)
+      void submitAddRule(ruleData)
     } else {
       log.cond('Edit Rule', funcName, fileName, area)
-      submitEditRule(ruleData)
+      void submitEditRule(ruleData)
     }
 
-    navigate(`/`)
+    void navigate(`/`)
   }
 
-  const onError = (errors: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onError = (errors: any): void => {
     setError(true)
     console.log('Zod Errors:', errors)
   }

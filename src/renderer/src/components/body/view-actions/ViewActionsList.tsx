@@ -2,11 +2,17 @@ import { ScrollArea } from '@renderer/components/ui/scroll-area'
 import { Separator } from '@renderer/components/ui/separator'
 import { CopyPaths } from '@shared-all/types/ruleTypes'
 
-const fileName: string = 'ViewActionsList.tsx'
-const area: string = 'view-actions'
+const fileName = 'ViewActionsList.tsx'
+const area = 'view-actions'
 
-export function ActionList({ title, actions }: { title: string; actions: string[] }) {
-  const funcName: string = 'ActionList'
+export function ActionList({
+  title,
+  actions
+}: {
+  title: string
+  actions: string[]
+}): React.ReactElement {
+  const funcName = 'ActionList'
   log.rend(funcName, fileName, area)
 
   return (
@@ -30,8 +36,14 @@ export function ActionList({ title, actions }: { title: string; actions: string[
   )
 }
 
-export function ActionCopyList({ title, actions }: { title: string; actions: CopyPaths[] }) {
-  const funcName: string = 'ActionCopyList'
+export function ActionCopyList({
+  title,
+  actions
+}: {
+  title: string
+  actions: CopyPaths[]
+}): React.ReactElement {
+  const funcName = 'ActionCopyList'
   log.rend(funcName, fileName, area)
 
   return (

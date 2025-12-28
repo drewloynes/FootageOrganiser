@@ -16,14 +16,14 @@ import {
   ignoreSystemObject
 } from './evaluationUtils'
 
-const fileName: string = 'evaluation.ts'
-const area: string = 'evaluation'
+const fileName = 'evaluation.ts'
+const area = 'evaluation'
 
 export async function evaluateCurrentRules(): Promise<boolean> {
   const funcName = 'evaluateCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let hasExecutableActions: boolean = false
+  let hasExecutableActions = false
   if (!glob.workerGlobals.currentRules) {
     errorExitLog(`currentRules doesn't exist`, funcName, fileName, area)
     return hasExecutableActions
@@ -51,7 +51,7 @@ export async function evaluateCurrentRules(): Promise<boolean> {
   // if any rules are awaiting evaluation - recurse this function
   if (glob.workerGlobals.currentRules.containsRulesAwaitingEvaluation()) {
     condLog(`Some rules still require evaluation`, funcName, fileName, area)
-    evaluateCurrentRules()
+    await evaluateCurrentRules()
   }
 
   exitLog(funcName, fileName, area)
@@ -237,7 +237,7 @@ function updateDirActionQueuesForOriginPath(
   initialPath: string,
   pathToDir: string
 ): void {
-  const funcName: string = 'updateDirActionQueuesForOriginPath'
+  const funcName = 'updateDirActionQueuesForOriginPath'
   entryLog(funcName, fileName, area)
 
   // Only need to add directories in mirroring - Copy files just ... copies files

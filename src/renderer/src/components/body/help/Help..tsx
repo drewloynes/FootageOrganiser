@@ -5,11 +5,11 @@ import HelpRuleConfig from './HelpRuleConfig'
 import HelpRuleManagement from './HelpRuleManagement'
 import HelpSettings from './HelpSettings'
 
-const fileName: string = 'Help.tsx'
-const area: string = 'help'
+const fileName = 'Help.tsx'
+const area = 'help'
 
-const Help = () => {
-  const funcName: string = 'Help'
+const Help = (): React.ReactElement => {
+  const funcName = 'Help'
   log.rend(funcName, fileName, area)
 
   return (

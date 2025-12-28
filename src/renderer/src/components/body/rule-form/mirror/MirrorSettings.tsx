@@ -11,11 +11,11 @@ import { Control } from 'react-hook-form'
 import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'
 
-const fileName: string = 'MirrorSettings.tsx'
-const area: string = 'rule-form'
+const fileName = 'MirrorSettings.tsx'
+const area = 'rule-form'
 
-export function MirrorSettings({ control }: { control: Control<StoreRule> }) {
-  const funcName: string = 'MirrorSettings'
+export function MirrorSettings({ control }: { control: Control<StoreRule> }): React.ReactElement {
+  const funcName = 'MirrorSettings'
   log.rend(funcName, fileName, area)
 
   return (

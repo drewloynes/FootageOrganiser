@@ -91,7 +91,7 @@ const CLIENT_LOG_CONFIG: ClientLoggingConfiguration = {
 
 Inside clientLoggerConfig.ts
 
-The dev value will automatically change to false when running not in dev, using scripts/setProd.cjs.
+The dev value will automatically change to false when running not in dev, using scripts/setProd.mjs.
 
 ## Code Signing
 

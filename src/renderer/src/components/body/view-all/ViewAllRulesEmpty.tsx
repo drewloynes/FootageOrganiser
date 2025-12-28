@@ -3,11 +3,11 @@ import { motion } from 'framer-motion'
 import { AlertCircle, Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-const fileName: string = 'ViewAllRulesEmpty.tsx'
-const area: string = 'view-all'
+const fileName = 'ViewAllRulesEmpty.tsx'
+const area = 'view-all'
 
-function ViewAllRulesEmpty() {
-  const funcName: string = 'ViewAllRulesEmpty'
+function ViewAllRulesEmpty(): React.ReactElement {
+  const funcName = 'ViewAllRulesEmpty'
   log.rend(funcName, fileName, area)
 
   return (

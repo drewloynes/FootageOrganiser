@@ -9,11 +9,11 @@ import { setCurrentRules } from './rules/currentRules'
 import { setCurrentSettings } from './settings/currentSettings'
 import { startAutoDeleteOldLogs } from './storage/logs/storeLogs'
 
-const fileName: string = 'workerSetup.ts'
-const area: string = 'worker'
+const fileName = 'workerSetup.ts'
+const area = 'worker'
 
 export async function setupWorker(): Promise<void> {
-  const funcName: string = 'setupWorker'
+  const funcName = 'setupWorker'
   entryLog(funcName, fileName, area)
 
   // Need main port setup to contact main to fill worker globals
@@ -24,7 +24,7 @@ export async function setupWorker(): Promise<void> {
 
   await fillWorkerGlobals()
   // Don't await this async function - Want it to run in the background permanently
-  startAutoDeleteOldLogs()
+  void startAutoDeleteOldLogs()
 
   // Tell main process worker is setup
   sendAsyncIpcMessageMain('worker-setup', {})
@@ -34,7 +34,7 @@ export async function setupWorker(): Promise<void> {
 }
 
 async function fillWorkerGlobals(): Promise<void> {
-  const funcName: string = 'fillWorkerGlobals'
+  const funcName = 'fillWorkerGlobals'
   entryLog(funcName, fileName, area)
 
   await setStorageLocation()
@@ -48,7 +48,7 @@ async function fillWorkerGlobals(): Promise<void> {
 }
 
 async function setStorageLocation(): Promise<void> {
-  const funcName: string = 'setStorageLocation'
+  const funcName = 'setStorageLocation'
   entryLog(funcName, fileName, area)
 
   glob.workerGlobals.storageLocation = (await sendSyncIpcMessageMain(

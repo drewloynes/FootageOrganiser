@@ -1,15 +1,15 @@
 import { endSleep, sleep } from '@shared-node/utils/timer'
 import { parseMainIpcMessage } from './mainIpcReceiver'
 
-const fileName: string = 'mainIpcSetup.ts'
-const area: string = 'ipc'
+const fileName = 'mainIpcSetup.ts'
+const area = 'ipc'
 
 export async function setupMainIpc(): Promise<boolean> {
-  const funcName: string = 'setupMainIpc'
+  const funcName = 'setupMainIpc'
   entryLog(funcName, fileName, area)
 
-  let setupMainIpcSuccess: boolean = true
-  const sleepId: string = 'awaiting-main-ipc'
+  let setupMainIpcSuccess = true
+  const sleepId = 'awaiting-main-ipc'
 
   // Listen to receive a message from main with port information
   process.parentPort.on('message', (e) => {
@@ -35,7 +35,7 @@ export async function setupMainIpc(): Promise<boolean> {
 }
 
 function setupMainIpcEvents(): void {
-  const funcName: string = 'setupMainIpcEvents'
+  const funcName = 'setupMainIpcEvents'
   entryLog(funcName, fileName, area)
 
   glob.workerGlobals.mainPort?.on('message', async (e) => {

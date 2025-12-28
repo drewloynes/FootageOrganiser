@@ -23,11 +23,15 @@ import { ArrowRight } from 'lucide-react'
 import { Control } from 'react-hook-form'
 import { TargetSubPathFormatFolderDisplay } from './TargetSubPathFormatFolderDisplay'
 
-const fileName: string = 'TargetSubPathFormat.tsx'
-const area: string = 'rule-form'
+const fileName = 'TargetSubPathFormat.tsx'
+const area = 'rule-form'
 
-export function TargetSubPathFormat({ control }: { control: Control<StoreRule> }) {
-  const funcName: string = 'TargetSubPathFormat'
+export function TargetSubPathFormat({
+  control
+}: {
+  control: Control<StoreRule>
+}): React.ReactElement {
+  const funcName = 'TargetSubPathFormat'
   log.rend(funcName, fileName, area)
 
   return (
@@ -42,20 +46,20 @@ export function TargetSubPathFormat({ control }: { control: Control<StoreRule> }
           (item) => !selectedFolders.includes(item)
         )
 
-        const addFolder = (newFolder: TARGET_SUB_PATH_FORMAT_OPTIONS) => {
+        const addFolder = (newFolder: TARGET_SUB_PATH_FORMAT_OPTIONS): void => {
           log.cond(`Added: ${newFolder}`, funcName, fileName, area)
           if (!selectedFolders.includes(newFolder)) {
             field.onChange([...selectedFolders, newFolder])
           }
         }
 
-        const removeFolder = (removedFolder: TARGET_SUB_PATH_FORMAT_OPTIONS) => {
+        const removeFolder = (removedFolder: TARGET_SUB_PATH_FORMAT_OPTIONS): void => {
           log.cond(`Removed: ${removedFolder}`, funcName, fileName, area)
           const updated = selectedFolders.filter((textFolder) => textFolder !== removedFolder)
           field.onChange(updated)
         }
 
-        const onDragEnd = ({ active, over }: DragEndEvent) => {
+        const onDragEnd = ({ active, over }: DragEndEvent): void => {
           log.cond(`Folder Dragged`, funcName, fileName, area)
 
           if (!over || active.id === over.id) {

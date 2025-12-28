@@ -3,8 +3,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { Card } from '@renderer/components/ui/card'
 import { X } from 'lucide-react'
 
-const fileName: string = 'TargetSubPathFormatItem.tsx'
-const area: string = 'rule-form'
+const fileName = 'TargetSubPathFormatItem.tsx'
+const area = 'rule-form'
 
 export function TargetSubPathFormatFolderDisplay({
   folder,
@@ -12,8 +12,8 @@ export function TargetSubPathFormatFolderDisplay({
 }: {
   folder: string
   removeItem: (id: string) => void
-}) {
-  const funcName: string = 'TargetSubPathFormatFolderDisplay'
+}): React.ReactElement {
+  const funcName = 'TargetSubPathFormatFolderDisplay'
   log.rend(funcName, fileName, area)
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({

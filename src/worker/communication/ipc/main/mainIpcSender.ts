@@ -1,10 +1,10 @@
 import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 
-const fileName: string = 'mainIpcSender.ts'
-const area: string = 'ipc'
+const fileName = 'mainIpcSender.ts'
+const area = 'ipc'
 
 function sendIpcMessageMain(message: AsyncIpcMessage | SyncIpcMessage): void {
-  const funcName: string = 'sendIpcMessageMain'
+  const funcName = 'sendIpcMessageMain'
   entryLog(funcName, fileName, area)
 
   glob.workerGlobals.mainPort?.postMessage(message)
@@ -15,7 +15,7 @@ function sendIpcMessageMain(message: AsyncIpcMessage | SyncIpcMessage): void {
 }
 
 export function sendAsyncIpcMessageMain(type: string, data: unknown): void {
-  const funcName: string = 'sendAsyncIpcMessageMain'
+  const funcName = 'sendAsyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
   sendIpcMessageMain(new AsyncIpcMessage(type, data))
@@ -25,7 +25,7 @@ export function sendAsyncIpcMessageMain(type: string, data: unknown): void {
 }
 
 export async function sendSyncIpcMessageMain(type: string, data: unknown): Promise<unknown> {
-  const funcName: string = 'sendSyncIpcMessageMain'
+  const funcName = 'sendSyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
   const receivedData = await SyncIpcMessage.sendSyncIpc(
@@ -40,7 +40,7 @@ export async function sendSyncIpcMessageMain(type: string, data: unknown): Promi
 }
 
 export function replySyncIpcMessageMain(originalMessage: SyncIpcMessage, data: unknown): void {
-  const funcName: string = 'replySyncIpcMessageMain'
+  const funcName = 'replySyncIpcMessageMain'
   entryLog(funcName, fileName, area)
 
   SyncIpcMessage.replySyncIpc(originalMessage, data, sendIpcMessageMain)

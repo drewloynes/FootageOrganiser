@@ -7,7 +7,7 @@ import { CLIENT_LOG_LEVEL } from './clientLogger'
 // - file: file name
 // - area: area
 // (Empty array filters all in)
-type ClientLoggingConfiguration = {
+interface ClientLoggingConfiguration {
   dev: boolean
   level: CLIENT_LOG_LEVEL[]
   func: string[]
@@ -16,7 +16,7 @@ type ClientLoggingConfiguration = {
 }
 
 const CLIENT_LOG_CONFIG: ClientLoggingConfiguration = {
-  dev: false,
+  dev: true,
   level: [],
   func: [],
   file: [],

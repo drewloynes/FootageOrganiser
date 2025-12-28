@@ -2,11 +2,11 @@ import { Alert } from '@shared-all/types/alert'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog'
 
-const fileName: string = 'AlertPopUp.tsx'
-const area: string = 'alert'
+const fileName = 'AlertPopUp.tsx'
+const area = 'alert'
 
-function AlertPopUp() {
-  const funcName: string = 'AlertPopUp'
+function AlertPopUp(): React.ReactElement {
+  const funcName = 'AlertPopUp'
   log.rend(funcName, fileName, area)
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -15,7 +15,7 @@ function AlertPopUp() {
   useEffect(() => {
     log.cond('useEffect: Setup receiving alert IPC', funcName, fileName, area)
 
-    function handleAlert(alert: Alert) {
+    function handleAlert(alert: Alert): void {
       log.ipcRec('Alert', funcName, fileName, area, alert)
       setAlert(alert)
       setIsDialogOpen(true)

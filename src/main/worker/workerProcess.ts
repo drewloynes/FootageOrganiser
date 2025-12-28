@@ -3,11 +3,11 @@ import workerPath from '@worker/worker?modulePath'
 import { utilityProcess } from 'electron'
 import { setupWorkerIpc } from '../ipc/worker/workerIpcSetup'
 
-const fileName: string = 'workerProcess.ts'
-const area: string = 'worker'
+const fileName = 'workerProcess.ts'
+const area = 'worker'
 
 export async function setupWorkerProcess(): Promise<void> {
-  const funcName: string = 'setupWorkerProcess'
+  const funcName = 'setupWorkerProcess'
   entryLog(funcName, fileName, area)
 
   startWorkerProcess()
@@ -22,7 +22,7 @@ export async function setupWorkerProcess(): Promise<void> {
 }
 
 function startWorkerProcess(): void {
-  const funcName: string = 'startWorkerProcess'
+  const funcName = 'startWorkerProcess'
   entryLog(funcName, fileName, area)
 
   glob.mainGlobals.workerProcess = utilityProcess.fork(workerPath)
@@ -31,13 +31,13 @@ function startWorkerProcess(): void {
   return
 }
 
-export function workerSetupComplete(): void {
-  const funcName: string = 'workerSetupComplete'
+export async function workerSetupComplete(): Promise<void> {
+  const funcName = 'workerSetupComplete'
   entryLog(funcName, fileName, area)
 
   glob.mainGlobals.workerSetup = true
   // Open window after app is fully setup
-  openWindow()
+  await openWindow()
 
   exitLog(funcName, fileName, area)
   return

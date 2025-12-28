@@ -54,7 +54,13 @@ if (loggerConfig.dev) {
 /* Setup logging functions */
 
 // Main logging function
-function logger(description, funcName, fileName, area = 'unknown', severity = 'info') {
+function logger(
+  description: string,
+  funcName: string,
+  fileName: string,
+  area = 'unknown',
+  severity = 'info'
+): void {
   if (shouldLog(funcName, fileName, area)) {
     winstonLogger.log(
       severity,
@@ -74,7 +80,7 @@ function logger(description, funcName, fileName, area = 'unknown', severity = 'i
 
 // Decide if it should be logged based on logging filters
 function shouldLog(funcName: string, fileName: string, area: string): boolean {
-  let shouldLog: boolean = false
+  let shouldLog = false
 
   if (!loggerConfig.dev) {
     return false
@@ -113,68 +119,68 @@ function matchStrings(string: string, matchStringArray: string[]): boolean {
 
 /* External Logging functions */
 
-export function entryLog(funcName, fileName, area = 'unknown') {
+export function entryLog(funcName, fileName, area = 'unknown'): void {
   const entryString = `Entry { ${funcName}`
   logger(entryString, funcName, fileName, area, 'func')
 }
 
-export function exitLog(funcName, fileName, area = 'unknown') {
+export function exitLog(funcName, fileName, area = 'unknown'): void {
   const entryString = `Exit } ${funcName}`
   logger(entryString, funcName, fileName, area, 'func')
 }
 
-export function condLog(description, funcName, fileName, area = 'unknown') {
+export function condLog(description, funcName, fileName, area = 'unknown'): void {
   const entryString = 'Cond: '
   logger(entryString.concat(description), funcName, fileName, area, 'cond')
 }
 
-export function condExitLog(description, funcName, fileName, area = 'unknown') {
+export function condExitLog(description, funcName, fileName, area = 'unknown'): void {
   condLog(description, funcName, fileName, area)
   exitLog(funcName, fileName, area)
 }
 
-export function ipcRecLog(description, funcName, fileName, area = 'unknown') {
+export function ipcRecLog(description, funcName, fileName, area = 'unknown'): void {
   const entryString = 'IPC Received: '
   logger(entryString.concat(description), funcName, fileName, area, 'ipc_')
 }
 
-export function ipcSentLog(description, funcName, fileName, area = 'unknown') {
+export function ipcSentLog(description, funcName, fileName, area = 'unknown'): void {
   const entryString = 'IPC Sent: '
   logger(entryString.concat(description), funcName, fileName, area, 'ipc_')
 }
 
-export function debugLog(description, funcName, fileName, area = 'unknown') {
+export function debugLog(description, funcName, fileName, area = 'unknown'): void {
   logger(description, funcName, fileName, area, 'debug')
 }
 
-export function debugExitLog(description, funcName, fileName, area = 'unknown') {
+export function debugExitLog(description, funcName, fileName, area = 'unknown'): void {
   logger(description, funcName, fileName, area, 'debug')
   exitLog(funcName, fileName, area)
 }
 
-export function infoLog(description, funcName, fileName, area = 'unknown') {
+export function infoLog(description, funcName, fileName, area = 'unknown'): void {
   logger(description, funcName, fileName, area, 'info')
 }
 
-export function infoExitLog(description, funcName, fileName, area = 'unknown') {
+export function infoExitLog(description, funcName, fileName, area = 'unknown'): void {
   infoLog(description, funcName, fileName, area)
   exitLog(funcName, fileName, area)
 }
 
-export function warnLog(description, funcName, fileName, area = 'unknown') {
+export function warnLog(description, funcName, fileName, area = 'unknown'): void {
   logger(description, funcName, fileName, area, 'warn')
 }
 
-export function warnExitLog(description, funcName, fileName, area = 'unknown') {
+export function warnExitLog(description, funcName, fileName, area = 'unknown'): void {
   warnLog(description, funcName, fileName, area)
   exitLog(funcName, fileName, area)
 }
 
-export function errorLog(description, funcName, fileName, area = 'unknown') {
+export function errorLog(description, funcName, fileName, area = 'unknown'): void {
   logger(description, funcName, fileName, area, 'error')
 }
 
-export function errorExitLog(description, funcName, fileName, area = 'unknown') {
+export function errorExitLog(description, funcName, fileName, area = 'unknown'): void {
   errorLog(description, funcName, fileName, area)
   exitLog(funcName, fileName, area)
 }

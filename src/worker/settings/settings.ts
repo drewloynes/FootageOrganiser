@@ -1,7 +1,7 @@
 import { CHECKSUM_TYPE } from '@shared-node/utils/checksum'
 
-const fileName: string = 'settings.ts'
-const area: string = 'settings'
+const fileName = 'settings.ts'
+const area = 'settings'
 
 export class Settings {
   // Minimum GBs of free storage in target path for action to be performed. Otherwise disable rule
@@ -14,10 +14,10 @@ export class Settings {
   #reevaluateSleepTime: number // Time in minutes
 
   constructor(
-    actionsCutoffInGBs: number = 10,
-    deleteOldLogsInDays: number = 30,
+    actionsCutoffInGBs = 10,
+    deleteOldLogsInDays = 30,
     checksumMethod: CHECKSUM_TYPE = CHECKSUM_TYPE.CRC,
-    reevaluateSleepTime: number = 10
+    reevaluateSleepTime = 10
   ) {
     const funcName = 'Settings Constructor'
     entryLog(funcName, fileName, area)
@@ -31,19 +31,19 @@ export class Settings {
     return
   }
 
-  get actionsCutoffInGBs() {
+  get actionsCutoffInGBs(): number {
     return this.#actionsCutoffInGBs
   }
 
-  get deleteOldLogsInDays() {
+  get deleteOldLogsInDays(): number {
     return this.#deleteOldLogsInDays
   }
 
-  get checksumMethod() {
+  get checksumMethod(): CHECKSUM_TYPE {
     return this.#checksumMethod
   }
 
-  get reevaluateSleepTime() {
+  get reevaluateSleepTime(): number {
     return this.#reevaluateSleepTime
   }
 }

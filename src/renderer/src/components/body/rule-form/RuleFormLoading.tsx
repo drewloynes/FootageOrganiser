@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 
-const fileName: string = 'RuleFormLoading.tsx'
-const area: string = 'rule-form'
+const fileName = 'RuleFormLoading.tsx'
+const area = 'rule-form'
 
-function RuleFormLoading() {
-  const funcName: string = 'RuleFormLoading'
+function RuleFormLoading(): React.ReactElement {
+  const funcName = 'RuleFormLoading'
   log.rend(funcName, fileName, area)
 
   return (

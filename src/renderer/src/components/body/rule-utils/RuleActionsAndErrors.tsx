@@ -7,11 +7,11 @@ import {
 } from '@shared-all/types/ruleTypes'
 import { CircleAlert, Info } from 'lucide-react'
 
-const fileName: string = 'RuleActionsAndErrors.tsx'
-const area: string = 'rule-utils'
+const fileName = 'RuleActionsAndErrors.tsx'
+const area = 'rule-utils'
 
-export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }) {
-  const funcName: string = 'RuleActionsAndErrors'
+export function RuleActionsAndErrors({ rule }: { rule: ShortRule | FullRule }): React.ReactElement {
+  const funcName = 'RuleActionsAndErrors'
   log.rend(funcName, fileName, area)
 
   return (

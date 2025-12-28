@@ -2,11 +2,11 @@ import { ScrollArea } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
 import { RuleForm } from './rule-form/RuleForm'
 
-const fileName: string = 'CreateNewRule.tsx'
-const area: string = 'body'
+const fileName = 'CreateNewRule.tsx'
+const area = 'body'
 
-function CreateRule() {
-  const funcName: string = 'CreateNewRule'
+function CreateRule(): React.ReactElement {
+  const funcName = 'CreateNewRule'
   log.rend(funcName, fileName, area)
 
   return (

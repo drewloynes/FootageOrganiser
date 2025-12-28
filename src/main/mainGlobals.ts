@@ -7,13 +7,13 @@ export class MainGlobals {
   // Port to worker process
   workerPort: Electron.MessagePortMain | undefined = undefined
   // Is worker process setup?
-  workerSetup: boolean = false
+  workerSetup = false
 
   /* Resolving promises */
   // Map for resolving normal SyncIpcMessages
-  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer> = new Map()
+  awaitingIpcMessages = new Map<string, PromiseResolveRejectTimer>()
   // Map for resolving sleeps
-  currentSleeps: Map<string, PromiseResolveTimer> = new Map()
+  currentSleeps = new Map<string, PromiseResolveTimer>()
 }
 
 export default MainGlobals

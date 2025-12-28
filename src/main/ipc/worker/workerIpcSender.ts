@@ -1,10 +1,10 @@
 import { AsyncIpcMessage, SyncIpcMessage } from '@shared-node/utils/ipc'
 
-const fileName: string = 'workerIpcSender.ts'
-const area: string = 'worker-ipc'
+const fileName = 'workerIpcSender.ts'
+const area = 'worker-ipc'
 
 function sendIpcMessageWorker(message: AsyncIpcMessage | SyncIpcMessage): void {
-  const funcName: string = 'sendIpcMessageWorker'
+  const funcName = 'sendIpcMessageWorker'
   entryLog(funcName, fileName, area)
 
   glob.mainGlobals.workerPort?.postMessage(message)
@@ -15,7 +15,7 @@ function sendIpcMessageWorker(message: AsyncIpcMessage | SyncIpcMessage): void {
 }
 
 export function sendAsyncIpcMessageWorker(type: string, data: unknown): void {
-  const funcName: string = 'sendAsyncIpcMessageWorker'
+  const funcName = 'sendAsyncIpcMessageWorker'
   entryLog(funcName, fileName, area)
 
   sendIpcMessageWorker(new AsyncIpcMessage(type, data))
@@ -25,7 +25,7 @@ export function sendAsyncIpcMessageWorker(type: string, data: unknown): void {
 }
 
 export async function sendSyncIpcMessageWorker(type: string, data: unknown): Promise<unknown> {
-  const funcName: string = 'sendSyncIpcMessageWorker'
+  const funcName = 'sendSyncIpcMessageWorker'
   entryLog(funcName, fileName, area)
 
   const receivedData = await SyncIpcMessage.sendSyncIpc(
@@ -40,7 +40,7 @@ export async function sendSyncIpcMessageWorker(type: string, data: unknown): Pro
 }
 
 export function replySyncIpcMessageWorker(originalMessage: SyncIpcMessage, data: unknown): void {
-  const funcName: string = 'replySyncIpcMessageWorker'
+  const funcName = 'replySyncIpcMessageWorker'
   entryLog(funcName, fileName, area)
 
   SyncIpcMessage.replySyncIpc(originalMessage, data, sendIpcMessageWorker)

@@ -10,11 +10,11 @@ import FootOrgSidebarBottom from './FootOrgSidebarBottom'
 import FootOrgSidebarFoot from './FootOrgSidebarFoot'
 import FootOrgSidebarTop from './FootOrgSidebarTop'
 
-const fileName: string = 'FootOrgSidebar.tsx'
-const area: string = 'sidebar'
+const fileName = 'FootOrgSidebar.tsx'
+const area = 'sidebar'
 
-function FootOrgSidebar() {
-  const funcName: string = 'FootOrgSidebar'
+function FootOrgSidebar(): React.ReactElement  {
+  const funcName = 'FootOrgSidebar'
   log.rend(funcName, fileName, area)
 
   return (

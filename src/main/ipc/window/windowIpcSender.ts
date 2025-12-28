@@ -2,11 +2,11 @@ import { getWindow } from '@main/window/window'
 import { Alert } from '@shared-all/types/alert'
 import { FullRule, ShortRule } from '@shared-all/types/ruleTypes'
 
-const fileName: string = 'windowIpcSender.ts'
-const area: string = 'window-ipc'
+const fileName = 'windowIpcSender.ts'
+const area = 'window-ipc'
 
 export function sendAlertToWindow(alert: Alert): void {
-  const funcName: string = 'sendAlertToWindow'
+  const funcName = 'sendAlertToWindow'
   entryLog(funcName, fileName, area)
 
   getWindow()?.webContents.send('alert', alert)
@@ -16,7 +16,7 @@ export function sendAlertToWindow(alert: Alert): void {
 }
 
 export function sendAllRulesToWindow(allRules: ShortRule[]): void {
-  const funcName: string = 'sendAllRulesToWindow'
+  const funcName = 'sendAllRulesToWindow'
   entryLog(funcName, fileName, area)
 
   getWindow()?.webContents.send('all-rules', allRules)
@@ -26,7 +26,7 @@ export function sendAllRulesToWindow(allRules: ShortRule[]): void {
 }
 
 export function sendRuleToWindow(rule: FullRule): void {
-  const funcName: string = 'sendRuleToWindow'
+  const funcName = 'sendRuleToWindow'
   entryLog(funcName, fileName, area)
 
   getWindow()?.webContents.send('rule', rule)

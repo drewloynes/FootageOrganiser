@@ -1,10 +1,10 @@
 import { stopAllRulesStream, stopEveryRuleStream } from '@main/rules/rulesWindowCallbacks'
 
-const fileName: string = 'workerUtils.ts'
-const area: string = 'worker'
+const fileName = 'workerUtils.ts'
+const area = 'worker'
 
 export function stopAllStreams(): void {
-  const funcName: string = 'stopAllStreams'
+  const funcName = 'stopAllStreams'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {

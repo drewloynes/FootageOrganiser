@@ -11,8 +11,8 @@ import { Control } from 'react-hook-form'
 import { IncludeExcludeLists } from '../utils/IncludeExcludeLists'
 import { RuleFormCheckBox } from '../utils/RuleFormCheckBox'
 
-const fileName: string = 'GeneralAdvancedSettings.tsx'
-const area: string = 'rule-form'
+const fileName = 'GeneralAdvancedSettings.tsx'
+const area = 'rule-form'
 
 export function GeneralAdvancedSettings({
   control,
@@ -20,8 +20,8 @@ export function GeneralAdvancedSettings({
 }: {
   control: Control<StoreRule>
   showDisableRule: boolean
-}) {
-  const funcName: string = 'GeneralAdvancedSettings'
+}): React.ReactElement  {
+  const funcName = 'GeneralAdvancedSettings'
   log.rend(funcName, fileName, area)
 
   return (

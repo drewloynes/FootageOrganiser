@@ -11,14 +11,14 @@ import { Rule } from '@worker/rules/rule'
 import { abortIfStateAwaitingChanges } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
 
-const fileName: string = 'executionUtils.ts'
-const area: string = 'execution'
+const fileName = 'executionUtils.ts'
+const area = 'execution'
 
 export async function spaceToCopyFile(fileFromPath: string, fileToPath: string): Promise<boolean> {
-  const funcName: string = 'spaceToCopyFile'
+  const funcName = 'spaceToCopyFile'
   entryLog(funcName, fileName, area)
 
-  let isSpace: boolean = false
+  let isSpace = false
   await updateCurrentDriveInfo()
   const driveInfo: DriveInfo | undefined = getDriveInfoFromPath(fileToPath)
 
@@ -41,8 +41,8 @@ export async function spaceToCopyFile(fileFromPath: string, fileToPath: string):
   return isSpace
 }
 
-export async function handleOutOfDriveSpace(rule: Rule, files: CopyPaths) {
-  const funcName: string = 'handleOutOfDriveSpace'
+export async function handleOutOfDriveSpace(rule: Rule, files: CopyPaths): Promise<void> {
+  const funcName = 'handleOutOfDriveSpace'
   entryLog(funcName, fileName, area)
 
   const outOfSpaceVolumeName = getVolumeNameFromPath(files.to)
@@ -58,8 +58,8 @@ export async function handleOutOfDriveSpace(rule: Rule, files: CopyPaths) {
   return
 }
 
-export async function executionFailed(rule: Rule, title: string, message: string) {
-  const funcName: string = 'executionFailed'
+export async function executionFailed(rule: Rule, title: string, message: string): Promise<void> {
+  const funcName = 'executionFailed'
   entryLog(funcName, fileName, area)
 
   sendAlertToMain(title, message)

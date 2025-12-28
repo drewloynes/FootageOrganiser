@@ -1,8 +1,8 @@
-const fileName: string = 'DraggableTopBar.tsx'
-const area: string = 'app'
+const fileName = 'DraggableTopBar.tsx'
+const area = 'app'
 
-function DraggableTopBar() {
-  const funcName: string = 'DraggableTopBar'
+function DraggableTopBar(): React.ReactElement {
+  const funcName = 'DraggableTopBar'
   log.rend(funcName, fileName, area)
 
   return <header className="absolute inset-0 bg-transparent h-12 " />

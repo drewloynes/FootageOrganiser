@@ -1,11 +1,11 @@
 import { Skeleton } from '@renderer/components/ui/skeleton'
 import { motion } from 'framer-motion'
 
-const fileName: string = 'ViewAllRulesLoading.tsx'
-const area: string = 'view-all'
+const fileName = 'ViewAllRulesLoading.tsx'
+const area = 'view-all'
 
-function ViewAllRulesLoading() {
-  const funcName: string = 'ViewAllRulesLoading'
+function ViewAllRulesLoading(): React.ReactElement {
+  const funcName = 'ViewAllRulesLoading'
   log.rend(funcName, fileName, area)
 
   return (

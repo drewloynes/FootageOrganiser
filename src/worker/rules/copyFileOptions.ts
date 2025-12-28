@@ -55,23 +55,23 @@ export class CopyFileOptions {
     return
   }
 
-  get targetSubPathFormat() {
+  get targetSubPathFormat(): TARGET_SUB_PATH_FORMAT_OPTIONS[] {
     return this.#targetSubPathFormat
   }
 
-  get customDirectoryName() {
+  get customDirectoryName(): string {
     return this.#customDirectoryName
   }
 
-  get deleteCopiedFiles() {
+  get deleteCopiedFiles(): boolean {
     return this.#deleteCopiedFiles
   }
 
-  get deleteUnderOtherPaths() {
+  get deleteUnderOtherPaths(): boolean {
     return this.#deleteUnderOtherPaths
   }
 
-  get otherPaths() {
+  get otherPaths(): PathInVolume[] {
     return this.#otherPaths
   }
 
@@ -103,11 +103,11 @@ export class CopyFileOptions {
     return clonedCopyFileOptions
   }
 
-  async generateTargetSubPath(pathToOriginFile) {
+  async generateTargetSubPath(pathToOriginFile): Promise<string> {
     const funcName = 'generateTargetSubPath'
     entryLog(funcName, fileName, area)
 
-    let formatPath: string = ''
+    let formatPath = ''
     const fileStats = await fs.promises.stat(pathToOriginFile)
 
     for (const formatItem of this.targetSubPathFormat) {
@@ -122,7 +122,7 @@ export class CopyFileOptions {
           condLog(`Add month to path format`, funcName, fileName, area)
           const monthNum: number = fileStats.birthtime.getMonth() + 1 // month counts from 0
           const monthName: string = fileStats.birthtime.toLocaleString('default', { month: 'long' })
-          const monthPath: string = `${monthNum}-${monthName}`
+          const monthPath = `${monthNum}-${monthName}`
           formatPath = formatPath.concat(path.sep, `${monthPath}`)
           break
         }

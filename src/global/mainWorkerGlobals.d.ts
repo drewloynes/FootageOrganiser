@@ -34,7 +34,7 @@ declare global {
   function ipcRecLog(description: string, funcName: string, fileName: string, area?: string): void
   function ipcSentLog(description: string, funcName: string, fileName: string, area?: string): void
 
-  // eslint-disable-next-line no-var
+   
   var glob: NodeJS.Global & typeof globalThis
 
   const FOOTAGE_ORGANISER_VERSION: string

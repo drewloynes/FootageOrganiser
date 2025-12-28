@@ -9,11 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@renderer/comp
 import { RULE_TYPE, StoreRule } from '@shared-all/types/ruleTypes'
 import { Control } from 'react-hook-form'
 
-const fileName: string = 'RuleType.tsx'
-const area: string = 'rule-form'
+const fileName = 'RuleType.tsx'
+const area = 'rule-form'
 
-export function RuleType({ control }: { control: Control<StoreRule> }) {
-  const funcName: string = 'RuleType'
+export function RuleType({ control }: { control: Control<StoreRule> }): React.ReactElement {
+  const funcName = 'RuleType'
   log.rend(funcName, fileName, area)
 
   return (

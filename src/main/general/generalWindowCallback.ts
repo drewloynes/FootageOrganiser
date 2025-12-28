@@ -5,11 +5,11 @@ import path from 'path'
 import { sendSyncIpcMessageWorker } from '../ipc/worker/workerIpcSender'
 import { getWindow } from '../window/window'
 
-const fileName: string = 'generalWindowCallback.ts'
-const area: string = 'general'
+const fileName = 'generalWindowCallback.ts'
+const area = 'general'
 
 export async function chooseDirectory(): Promise<ShortPathInVolume | undefined> {
-  const funcName: string = 'chooseDirectory'
+  const funcName = 'chooseDirectory'
   entryLog(funcName, fileName, area)
 
   let shortPathInVolume: ShortPathInVolume | undefined = undefined
@@ -43,7 +43,7 @@ export async function chooseDirectory(): Promise<ShortPathInVolume | undefined> 
 }
 
 export async function openLogsFolder(): Promise<void> {
-  const funcName: string = 'openLogsFolder'
+  const funcName = 'openLogsFolder'
   entryLog(funcName, fileName, area)
 
   const logsPath = path.join(app.getPath('userData'), 'logs')
@@ -58,7 +58,7 @@ export async function openLogsFolder(): Promise<void> {
 }
 
 export async function openGithub(): Promise<void> {
-  const funcName: string = 'openGithub'
+  const funcName = 'openGithub'
   entryLog(funcName, fileName, area)
 
   await shell.openExternal('https://github.com/drewloynes/FootageOrganiser')
@@ -68,7 +68,7 @@ export async function openGithub(): Promise<void> {
 }
 
 export async function openReportBug(): Promise<void> {
-  const funcName: string = 'openReportBug'
+  const funcName = 'openReportBug'
   entryLog(funcName, fileName, area)
 
   await shell.openExternal('https://github.com/drewloynes/FootageOrganiser/issues/new')

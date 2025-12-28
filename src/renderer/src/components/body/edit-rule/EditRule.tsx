@@ -23,11 +23,11 @@ import { StartStopBig } from '../rule-utils/StartStop'
 import EditRuleAwaitingChangesForm from './EditRuleAwaitingChangesForm'
 import EditRuleLoading from './EditRuleLoading'
 
-const fileName: string = 'EditRule.tsx'
-const area: string = 'edit-rule'
+const fileName = 'EditRule.tsx'
+const area = 'edit-rule'
 
-export function EditRule() {
-  const funcName: string = 'EditRule'
+export function EditRule(): React.ReactElement {
+  const funcName = 'EditRule'
   log.rend(funcName, fileName, area)
 
   let { ruleName } = useParams<{ ruleName: string }>()
@@ -39,7 +39,7 @@ export function EditRule() {
   if (ruleName === undefined) {
     log.cond('Rule name not defined', funcName, fileName, area)
     ruleName = ''
-    navigate(`/`)
+    void navigate(`/`)
   }
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export function EditRule() {
               <AlertDialogAction
                 onClick={() => {
                   window.electron.deleteRule(ruleName)
-                  navigate(`/`)
+                  void navigate(`/`)
                 }}
               >
                 Continue

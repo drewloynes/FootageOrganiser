@@ -12,11 +12,11 @@ import {
 } from '../ui/sidebar'
 import SidebarItem from './SidebarItem'
 
-const fileName: string = 'FootOrgSidebarTop.tsx'
-const area: string = 'sidebar'
+const fileName = 'FootOrgSidebarTop.tsx'
+const area = 'sidebar'
 
-function FootOrgSidebarTop() {
-  const funcName: string = 'FootOrgSidebarTop'
+function FootOrgSidebarTop(): React.ReactElement {
+  const funcName = 'FootOrgSidebarTop'
   log.rend(funcName, fileName, area)
 
   const [openControlRules, setOpenControlRules] = useState(false)
