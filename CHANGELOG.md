@@ -14,6 +14,8 @@ Fixes:
 
 - Removed many unnecessary settings in electron-builder.
 
+- Automatically create action logs directory on program start.
+
 ## 1.1.1
 
 Tooling:
