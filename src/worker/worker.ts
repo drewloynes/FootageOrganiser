@@ -1,7 +1,7 @@
 // Entry File for the worker process
-
 import initWorkerGlobals from '@worker/workerInitialisation'
 import { setupWorker } from '@worker/workerSetup'
+import 'source-map-support/register'
 import { runWorker } from './runWorker'
 
 const fileName: string = 'worker.ts'

@@ -12,41 +12,44 @@ const levels = {
   func: 7
 }
 
-const transports = [
-  new winston.transports.Console(),
-  new winston.transports.File({
-    filename: 'logs/error.ans',
-    level: 'warn'
-  }),
-  new winston.transports.File({ filename: 'logs/server.ans' })
-]
+let winstonLogger: winston.Logger
+if (loggerConfig.dev) {
+  const transports = [
+    new winston.transports.Console(),
+    new winston.transports.File({
+      filename: 'logs/error.ans',
+      level: 'warn'
+    }),
+    new winston.transports.File({ filename: 'logs/server.ans' })
+  ]
 
-const format = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.align(),
-  winston.format.printf((info) => `[${info.level}]: ${info.message}|${info.timestamp}|`),
-  winston.format.colorize({ all: true })
-)
+  const format = winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
+    winston.format.align(),
+    winston.format.printf((info) => `[${info.level}]: ${info.message}|${info.timestamp}|`),
+    winston.format.colorize({ all: true })
+  )
 
-const colors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  debug: 'blue',
-  http: 'magenta',
-  ipc_: 'magenta',
-  cond: 'cyan',
-  func: 'grey'
+  const colors = {
+    error: 'red',
+    warn: 'yellow',
+    info: 'green',
+    debug: 'blue',
+    http: 'magenta',
+    ipc_: 'magenta',
+    cond: 'cyan',
+    func: 'grey'
+  }
+
+  winston.addColors(colors)
+
+  winstonLogger = winston.createLogger({
+    level: loggerConfig.logLevel,
+    levels,
+    format,
+    transports
+  })
 }
-
-winston.addColors(colors)
-
-const winstonLogger = winston.createLogger({
-  level: loggerConfig.logLevel,
-  levels,
-  format,
-  transports
-})
 
 /* Setup logging functions */
 

@@ -1,4 +1,5 @@
 import { CopyPaths } from '@shared-all/types/ruleTypes'
+import { pathExists } from '@shared-node/utils/filePaths'
 import { sleep } from '@shared-node/utils/timer'
 import * as fs from 'fs'
 import path from 'path'
@@ -100,23 +101,28 @@ export function deleteOldLogs(): void {
     condLog('Storage location exists', funcName, fileName, area)
 
     const logsLocation: string = path.join(glob.workerGlobals.storageLocation, 'logs')
-    const logDirectories: string[] = fs
-      .readdirSync(logsLocation)
-      .filter((file) => fs.statSync(path.join(logsLocation, file)).isDirectory())
-    const now = new Date()
-    for (const logDirectory of logDirectories) {
-      condLog(`For log directory: ${logDirectory}`, funcName, fileName, area)
 
-      const dirDate = new Date(logDirectory)
-      if (isNaN(dirDate.getTime())) {
-        warnLog('Could not parse date of log directory', funcName, fileName, area)
-        continue
-      }
+    if (pathExists(logsLocation)) {
+      condLog('Logs location exists', funcName, fileName, area)
 
-      const logDirectoryAge = (now.getTime() - dirDate.getTime()) / (1000 * 60 * 60 * 24)
-      if (logDirectoryAge > LogDirectoryMaxAge) {
-        condLog(`Delete log directory ${logDirectory}`, funcName, fileName, area)
-        fs.rmSync(path.join(logsLocation, logDirectory), { recursive: true, force: true })
+      const logDirectories: string[] = fs
+        .readdirSync(logsLocation)
+        .filter((file) => fs.statSync(path.join(logsLocation, file)).isDirectory())
+      const now = new Date()
+      for (const logDirectory of logDirectories) {
+        condLog(`For log directory: ${logDirectory}`, funcName, fileName, area)
+
+        const dirDate = new Date(logDirectory)
+        if (isNaN(dirDate.getTime())) {
+          warnLog('Could not parse date of log directory', funcName, fileName, area)
+          continue
+        }
+
+        const logDirectoryAge = (now.getTime() - dirDate.getTime()) / (1000 * 60 * 60 * 24)
+        if (logDirectoryAge > LogDirectoryMaxAge) {
+          condLog(`Delete log directory ${logDirectory}`, funcName, fileName, area)
+          fs.rmSync(path.join(logsLocation, logDirectory), { recursive: true, force: true })
+        }
       }
     }
   }

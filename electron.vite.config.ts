@@ -22,7 +22,8 @@ export default defineConfig({
           main: resolve(__dirname, 'src/main/main.ts'),
           worker: resolve(__dirname, 'src/worker/worker.ts')
         }
-      }
+      },
+      sourcemap: true
     },
     define: {
       FOOTAGE_ORGANISER_VERSION: JSON.stringify(packageJson.version)
@@ -38,7 +39,8 @@ export default defineConfig({
         output: {
           format: 'cjs'
         }
-      }
+      },
+      sourcemap: true
     }
   },
   renderer: {
@@ -54,6 +56,9 @@ export default defineConfig({
     },
     define: {
       FOOTAGE_ORGANISER_VERSION: JSON.stringify(packageJson.version)
+    },
+    build: {
+      sourcemap: true
     },
     plugins: [react(), tailwindcss()]
   }

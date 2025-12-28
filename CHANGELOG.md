@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+Fixes:
+
+- Fixed non-existent folder bug to make the Mac version work.
+
+- Fixed the Mac menu bar icon.
+
+- Fixed the Mac opening / closing functionality.
+
+- Add a setDev script to automatically reset the logging to dev mode.
+
+- Removed many unnecessary settings in electron-builder.
+
 ## 1.1.1
 
 Tooling:

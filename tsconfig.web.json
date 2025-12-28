@@ -7,31 +7,21 @@
     "src/global/rendererGlobals.d.ts",
     "src/shared-all/**/*",
     "src/lib/utils.ts",
+    "package.json"
   ],
   "compilerOptions": {
+    "sourceMap": true,
     "composite": true,
     "jsx": "react-jsx",
     "noUnusedLocals": false,
     "baseUrl": ".",
     "paths": {
-      "@renderer/*": [
-         "src/renderer/src/*"
-      ],
-      "@shared-all/*": [
-        "src/shared-all/*"
-      ],
-      "@/*": [
-         "src/renderer/src/*"
-      ],
-      "@components/*": [
-        "src/renderer/src/components/*"
-     ],
-     "@assets/*": [
-      "src/renderer/src/assets/*"
-     ],
-      "@resources/*": [
-      "resources/*"
-     ],
+      "@renderer/*": ["src/renderer/src/*"],
+      "@shared-all/*": ["src/shared-all/*"],
+      "@/*": ["src/renderer/src/*"],
+      "@components/*": ["src/renderer/src/components/*"],
+      "@assets/*": ["src/renderer/src/assets/*"],
+      "@resources/*": ["resources/*"]
     }
   }
 }

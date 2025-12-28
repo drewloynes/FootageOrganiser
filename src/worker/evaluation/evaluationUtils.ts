@@ -72,6 +72,11 @@ export function ignoreFile(pathToFile: string): boolean {
     ignore = true
   }
 
+  if (nameOfFile === '.DS_Store' && process.platform === 'darwin') {
+    condLog(`File name is .DS_Store files on mac`, funcName, fileName, area)
+    ignore = true
+  }
+
   exitLog(funcName, fileName, area)
   return ignore
 }
