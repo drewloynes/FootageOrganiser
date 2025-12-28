@@ -1,6 +1,7 @@
 import { CopyPaths } from '@shared-all/types/ruleTypes'
 import { pathExists } from '@shared-node/utils/filePaths'
 import { sleep } from '@shared-node/utils/timer'
+import { sendAlertToMain } from '@worker/general/alert'
 import * as fs from 'fs'
 import path from 'path'
 
@@ -59,9 +60,13 @@ export function addActionLog(
       pathsString = actionPath as string
     }
 
-    fs.mkdirSync(path.dirname(logFilePath), { recursive: true })
-    const line = currentDate.toUTCString() + ' | ' + action + ' | ' + pathsString + '\n'
-    fs.appendFileSync(logFilePath, line, 'utf-8')
+    try {
+      fs.mkdirSync(path.dirname(logFilePath), { recursive: true })
+      const line = currentDate.toUTCString() + ' | ' + action + ' | ' + pathsString + '\n'
+      fs.appendFileSync(logFilePath, line, 'utf-8')
+    } catch {
+      errorLog(`Couldn't write action log!`, funcName, fileName, area)
+    }
   }
 
   exitLog(funcName, fileName, area)
@@ -123,6 +128,16 @@ export function deleteOldLogs(): void {
           condLog(`Delete log directory ${logDirectory}`, funcName, fileName, area)
           fs.rmSync(path.join(logsLocation, logDirectory), { recursive: true, force: true })
         }
+      }
+    } else {
+      try {
+        fs.mkdirSync(logsLocation, { recursive: true })
+      } catch {
+        errorLog(`Couldn't create action log directory`, funcName, fileName, area)
+        sendAlertToMain(
+          `Unable to create logs directory`,
+          `Could not create the logs directory for logging completed actions.`
+        )
       }
     }
   }
