@@ -1,10 +1,10 @@
 import * as fsProm from 'fs/promises'
 
-const fileName: string = 'storeData.ts'
-const area: string = 'store'
+const fileName = 'storeData.ts'
+const area = 'store'
 
-export async function saveData(filePath: string, data: object) {
-  const funcName: string = 'saveData'
+export async function saveData(filePath: string, data: object): Promise<void> {
+  const funcName = 'saveData'
   entryLog(funcName, fileName, area)
 
   const jsonData: string = JSON.stringify(data, null, 2) // Pretty JSON
@@ -17,7 +17,7 @@ export async function saveData(filePath: string, data: object) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function loadData(filePath: string): Promise<any | undefined> {
-  const funcName: string = 'loadData'
+  const funcName = 'loadData'
   entryLog(funcName, fileName, area)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

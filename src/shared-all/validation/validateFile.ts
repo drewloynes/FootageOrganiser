@@ -7,13 +7,13 @@ const RESERVED_WINDOWS_FILE_NAMES: string[] = [
   ...Array.from({ length: 10 }, (_, i) => `LPT${i}`)
 ]
 
-const INVALID_FILE_NAME_FILTER_CHARS: RegExp = /[\/\\:?"><|]/
+const INVALID_FILE_NAME_FILTER_CHARS = /[/\\:?"><|]/
 
-const ONLY_EDGE_ASTERISKS: RegExp = /^(?:\*?)[^*]*?(?:\*?)$/
+const ONLY_EDGE_ASTERISKS = /^(?:\*?)[^*]*?(?:\*?)$/
 
-const ASCII_CONTROL_CHARACTERS: RegExp = /[\x00-\x1F]/
+const ASCII_CONTROL_CHARACTERS = /[\x00-\x1F]/
 
-const ENDS_WITH_DOT_OR_SPACE: RegExp = /[. ]$/
+const ENDS_WITH_DOT_OR_SPACE = /[. ]$/
 
 // Validates strings are valid files name filters
 // - Can be a full file name

@@ -1,10 +1,10 @@
 import { setupWindowIpcEvents } from './windowIpcReceiver'
 
-const fileName: string = 'windowIpcSetup.ts'
-const area: string = 'window-ipc'
+const fileName = 'windowIpcSetup.ts'
+const area = 'window-ipc'
 
 export function setupWindowIpc(): void {
-  const funcName: string = 'setupWindowIpc'
+  const funcName = 'setupWindowIpc'
   entryLog(funcName, fileName, area)
 
   setupWindowIpcEvents()

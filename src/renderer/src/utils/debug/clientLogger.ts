@@ -14,6 +14,7 @@ export enum CLIENT_LOG_LEVEL {
 }
 
 export function initialiseLogger(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(globalThis as any).log = new ClientLogger()
 }
 
@@ -23,7 +24,7 @@ export class ClientLogger {
   }
 
   private generateLogMessage(func: string, file: string, area: string, desc?: string): string {
-    let generateMessage: string = ''
+    let generateMessage = ''
     if (desc) {
       generateMessage = desc.padEnd(30, ' ') + '|'
     }
@@ -52,7 +53,7 @@ export class ClientLogger {
   }
 
   private shouldLog(level: CLIENT_LOG_LEVEL, func: string, file: string, area: string): boolean {
-    let shouldLog: boolean = false
+    let shouldLog = false
 
     if (!CLIENT_LOG_CONFIG.dev) {
       return false
@@ -73,7 +74,7 @@ export class ClientLogger {
     return shouldLog
   }
 
-  error(desc: string, func: string, file: string, area: string) {
+  error(desc: string, func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.ERROR, func, file, area)) {
       console.error(
         this.generateLogIntro(CLIENT_LOG_LEVEL.ERROR),
@@ -83,7 +84,7 @@ export class ClientLogger {
     }
   }
 
-  warn(desc: string, func: string, file: string, area: string) {
+  warn(desc: string, func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.WARN, func, file, area)) {
       console.warn(
         this.generateLogIntro(CLIENT_LOG_LEVEL.WARN),
@@ -93,7 +94,7 @@ export class ClientLogger {
     }
   }
 
-  info(desc: string, func: string, file: string, area: string) {
+  info(desc: string, func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.INFO, func, file, area)) {
       console.info(
         this.generateLogIntro(CLIENT_LOG_LEVEL.INFO),
@@ -103,7 +104,8 @@ export class ClientLogger {
     }
   }
 
-  debug(desc: string, func: string, file: string, area: string, data?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  debug(desc: string, func: string, file: string, area: string, data?: any): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.DEBUG, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.DEBUG),
@@ -116,7 +118,8 @@ export class ClientLogger {
     }
   }
 
-  ipcSent(desc: string, func: string, file: string, area: string, data?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ipcSent(desc: string, func: string, file: string, area: string, data?: any): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.IPC_SENT, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.IPC_SENT),
@@ -129,7 +132,8 @@ export class ClientLogger {
     }
   }
 
-  ipcRec(desc: string, func: string, file: string, area: string, data?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ipcRec(desc: string, func: string, file: string, area: string, data?: any): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.IPC_REC, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.IPC_REC),
@@ -142,7 +146,7 @@ export class ClientLogger {
     }
   }
 
-  cond(desc: string, func: string, file: string, area: string) {
+  cond(desc: string, func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.COND, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.COND),
@@ -152,7 +156,7 @@ export class ClientLogger {
     }
   }
 
-  rend(func: string, file: string, area: string) {
+  rend(func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.REND, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.REND),
@@ -162,7 +166,7 @@ export class ClientLogger {
     }
   }
 
-  entry(func: string, file: string, area: string) {
+  entry(func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.ENTRY, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.ENTRY),
@@ -172,7 +176,7 @@ export class ClientLogger {
     }
   }
 
-  exit(func: string, file: string, area: string) {
+  exit(func: string, file: string, area: string): void {
     if (this.shouldLog(CLIENT_LOG_LEVEL.EXIT, func, file, area)) {
       console.log(
         this.generateLogIntro(CLIENT_LOG_LEVEL.EXIT),

@@ -2,11 +2,11 @@ import { AsyncIpcMessage } from '@shared-node/utils/ipc'
 import { MessageChannelMain } from 'electron/main'
 import { parseWorkerIpcMessage } from './workerIpcReceiver'
 
-const fileName: string = 'workerIpcSetup.ts'
-const area: string = 'worker-ipc'
+const fileName = 'workerIpcSetup.ts'
+const area = 'worker-ipc'
 
 export function setupWorkerIpc(): void {
-  const funcName: string = 'setupWorkerIpc'
+  const funcName = 'setupWorkerIpc'
   entryLog(funcName, fileName, area)
 
   // Create ports and send over to worker
@@ -23,12 +23,12 @@ export function setupWorkerIpc(): void {
 }
 
 function setupWorkerIpcEvents(): void {
-  const funcName: string = 'setupWorkerIpcEvents'
+  const funcName = 'setupWorkerIpcEvents'
   entryLog(funcName, fileName, area)
 
-  glob.mainGlobals.workerPort?.on('message', (e) => {
+  glob.mainGlobals.workerPort?.on('message', async (e) => {
     ipcRecLog(`Worker->Main Message: ${e.data.type}`, funcName, fileName, area)
-    parseWorkerIpcMessage(e.data)
+    await parseWorkerIpcMessage(e.data)
   })
 
   glob.mainGlobals.workerPort?.on('close', () => {

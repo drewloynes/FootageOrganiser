@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { SidebarGroup, SidebarGroupContent, SidebarMenu } from '../ui/sidebar'
 import SidebarItem from './SidebarItem'
 
-const fileName: string = 'FootOrgSidebarBottom.tsx'
-const area: string = 'sidebar'
+const fileName = 'FootOrgSidebarBottom.tsx'
+const area = 'sidebar'
 
-function FootOrgSidebarBottom() {
-  const funcName: string = 'FootOrgSidebarBottom'
+function FootOrgSidebarBottom(): React.ReactElement  {
+  const funcName = 'FootOrgSidebarBottom'
   log.rend(funcName, fileName, area)
 
   const navigate = useNavigate()

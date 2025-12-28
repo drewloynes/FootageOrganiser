@@ -19,14 +19,14 @@ import { join } from 'path'
 import { Rule } from './rule'
 import { Rules } from './rules'
 
-const fileName: string = 'currentRules.ts'
-const area: string = 'rules'
+const fileName = 'currentRules.ts'
+const area = 'rules'
 
 export function getRulesStorageLocation(): string {
-  const funcName: string = 'getRulesStorageLocation'
+  const funcName = 'getRulesStorageLocation'
   entryLog(funcName, fileName, area)
 
-  let rulesStorageLocation: string = ''
+  let rulesStorageLocation = ''
   if (glob.workerGlobals.storageLocation !== undefined) {
     condLog('Storage location set', funcName, fileName, area)
     rulesStorageLocation = join(glob.workerGlobals.storageLocation, 'rules.json')
@@ -105,7 +105,7 @@ function getCurrentRules(): Rules | undefined {
   const funcName = 'getCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let rules: Rules | undefined = glob.workerGlobals.currentRules
+  const rules: Rules | undefined = glob.workerGlobals.currentRules
 
   exitLog(funcName, fileName, area)
   return rules
@@ -121,7 +121,7 @@ export function getAllRulesToSendCurrentRules(): ShortRule[] {
     return []
   }
 
-  const rulesToSend: Array<ShortRule> = []
+  const rulesToSend: ShortRule[] = []
   currentRules.ruleList.forEach((rule) => rulesToSend.push(rule.convertToShortRule()))
 
   exitLog(funcName, fileName, area)
@@ -144,7 +144,8 @@ export function getRuleToSendCurrentRules(ruleName: string): FullRule | undefine
   return ruleToSend
 }
 
-export function sendRulesStreamToMainCurrentRules(_ignore: undefined) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function sendRulesStreamToMainCurrentRules(_ignore: undefined): void {
   const funcName = 'sendRulesStreamToMainCurrentRules'
   entryLog(funcName, fileName, area)
 
@@ -155,7 +156,7 @@ export function sendRulesStreamToMainCurrentRules(_ignore: undefined) {
   return
 }
 
-export function sendRuleStreamToMainCurrentRules(rule: Rule) {
+export function sendRuleStreamToMainCurrentRules(rule: Rule): void {
   const funcName = 'sendRuleStreamToMainCurrentRules'
   entryLog(funcName, fileName, area)
 
@@ -201,7 +202,7 @@ export async function addRuleCurrentRules(newStoreRule: StoreRule): Promise<bool
   const funcName = 'addRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let ruleAdded: boolean = false
+  let ruleAdded = false
 
   const newRule: Rule | undefined = await toRule(newStoreRule)
   if (!newRule) {
@@ -224,12 +225,12 @@ export async function addRuleCurrentRules(newStoreRule: StoreRule): Promise<bool
 export async function modifyRuleCurrentRules(
   originalRuleName: string,
   modifiedStoreRule: StoreRule,
-  error: string = ''
+  error = ''
 ): Promise<boolean> {
   const funcName = 'modifyRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let ruleModified: boolean = false
+  let ruleModified = false
 
   const modifiedRule: Rule | undefined = await toRule(modifiedStoreRule)
   if (!modifiedRule) {
@@ -269,7 +270,7 @@ export async function deleteRuleCurrentRules(deleteRuleName: string): Promise<bo
   const funcName = 'deleteRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let ruleDeleted: boolean = false
+  let ruleDeleted = false
 
   if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === deleteRuleName) {
     condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
@@ -294,7 +295,7 @@ export function stopRuleCurrentRules(ruleName: string): boolean {
   const funcName = 'stopRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let ruleStopped: boolean = false
+  let ruleStopped = false
 
   if (glob.workerGlobals.ruleInUse && glob.workerGlobals.ruleInUse.name === ruleName) {
     condLog(`Rule currently in use - schedule change`, funcName, fileName, area)
@@ -338,7 +339,7 @@ export function startRuleCurrentRules(ruleName: string): boolean {
   const funcName = 'startRuleCurrentRules'
   entryLog(funcName, fileName, area)
 
-  let ruleStarted: boolean = false
+  let ruleStarted = false
   if (glob.workerGlobals.currentRules?.startRule(ruleName)) {
     infoLog(`Rule: ${ruleName} has been started`, funcName, fileName, area)
     glob.workerGlobals.streamAllRulesToMain.updateData(glob.workerGlobals.currentRules)
@@ -372,7 +373,7 @@ export async function activateRuleCurrentRules(ruleName: string): Promise<void> 
   return
 }
 
-export async function disableRuleCurrentRules(ruleName: string, error: string = ''): Promise<void> {
+export async function disableRuleCurrentRules(ruleName: string, error = ''): Promise<void> {
   const funcName = 'disableRuleCurrentRules'
   entryLog(funcName, fileName, area)
 

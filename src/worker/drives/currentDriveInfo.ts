@@ -82,7 +82,7 @@ export async function updateCurrentDriveInfo(): Promise<boolean> {
 }
 
 export function getDriveInfoFromPath(path: string): DriveInfo | undefined {
-  const funcName: string = 'getDriveInfoFromPath'
+  const funcName = 'getDriveInfoFromPath'
   entryLog(funcName, fileName, area)
 
   let driveInfoOfPath: DriveInfo | undefined = undefined
@@ -106,7 +106,7 @@ export function getDriveInfoFromPath(path: string): DriveInfo | undefined {
 }
 
 export function getVolumeNameFromPath(path: string): string | undefined {
-  const funcName: string = 'getVolNameFromPath'
+  const funcName = 'getVolNameFromPath'
   entryLog(funcName, fileName, area)
 
   const driveInfo: DriveInfo | undefined = getDriveInfoFromPath(path)
@@ -121,7 +121,7 @@ export function getVolumeNameFromPath(path: string): string | undefined {
 }
 
 export function hasConnectDrivesChanged(newCurrentDriveInfo: DriveInfo[]): boolean {
-  const funcName: string = 'hasConnectDrivesChanged'
+  const funcName = 'hasConnectDrivesChanged'
   entryLog(funcName, fileName, area)
 
   if (glob.workerGlobals.currentDriveInfo === undefined) {

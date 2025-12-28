@@ -1,11 +1,11 @@
 import { Alert } from '@shared-all/types/alert'
 import { sendAsyncIpcMessageMain } from '@worker/communication/ipc/main/mainIpcSender'
 
-const fileName: string = 'alert.ts'
-const area: string = 'ipc'
+const fileName = 'alert.ts'
+const area = 'ipc'
 
 export function sendAlertToMain(title: string, message: string): void {
-  const funcName: string = 'sendAlertToMain'
+  const funcName = 'sendAlertToMain'
   entryLog(funcName, fileName, area)
 
   sendAsyncIpcMessageMain('alert', new Alert(title, message))

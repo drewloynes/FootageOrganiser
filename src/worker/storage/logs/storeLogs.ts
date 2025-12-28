@@ -4,8 +4,8 @@ import { sleep } from '@shared-node/utils/timer'
 import * as fs from 'fs'
 import path from 'path'
 
-const fileName: string = 'storeLogs.ts'
-const area: string = 'store-logs'
+const fileName = 'storeLogs.ts'
+const area = 'store-logs'
 
 export enum ACTION_TYPE {
   MAKE_DIRECTORY = 'Made Directory',
@@ -34,7 +34,7 @@ export function addActionLog(
   action: ACTION_TYPE,
   actionPath: string | CopyPaths
 ): void {
-  const funcName: string = 'addActionLog'
+  const funcName = 'addActionLog'
   entryLog(funcName, fileName, area)
 
   if (glob.workerGlobals.storageLocation) {
@@ -52,11 +52,11 @@ export function addActionLog(
     let pathsString: string
     if (action === ACTION_TYPE.COPY_FILE) {
       condLog(`Copy File Action`, funcName, fileName, area)
-      const castActionPath = <CopyPaths>actionPath
+      const castActionPath = actionPath as CopyPaths
       pathsString = 'From: ' + castActionPath.from + ' To: ' + castActionPath.to
     } else {
       condLog(`Not Copy File Action`, funcName, fileName, area)
-      pathsString = <string>actionPath
+      pathsString = actionPath as string
     }
 
     fs.mkdirSync(path.dirname(logFilePath), { recursive: true })
@@ -69,7 +69,7 @@ export function addActionLog(
 }
 
 export async function startAutoDeleteOldLogs(): Promise<void> {
-  const funcName: string = 'startAutoDeleteOldLogs'
+  const funcName = 'startAutoDeleteOldLogs'
   entryLog(funcName, fileName, area)
 
   // loop infinitely, Running delete just after midnight everyday
@@ -92,7 +92,7 @@ export async function startAutoDeleteOldLogs(): Promise<void> {
 }
 
 export function deleteOldLogs(): void {
-  const funcName: string = 'deleteOldLogs'
+  const funcName = 'deleteOldLogs'
   entryLog(funcName, fileName, area)
 
   const LogDirectoryMaxAge: number | undefined =

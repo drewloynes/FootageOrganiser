@@ -7,14 +7,14 @@ import { abortIfStateAwaitingChanges } from '@worker/state-changes/changeState'
 import * as fs from 'fs'
 import * as path from 'path'
 
-const fileName: string = 'evaluationUtils.ts'
-const area: string = 'evaluation'
+const fileName = 'evaluationUtils.ts'
+const area = 'evaluation'
 
 export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
   const funcName = 'checkRuleEvaluatability'
   entryLog(funcName, fileName, area)
 
-  let isEvaluateable: boolean = true
+  let isEvaluateable = true
   rule.setUnevaluateableReason(UNEVALUATABLE_REASON.NO_PROBLEM)
 
   rule.origin.updateFullPathList()
@@ -45,10 +45,10 @@ export async function checkRuleEvaluatability(rule: Rule): Promise<boolean> {
 }
 
 export function ignoreSystemObject(systemObject: fs.Dirent): boolean {
-  const funcName: string = 'ignoreSystemObject'
+  const funcName = 'ignoreSystemObject'
   entryLog(funcName, fileName, area)
 
-  let ignore: boolean = false
+  let ignore = false
   if (
     (systemObject.name === '$RECYCLE.BIN' || systemObject.name === 'System Volume Information') &&
     process.platform === 'win32'
@@ -62,10 +62,10 @@ export function ignoreSystemObject(systemObject: fs.Dirent): boolean {
 }
 
 export function ignoreFile(pathToFile: string): boolean {
-  const funcName: string = 'ignoreFile'
+  const funcName = 'ignoreFile'
   entryLog(funcName, fileName, area)
 
-  let ignore: boolean = false
+  let ignore = false
   const nameOfFile: string = path.basename(pathToFile)
   if (nameOfFile === 'desktop.ini' && process.platform === 'win32') {
     condLog(`File name is desktop.ini files on windows`, funcName, fileName, area)
@@ -87,7 +87,7 @@ export async function generateTargetFilePath(
   pathToOriginFile: string,
   initialTargetPath: string
 ): Promise<string> {
-  const funcName: string = 'generateTargetFilePath'
+  const funcName = 'generateTargetFilePath'
   entryLog(funcName, fileName, area)
 
   let copyToPath: string
@@ -118,10 +118,10 @@ export async function deleteFileUnderOriginPath(
   originFilePath: string,
   targetFilePath: string
 ): Promise<boolean> {
-  const funcName: string = 'deleteFileUnderOriginPath'
+  const funcName = 'deleteFileUnderOriginPath'
   entryLog(funcName, fileName, area)
 
-  let deleteFile: boolean = false
+  let deleteFile = false
 
   if (rule.type !== RULE_TYPE.COPYFILE || !rule.copyFileOptions.deleteCopiedFiles) {
     condExitLog(`Not a copy file rule or not set to delete copied files`, funcName, fileName, area)
@@ -151,7 +151,7 @@ async function checksumValidatePaths(
   originFilePath: string,
   targetFilePath: string
 ): Promise<boolean> {
-  const funcName: string = 'checksumValidatePaths'
+  const funcName = 'checksumValidatePaths'
   entryLog(funcName, fileName, area)
 
   rule.setStatus(RULE_STATUS_TYPE.CHECKSUM_RUNNING)

@@ -11,11 +11,11 @@ import { StartStopSmall } from '../rule-utils/StartStop'
 import ViewAllRulesEmpty from './ViewAllRulesEmpty'
 import ViewAllRulesLoading from './ViewAllRulesLoading'
 
-const fileName: string = 'ViewAllRules.tsx'
-const area: string = 'body'
+const fileName = 'ViewAllRules.tsx'
+const area = 'body'
 
-const ViewAllRules = () => {
-  const funcName: string = 'ViewAllRules'
+const ViewAllRules = (): React.ReactElement => {
+  const funcName = 'ViewAllRules'
   log.rend(funcName, fileName, area)
 
   const [allRules, setAllRules] = useState<ShortRule[]>([])
@@ -26,7 +26,7 @@ const ViewAllRules = () => {
   useEffect(() => {
     log.cond('useEffect: Start startAllRulesStream', funcName, fileName, area)
 
-    function handleAllRules(latestAllRules: ShortRule[]) {
+    function handleAllRules(latestAllRules: ShortRule[]): void {
       log.ipcRec('Received Latest All Rules', funcName, fileName, area, allRules)
       setAllRules(latestAllRules)
 

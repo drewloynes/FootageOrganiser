@@ -15,7 +15,7 @@ export class MirrorOptions {
     return
   }
 
-  get enableDeletingInTarget() {
+  get enableDeletingInTarget(): boolean {
     return this.#enableDeletingInTarget
   }
 

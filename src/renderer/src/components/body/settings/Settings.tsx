@@ -1,11 +1,11 @@
 import { ScrollArea } from '@renderer/components/ui/scroll-area'
 import SettingsForm from './SettingsForm'
 
-const fileName: string = 'Settings.tsx'
-const area: string = 'settings'
+const fileName = 'Settings.tsx'
+const area = 'settings'
 
-function Settings() {
-  const funcName: string = 'Settings'
+function Settings(): React.ReactElement {
+  const funcName = 'Settings'
   log.rend(funcName, fileName, area)
 
   return (

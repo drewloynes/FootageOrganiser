@@ -1,8 +1,8 @@
-const fileName: string = 'FootOrgHeader.tsx'
-const area: string = 'body'
+const fileName = 'FootOrgHeader.tsx'
+const area = 'body'
 
-export const FootOrgHeader = () => {
-  const funcName: string = 'FootOrgHeader'
+export const FootOrgHeader = (): React.ReactElement => {
+  const funcName = 'FootOrgHeader'
   log.rend(funcName, fileName, area)
 
   return (

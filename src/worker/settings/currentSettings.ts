@@ -6,14 +6,14 @@ import { loadData, saveData } from '@worker/storage/storeData'
 import { join } from 'path'
 import { Settings } from './settings'
 
-const fileName: string = 'currentSettings.ts'
-const area: string = 'settings'
+const fileName = 'currentSettings.ts'
+const area = 'settings'
 
 function getSettingsStorageLocation(): string {
   const funcName = 'getSettingsStorageLocation'
   entryLog(funcName, fileName, area)
 
-  let settingsStorageLocation: string = ''
+  let settingsStorageLocation = ''
   if (glob.workerGlobals.storageLocation !== undefined) {
     condLog('Storage location set', funcName, fileName, area)
     settingsStorageLocation = join(glob.workerGlobals.storageLocation, 'settings.json')

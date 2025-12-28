@@ -6,7 +6,10 @@ import * as React from 'react'
 
 import { cn } from '@renderer/utils/utils'
 
-function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+function Checkbox({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxPrimitive.Root>): React.ReactElement {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"

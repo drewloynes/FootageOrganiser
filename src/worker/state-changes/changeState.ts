@@ -127,6 +127,7 @@ async function applyAwaitingStateChange(change: Change): Promise<void> {
     case CHANGE_TYPE.EVALUATE_RULE: {
       condLog('Evaluate rule', funcName, fileName, area)
       evaluateRuleCurrentRules(change.dataForChange as string)
+      break
     }
     default: {
       debugLog('Change type unidentified', funcName, fileName, area)

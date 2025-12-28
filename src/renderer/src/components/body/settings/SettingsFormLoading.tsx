@@ -1,11 +1,11 @@
 import { Skeleton } from '@renderer/components/ui/skeleton'
 import { motion } from 'framer-motion'
 
-const fileName: string = 'SettingsFormLoading.tsx'
-const area: string = 'settings'
+const fileName = 'SettingsFormLoading.tsx'
+const area = 'settings'
 
-function SettingsFormLoading() {
-  const funcName: string = 'SettingsFormLoading'
+function SettingsFormLoading(): React.ReactElement  {
+  const funcName = 'SettingsFormLoading'
   log.rend(funcName, fileName, area)
 
   return (

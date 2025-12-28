@@ -30,7 +30,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Set Production Environment
-        run: node ./scripts/setProd.cjs
+        run: node ./scripts/setProd.mjs
 
       - name: Build App
         run: npm run build

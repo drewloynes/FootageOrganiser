@@ -18,11 +18,11 @@ import {
 } from '../ui/dropdown-menu'
 import { SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar'
 
-const fileName: string = 'FootOrgSidebarFoot.tsx'
-const area: string = 'sidebar'
+const fileName = 'FootOrgSidebarFoot.tsx'
+const area = 'sidebar'
 
-function FootOrgSidebarFoot() {
-  const funcName: string = 'FootOrgSidebarFoot'
+function FootOrgSidebarFoot(): React.ReactElement  {
+  const funcName = 'FootOrgSidebarFoot'
   log.rend(funcName, fileName, area)
 
   const navigate = useNavigate()

@@ -10,8 +10,8 @@ import { copyFile, mkdir, rm, unlink } from 'fs/promises'
 import * as path from 'path'
 import { executionFailed, handleOutOfDriveSpace, spaceToCopyFile } from './executionUtils'
 
-const fileName: string = 'execution.ts'
-const area: string = 'execution'
+const fileName = 'execution.ts'
+const area = 'execution'
 
 export async function executeCurrentRules(): Promise<void> {
   const funcName = 'executeCurrentRules'
@@ -56,7 +56,7 @@ export async function executeCurrentRules(): Promise<void> {
   // if any rules are still awaiting execution - recurse this function
   if (glob.workerGlobals.currentRules.containsRulesAwaitingExecution()) {
     condLog(`Some rules still require execution`, funcName, fileName, area)
-    executeCurrentRules()
+    await executeCurrentRules()
   }
 
   exitLog(funcName, fileName, area)
@@ -64,7 +64,7 @@ export async function executeCurrentRules(): Promise<void> {
 }
 
 async function executeMakeDirectories(rule: Rule): Promise<void> {
-  const funcName: string = 'executeMakeDirectories'
+  const funcName = 'executeMakeDirectories'
   entryLog(funcName, fileName, area)
 
   rule.setExecutingAction('Making directories')
@@ -98,7 +98,7 @@ async function executeMakeDirectories(rule: Rule): Promise<void> {
 }
 
 async function executeCopyFiles(rule: Rule): Promise<void> {
-  const funcName: string = 'executeCopyFiles'
+  const funcName = 'executeCopyFiles'
   entryLog(funcName, fileName, area)
 
   const fullFileCopyActionQueue = [...rule.fileCopyActionQueue]
@@ -109,7 +109,7 @@ async function executeCopyFiles(rule: Rule): Promise<void> {
 
     if (!(await spaceToCopyFile(files.from, files.to))) {
       condLog(`No space to copy file to drive`, funcName, fileName, area)
-      handleOutOfDriveSpace(rule, files)
+      await handleOutOfDriveSpace(rule, files)
       // No need to break, will always throw an error and exit execution of rule
     }
 
@@ -143,7 +143,7 @@ async function executeCopyFiles(rule: Rule): Promise<void> {
 }
 
 async function executeDeleteFiles(rule: Rule): Promise<void> {
-  const funcName: string = 'executeDeleteFiles'
+  const funcName = 'executeDeleteFiles'
   entryLog(funcName, fileName, area)
 
   rule.setExecutingAction(`Deleting files`)
@@ -173,7 +173,7 @@ async function executeDeleteFiles(rule: Rule): Promise<void> {
 }
 
 async function executeDeleteDirectories(rule: Rule): Promise<void> {
-  const funcName: string = 'executeDeleteDirectories'
+  const funcName = 'executeDeleteDirectories'
   entryLog(funcName, fileName, area)
 
   rule.setExecutingAction(`Deleting directories`)

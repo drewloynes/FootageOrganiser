@@ -1,15 +1,15 @@
 import { Rule } from '@worker/rules/rule'
 import { streamUpdateCurrentRules } from './currentRules'
 
-const fileName: string = 'rules.ts'
-const area: string = 'rules'
+const fileName = 'rules.ts'
+const area = 'rules'
 
 export class Rules {
   // List of each rule
   #ruleList: Rule[]
 
   constructor(ruleList: Rule[] = []) {
-    const funcName: string = 'Rules Constructor'
+    const funcName = 'Rules Constructor'
     entryLog(funcName, fileName, area)
 
     this.#ruleList = ruleList
@@ -18,7 +18,7 @@ export class Rules {
     return
   }
 
-  get ruleList() {
+  get ruleList(): Rule[] {
     return this.#ruleList
   }
 
@@ -43,7 +43,7 @@ export class Rules {
     const funcName = 'containsRulesAwaitingEvaluation'
     entryLog(funcName, fileName, area)
 
-    let rulesAwaitingEvaluation: boolean = false
+    let rulesAwaitingEvaluation = false
     const ruleAwaitingEvaluation = this.ruleList.find((rule) => rule.evaluateRule)
     if (ruleAwaitingEvaluation) {
       condLog(`Found Rule awaiting evaluation`, funcName, fileName, area)
@@ -58,7 +58,7 @@ export class Rules {
     const funcName = 'containsRulesAwaitingExecution'
     entryLog(funcName, fileName, area)
 
-    let rulesAwaitingExecution: boolean = false
+    let rulesAwaitingExecution = false
     const ruleAwaitingExecution = this.ruleList.find((rule) => rule.hasExecutableActions())
     if (ruleAwaitingExecution) {
       condLog(`Found Rule awaiting execution`, funcName, fileName, area)
@@ -83,7 +83,7 @@ export class Rules {
     const funcName = 'addRule'
     entryLog(funcName, fileName, area)
 
-    let ruleAdded: boolean = false
+    let ruleAdded = false
     if (!this.findRule(newRule.name)) {
       condLog(`No rule exists with name: ${newRule.name}`, funcName, fileName, area)
       this.ruleList.push(newRule)
@@ -99,7 +99,7 @@ export class Rules {
     const funcName = 'modifyRule'
     entryLog(funcName, fileName, area)
 
-    let ruleModified: boolean = false
+    let ruleModified = false
     const originalRule: Rule | undefined = this.findRule(originalRuleName)
     if (originalRule) {
       condLog(`Original rule found`, funcName, fileName, area)
@@ -121,7 +121,7 @@ export class Rules {
     const funcName = 'deleteRule'
     entryLog(funcName, fileName, area)
 
-    let ruleDeleted: boolean = false
+    let ruleDeleted = false
     const rule: Rule | undefined = this.findRule(deleteRuleName)
     if (rule) {
       condLog(`Rule found`, funcName, fileName, area)
@@ -142,7 +142,7 @@ export class Rules {
     const funcName = 'stopRule'
     entryLog(funcName, fileName, area)
 
-    let ruleStoped: boolean = false
+    let ruleStoped = false
     const rule: Rule | undefined = this.findRule(ruleName)
     if (rule) {
       condLog(`Rule ${rule.name} found`, funcName, fileName, area)
@@ -159,7 +159,7 @@ export class Rules {
     const funcName = 'startRule'
     entryLog(funcName, fileName, area)
 
-    let ruleStarted: boolean = false
+    let ruleStarted = false
     const rule: Rule | undefined = this.findRule(ruleName)
     if (rule) {
       condLog(`Rule ${rule.name} found`, funcName, fileName, area)
@@ -176,7 +176,7 @@ export class Rules {
     const funcName = 'setAwaitingChanges'
     entryLog(funcName, fileName, area)
 
-    let awaitingChangesSet: boolean = false
+    let awaitingChangesSet = false
     const rule: Rule | undefined = this.findRule(ruleName)
     if (rule) {
       condLog(`Rule ${rule.name} found`, funcName, fileName, area)

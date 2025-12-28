@@ -1,11 +1,11 @@
 import { Skeleton } from '@renderer/components/ui/skeleton'
 import { motion } from 'framer-motion'
 
-const fileName: string = 'ViewActionsLoading.tsx'
-const area: string = 'view-actions'
+const fileName = 'ViewActionsLoading.tsx'
+const area = 'view-actions'
 
-function ViewActionsLoading() {
-  const funcName: string = 'ViewActionsLoading'
+function ViewActionsLoading(): React.ReactElement  {
+  const funcName = 'ViewActionsLoading'
   log.rend(funcName, fileName, area)
 
   return (

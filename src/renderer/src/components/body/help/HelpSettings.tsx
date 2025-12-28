@@ -6,11 +6,11 @@ import {
 } from '@renderer/components/ui/accordion'
 import { Separator } from '@renderer/components/ui/separator'
 
-const fileName: string = 'HelpSettings.tsx'
-const area: string = 'help'
+const fileName = 'HelpSettings.tsx'
+const area = 'help'
 
-function HelpSettings() {
-  const funcName: string = 'HelpSettings'
+function HelpSettings(): React.ReactElement {
+  const funcName = 'HelpSettings'
   log.rend(funcName, fileName, area)
 
   return (

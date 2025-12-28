@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { Control, FieldPath } from 'react-hook-form'
 import { DynamicList } from './DynamicList'
 
-const fileName: string = 'IncludeExcludeLists.tsx'
-const area: string = 'rule-form'
+const fileName = 'IncludeExcludeLists.tsx'
+const area = 'rule-form'
 
 export function IncludeExcludeLists({
   control,
@@ -12,8 +12,8 @@ export function IncludeExcludeLists({
 }: {
   control: Control<StoreRule>
   listParentName: string
-}) {
-  const funcName: string = 'IncludeExcludeLists'
+}): React.ReactElement {
+  const funcName = 'IncludeExcludeLists'
   log.rend(funcName, fileName, area)
 
   const includeFileFullName: FieldPath<StoreRule> = listParentName.concat(

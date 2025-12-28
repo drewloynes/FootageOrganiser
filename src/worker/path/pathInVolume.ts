@@ -3,8 +3,8 @@ import { cloneStringArray, matchStringAgainstStringArray } from '@shared-node/ut
 import path from 'path'
 import { FullPath } from './fullPath'
 
-const fileName: string = 'pathInVolume.ts'
-const area: string = 'path'
+const fileName = 'pathInVolume.ts'
+const area = 'path'
 
 // Identifying what the path in volume is for.
 // - ORGIN is an origin path - stored under rule.origin
@@ -39,7 +39,7 @@ export class PathInVolume {
   // - Array as multiple drives can have the same VolumeName, therefore we get a fullPath for each drive with volumeName.
   // - Array if empty when the path doesn't currently exist
   #fullPathList: FullPath[] = []
-  #countExistingFullPaths: number = 0
+  #countExistingFullPaths = 0
 
   constructor(
     volumeName: string,
@@ -50,7 +50,7 @@ export class PathInVolume {
     dirsToInclude: string[] = [],
     dirsToExclude: string[] = []
   ) {
-    const funcName: string = 'PathInVolume Constructor'
+    const funcName = 'PathInVolume Constructor'
     entryLog(funcName, fileName, area)
 
     this.#volumeName = volumeName
@@ -69,39 +69,39 @@ export class PathInVolume {
     return
   }
 
-  get volumeName() {
+  get volumeName(): string {
     return this.#volumeName
   }
 
-  get pathFromVolumeRoot() {
+  get pathFromVolumeRoot(): string {
     return this.#pathFromVolumeRoot
   }
 
-  get type() {
+  get type(): PATH_IN_VOLUME_TYPE {
     return this.#type
   }
 
-  get filesToInclude() {
+  get filesToInclude(): string[] {
     return this.#filesToInclude
   }
 
-  get filesToExclude() {
+  get filesToExclude(): string[] {
     return this.#filesToExclude
   }
 
-  get dirsToInclude() {
+  get dirsToInclude(): string[] {
     return this.#dirsToInclude
   }
 
-  get dirsToExclude() {
+  get dirsToExclude(): string[] {
     return this.#dirsToExclude
   }
 
-  get fullPathList() {
+  get fullPathList(): FullPath[] {
     return this.#fullPathList
   }
 
-  get countExistingFullPaths() {
+  get countExistingFullPaths(): number {
     return this.#countExistingFullPaths
   }
 
@@ -135,7 +135,7 @@ export class PathInVolume {
   }
 
   updateFullPathList(): void {
-    const funcName: string = 'updateFullPathList'
+    const funcName = 'updateFullPathList'
     entryLog(funcName, fileName, area)
 
     this.#fullPathList = []
@@ -171,8 +171,8 @@ export class PathInVolume {
     return
   }
 
-  includeFile(pathToFile: string) {
-    const funcName: string = 'includeFile'
+  includeFile(pathToFile: string): boolean {
+    const funcName = 'includeFile'
     entryLog(funcName, fileName, area)
 
     const nameOfFile: string = path.basename(pathToFile)
@@ -197,8 +197,8 @@ export class PathInVolume {
     return true
   }
 
-  includeDir(pathToDir: string) {
-    const funcName: string = 'includeDir'
+  includeDir(pathToDir: string): boolean {
+    const funcName = 'includeDir'
     entryLog(funcName, fileName, area)
 
     const nameOfDir: string = path.basename(pathToDir)

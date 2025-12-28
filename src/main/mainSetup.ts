@@ -6,17 +6,17 @@ import { openWindow } from './window/window'
 import { setupWorkerProcess } from './worker/workerProcess'
 import { stopAllStreams } from './worker/workerUtils'
 
-const fileName: string = 'mainSetup.ts'
-const area: string = 'main'
+const fileName = 'mainSetup.ts'
+const area = 'main'
 
 let tray: Tray | undefined
 
 export function setupMain(): void {
-  const funcName: string = 'setupMain'
+  const funcName = 'setupMain'
   entryLog(funcName, fileName, area)
 
   const supportedPlatforms: string[] = ['win32', 'darwin']
-  // eslint-disable-next-line no-constant-condition
+
   if (!supportedPlatforms.includes(process.platform)) {
     condLog(`Platform ${process.platform} not supported`, funcName, fileName, area)
     app.quit()
@@ -60,8 +60,8 @@ export function setupMain(): void {
   return
 }
 
-async function ready() {
-  const funcName: string = 'ready'
+async function ready(): Promise<void> {
+  const funcName = 'ready'
   entryLog(funcName, fileName, area)
 
   if (process.platform === 'win32') {
@@ -96,15 +96,15 @@ async function ready() {
   tray.setToolTip('Footage Organiser')
   tray.on('click', () => openWindow())
 
-  setupWorkerProcess()
+  void setupWorkerProcess()
   setupWindowIpc()
 
   exitLog(funcName, fileName, area)
   return
 }
 
-function browserWindowCreated(_, window) {
-  const funcName: string = 'browserWindowCreated'
+function browserWindowCreated(_, window): void {
+  const funcName = 'browserWindowCreated'
   entryLog(funcName, fileName, area)
 
   // Transition into normal app when window is open on mac
@@ -120,22 +120,22 @@ function browserWindowCreated(_, window) {
   return
 }
 
-function activate() {
-  const funcName: string = 'activate'
+async function activate(): Promise<void> {
+  const funcName = 'activate'
   entryLog(funcName, fileName, area)
 
   // Create a window in the app when the dock icon is clicked and no other windows are open.
   if (BrowserWindow.getAllWindows().length === 0) {
     condLog(`No windows open`, funcName, fileName, area)
-    openWindow()
+    await openWindow()
   }
 
   exitLog(funcName, fileName, area)
   return
 }
 
-function windowAllClosed() {
-  const funcName: string = 'windowAllClosed'
+function windowAllClosed(): void {
+  const funcName = 'windowAllClosed'
   entryLog(funcName, fileName, area)
 
   // Transition into background agent when no windows are open on mac
@@ -151,7 +151,7 @@ function windowAllClosed() {
 }
 
 function beforeQuit(): void {
-  const funcName: string = 'beforeQuit'
+  const funcName = 'beforeQuit'
   entryLog(funcName, fileName, area)
 
   if (glob.mainGlobals.workerProcess) {

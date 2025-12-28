@@ -28,11 +28,11 @@ import { StoreRule } from '@shared-all/types/ruleTypes'
 import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { app, ipcMain } from 'electron'
 
-const fileName: string = 'windowIpcReceiver.ts'
-const area: string = 'window-ipc'
+const fileName = 'windowIpcReceiver.ts'
+const area = 'window-ipc'
 
 export function setupWindowIpcEvents(): void {
-  const funcName: string = 'setupWindowIpcEvents'
+  const funcName = 'setupWindowIpcEvents'
   entryLog(funcName, fileName, area)
 
   // Setup all callbacks for the window

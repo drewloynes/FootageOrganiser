@@ -3,11 +3,11 @@ import { STORE_RULE_ZOD_SCHEMA } from '@shared-all/validation/validateRule'
 import { validateRuleName } from '@shared-node/validation/validateRule'
 import { sendAsyncIpcMessageWorker, sendSyncIpcMessageWorker } from '../ipc/worker/workerIpcSender'
 
-const fileName: string = 'ruleWindowCallback.ts'
-const area: string = 'rules'
+const fileName = 'ruleWindowCallback.ts'
+const area = 'rules'
 
 export function addRule(newRule: StoreRule): void {
-  const funcName: string = 'addRule'
+  const funcName = 'addRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -25,7 +25,7 @@ export function addRule(newRule: StoreRule): void {
 }
 
 export function modifyRule(oldRuleName: string, newRule: StoreRule): void {
-  const funcName: string = 'modifyRule'
+  const funcName = 'modifyRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -48,7 +48,7 @@ export function modifyRule(oldRuleName: string, newRule: StoreRule): void {
 }
 
 export function deleteRule(ruleName: string): void {
-  const funcName: string = 'deleteRule'
+  const funcName = 'deleteRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -66,7 +66,7 @@ export function deleteRule(ruleName: string): void {
 }
 
 export function startRule(ruleName: string): void {
-  const funcName: string = 'startRule'
+  const funcName = 'startRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -84,7 +84,7 @@ export function startRule(ruleName: string): void {
 }
 
 export function stopRule(ruleName: string): void {
-  const funcName: string = 'stopRule'
+  const funcName = 'stopRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -102,7 +102,7 @@ export function stopRule(ruleName: string): void {
 }
 
 export function stopAllRules(): void {
-  const funcName: string = 'stopAllRules'
+  const funcName = 'stopAllRules'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -117,7 +117,7 @@ export function stopAllRules(): void {
 }
 
 export function activateRule(ruleName: string): void {
-  const funcName: string = 'activateRule'
+  const funcName = 'activateRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -135,7 +135,7 @@ export function activateRule(ruleName: string): void {
 }
 
 export function disableRule(ruleName: string): void {
-  const funcName: string = 'disableRule'
+  const funcName = 'disableRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -153,7 +153,7 @@ export function disableRule(ruleName: string): void {
 }
 
 export function disableAllRules(): void {
-  const funcName: string = 'disableAllRules'
+  const funcName = 'disableAllRules'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -168,7 +168,7 @@ export function disableAllRules(): void {
 }
 
 export function evaluateAllRules(): void {
-  const funcName: string = 'evaluateAllRules'
+  const funcName = 'evaluateAllRules'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -183,7 +183,7 @@ export function evaluateAllRules(): void {
 }
 
 export function startRuleStream(ruleName: string): void {
-  const funcName: string = 'startRuleStream'
+  const funcName = 'startRuleStream'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -201,7 +201,7 @@ export function startRuleStream(ruleName: string): void {
 }
 
 export function stopRuleStream(ruleName: string): void {
-  const funcName: string = 'startRuleStream'
+  const funcName = 'startRuleStream'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -219,7 +219,7 @@ export function stopRuleStream(ruleName: string): void {
 }
 
 export function stopEveryRuleStream(): void {
-  const funcName: string = 'stopEveryRuleStream'
+  const funcName = 'stopEveryRuleStream'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -234,7 +234,7 @@ export function stopEveryRuleStream(): void {
 }
 
 export function startAllRulesStream(): void {
-  const funcName: string = 'startAllRulesStream'
+  const funcName = 'startAllRulesStream'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -249,7 +249,7 @@ export function startAllRulesStream(): void {
 }
 
 export function stopAllRulesStream(): void {
-  const funcName: string = 'stopAllRulesStream'
+  const funcName = 'stopAllRulesStream'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -264,7 +264,7 @@ export function stopAllRulesStream(): void {
 }
 
 export async function getRule(ruleName: string): Promise<FullRule | undefined> {
-  const funcName: string = 'getRule'
+  const funcName = 'getRule'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -283,7 +283,7 @@ export async function getRule(ruleName: string): Promise<FullRule | undefined> {
 }
 
 export async function getAllRules(): Promise<ShortRule[]> {
-  const funcName: string = 'getAllRules'
+  const funcName = 'getAllRules'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {

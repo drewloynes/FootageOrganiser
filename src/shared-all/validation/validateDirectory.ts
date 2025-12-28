@@ -1,8 +1,8 @@
-const INVALID_WINDOWS_DIR_NAME_CHARS: RegExp = /[<>:"/\\|?*\x00-\x1F]/g
+const INVALID_WINDOWS_DIR_NAME_CHARS = /[<>:"/\\|?*\x00-\x1F]/g
 
-const INVALID_DIR_NAME_FILTER_CHARS: RegExp = /[\/\\:?"><|]/
+const INVALID_DIR_NAME_FILTER_CHARS = /[/\\:?"><|]/
 
-const INVALID_MAC_DIR_NAME_CHARS: RegExp = /[:]/g
+const INVALID_MAC_DIR_NAME_CHARS = /[:]/g
 
 const RESERVED_WINDOWS_DIR_NAMES: string[] = [
   'CON',
@@ -13,11 +13,11 @@ const RESERVED_WINDOWS_DIR_NAMES: string[] = [
   ...Array.from({ length: 10 }, (_, i) => `LPT${i}`)
 ]
 
-const ONLY_EDGE_ASTERISKS: RegExp = /^(?:\*?)[^*]*?(?:\*?)$/
+const ONLY_EDGE_ASTERISKS = /^(?:\*?)[^*]*?(?:\*?)$/
 
-const ASCII_CONTROL_CHARACTERS: RegExp = /[\x00-\x1F]/
+const ASCII_CONTROL_CHARACTERS = /[\x00-\x1F]/
 
-const ENDS_WITH_DOT_OR_SPACE: RegExp = /[. ]$/
+const ENDS_WITH_DOT_OR_SPACE = /[. ]$/
 
 // Make sure the directory name is valid in noth windows and mac
 export function validateDirectoryName(directoryName: string): boolean {

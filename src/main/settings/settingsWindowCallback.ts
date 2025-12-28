@@ -2,11 +2,11 @@ import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { STORE_SETTINGS_ZOD_SCHEMA } from '@shared-all/validation/validateSettings'
 import { sendAsyncIpcMessageWorker, sendSyncIpcMessageWorker } from '../ipc/worker/workerIpcSender'
 
-const fileName: string = 'settingsWindowCallback.ts'
-const area: string = 'settings'
+const fileName = 'settingsWindowCallback.ts'
+const area = 'settings'
 
 export function modifySettings(newSettings: StoreSettings): void {
-  const funcName: string = 'modifySettings'
+  const funcName = 'modifySettings'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {
@@ -24,7 +24,7 @@ export function modifySettings(newSettings: StoreSettings): void {
 }
 
 export async function getSettings(): Promise<StoreSettings | undefined> {
-  const funcName: string = 'getSettings'
+  const funcName = 'getSettings'
   entryLog(funcName, fileName, area)
 
   if (!glob.mainGlobals.workerSetup) {

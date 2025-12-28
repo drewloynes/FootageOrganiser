@@ -3,11 +3,11 @@ import { evaluateCurrentRules } from './evaluation/evaluation'
 import { executeCurrentRules } from './execution/execution'
 import { setSilentEvaluateCurrentRules } from './rules/currentRules'
 
-const fileName: string = 'runWorker.ts'
-const area: string = 'worker'
+const fileName = 'runWorker.ts'
+const area = 'worker'
 
 export async function runWorker(): Promise<void> {
-  const funcName: string = 'runWorker'
+  const funcName = 'runWorker'
   entryLog(funcName, fileName, area)
 
   const continueWork = true
@@ -30,8 +30,8 @@ export async function runWorker(): Promise<void> {
   return
 }
 
-async function sleepTillReevaluation() {
-  const funcName: string = 'sleepTillReevaluation'
+async function sleepTillReevaluation(): Promise<void> {
+  const funcName = 'sleepTillReevaluation'
   entryLog(funcName, fileName, area)
 
   const reevaluateSleepTime = glob.workerGlobals.currentSettings?.reevaluateSleepTime
@@ -48,7 +48,7 @@ async function sleepTillReevaluation() {
 }
 
 export function endReevaluationSleepEarly(): void {
-  const funcName: string = 'endReevaluationSleepEarly'
+  const funcName = 'endReevaluationSleepEarly'
   entryLog(funcName, fileName, area)
 
   endSleep('run-worker-sleep', glob.workerGlobals.currentSleeps)

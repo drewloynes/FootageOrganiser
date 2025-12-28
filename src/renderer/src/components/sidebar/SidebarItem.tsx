@@ -1,8 +1,8 @@
 import { TooltipContentProps } from '@radix-ui/react-tooltip'
 import { SidebarMenuButton, SidebarMenuItem } from '../ui/sidebar'
 
-const fileName: string = 'SidebarItem.tsx'
-const area: string = 'sidebar'
+const fileName = 'SidebarItem.tsx'
+const area = 'sidebar'
 
 function SidebarItem({
   button_text = '',
@@ -18,8 +18,8 @@ function SidebarItem({
   size?: 'default' | 'sm' | 'lg' | null | undefined
   onClick?: () => void
   className?: string
-}) {
-  const funcName: string = 'SidebarItem'
+}): React.ReactElement {
+  const funcName = 'SidebarItem'
   log.rend(funcName, fileName, area)
 
   return (

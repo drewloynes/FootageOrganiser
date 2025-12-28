@@ -1,4 +1,4 @@
-type LoggingConfiguration = {
+interface LoggingConfiguration {
   dev: boolean
   logLevel: string
   logProcess: string[]
@@ -8,7 +8,7 @@ type LoggingConfiguration = {
 }
 
 const loggerConfig: LoggingConfiguration = {
-  dev: false,
+  dev: true,
   logLevel: 'func',
   logProcess: [],
   logFunc: [],

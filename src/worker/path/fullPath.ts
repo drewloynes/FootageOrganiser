@@ -1,12 +1,12 @@
-const fileName: string = 'fullPath.ts'
-const area: string = 'path'
+const fileName = 'fullPath.ts'
+const area = 'path'
 
 export class FullPath {
   #path: string
   #exists: boolean
 
-  constructor(path: string, exists: boolean = false) {
-    const funcName: string = 'FullPath Constructor'
+  constructor(path: string, exists = false) {
+    const funcName = 'FullPath Constructor'
     entryLog(funcName, fileName, area)
 
     this.#path = path
@@ -16,11 +16,11 @@ export class FullPath {
     return
   }
 
-  get path() {
+  get path(): string {
     return this.#path
   }
 
-  get exists() {
+  get exists(): boolean {
     return this.#exists
   }
 

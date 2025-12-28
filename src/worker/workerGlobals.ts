@@ -24,9 +24,9 @@ export class WorkerGlobals {
 
   /* Resolving promises */
   // Map for resolving normal SyncIpcMessages
-  awaitingIpcMessages: Map<string, PromiseResolveRejectTimer> = new Map()
+  awaitingIpcMessages = new Map<string, PromiseResolveRejectTimer>()
   // Map for resolving sleeps
-  currentSleeps: Map<string, PromiseResolveTimer> = new Map()
+  currentSleeps = new Map<string, PromiseResolveTimer>()
 
   /* User Set Data */
   // Current settings used by worker

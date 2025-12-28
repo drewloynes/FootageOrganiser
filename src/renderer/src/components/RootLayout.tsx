@@ -1,11 +1,11 @@
 import { ComponentProps } from 'react'
 import { SidebarProvider } from './ui/sidebar'
 
-const fileName: string = 'RootLayout.tsx'
-const area: string = 'app'
+const fileName = 'RootLayout.tsx'
+const area = 'app'
 
-function RootLayout({ children }: ComponentProps<'div'>) {
-  const funcName: string = 'RootLayout'
+function RootLayout({ children }: ComponentProps<'div'>): React.ReactElement {
+  const funcName = 'RootLayout'
   log.rend(funcName, fileName, area)
 
   return <SidebarProvider>{children}</SidebarProvider>

@@ -14,11 +14,11 @@ import DraggableTopBar from './components/DraggableTopBar'
 import RootLayout from './components/RootLayout'
 import FootOrgSidebar from './components/sidebar/FootOrgSidebar'
 
-const fileName: string = 'App.tsx'
-const area: string = 'app'
+const fileName = 'App.tsx'
+const area = 'app'
 
-function App() {
-  const funcName: string = 'App'
+function App(): React.ReactElement {
+  const funcName = 'App'
   log.rend(funcName, fileName, area)
 
   return (

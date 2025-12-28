@@ -35,11 +35,11 @@ export class Rule {
   #disabled: boolean
 
   // Start executing on any actions
-  startActions: boolean = true
+  startActions = true
   // Whether the rule is requiring evaluation
-  evaluateRule: boolean = true
+  evaluateRule = true
   // Whether the rule is awaiting changes (e.g. it is to be stopped, deleted or modified once it is no longer in use)
-  #awaitingChanges: boolean = false
+  #awaitingChanges = false
 
   // Queues for making or deleting directorys
   // - Lists of directorie paths to make or delete
@@ -57,13 +57,13 @@ export class Rule {
   // (E.G. do full paths exists, is a mirror trying to mirror from multiple paths)
   #unevaluateableReason: UNEVALUATABLE_REASON = UNEVALUATABLE_REASON.AWAITING_EVALUATION
   // Current checksum action being performed
-  #checksumAction: string = ''
+  #checksumAction = ''
   // Current executing action being performed
-  #executingAction: string = ''
+  #executingAction = ''
   // Current progress through actions when executing
-  #actionsProgress: number = 0
+  #actionsProgress = 0
   // Problem encountered by rule
-  #error: string = ''
+  #error = ''
 
   // StreamUpdate object for streaming rule to main
   streamToMain: StreamUpdate = new StreamUpdate(200, sendRuleStreamToMainCurrentRules)
@@ -106,43 +106,43 @@ export class Rule {
     return
   }
 
-  get name() {
+  get name(): string {
     return this.#name
   }
 
-  get type() {
+  get type(): RULE_TYPE {
     return this.#type
   }
 
-  get origin() {
+  get origin(): PathInVolume {
     return this.#origin
   }
 
-  get target() {
+  get target(): PathInVolume {
     return this.#target
   }
 
-  get copyFileOptions() {
+  get copyFileOptions(): CopyFileOptions {
     return this.#copyFileOptions
   }
 
-  get mirrorOptions() {
+  get mirrorOptions(): MirrorOptions {
     return this.#mirrorOptions
   }
 
-  get enableStartStopActions() {
+  get enableStartStopActions(): boolean {
     return this.#enableStartStopActions
   }
 
-  get disabled() {
+  get disabled(): boolean {
     return this.#disabled
   }
 
-  get awaitingChanges() {
+  get awaitingChanges(): boolean {
     return this.#awaitingChanges
   }
 
-  get status() {
+  get status(): RULE_STATUS_TYPE {
     return this.#status
   }
 
@@ -370,7 +370,7 @@ export class Rule {
   }
 
   setEvaluate(): void {
-    const funcName: string = 'setEvaluate'
+    const funcName = 'setEvaluate'
     entryLog(funcName, fileName, area)
 
     if (!this.disabled) {
@@ -399,7 +399,7 @@ export class Rule {
   }
 
   setDisabled(disabled: boolean): void {
-    const funcName: string = 'setDisabled'
+    const funcName = 'setDisabled'
     entryLog(funcName, fileName, area)
 
     this.#disabled = disabled
@@ -412,7 +412,7 @@ export class Rule {
     const funcName = 'hasActions'
     entryLog(funcName, fileName, area)
 
-    let hasActions: boolean = false
+    let hasActions = false
     if (
       this.dirMakeActionQueue.length > 0 ||
       this.dirDeleteActionQueue.length > 0 ||
@@ -431,7 +431,7 @@ export class Rule {
     const funcName = 'hasExecutableActions'
     entryLog(funcName, fileName, area)
 
-    let hasExecuatableActions: boolean = false
+    let hasExecuatableActions = false
     if (this.hasActions() && this.startActions && !this.evaluateRule) {
       condLog(`There are executable actions in the action queues`, funcName, fileName, area)
       hasExecuatableActions = true

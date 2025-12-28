@@ -24,11 +24,11 @@ import { useNavigate } from 'react-router-dom'
 import SettingsFormLoading from './SettingsFormLoading'
 import { SettingsFormNumberInput } from './utils/SettingsFormNumberInput'
 
-const fileName: string = 'SettingsFomr.tsx'
-const area: string = 'settings'
+const fileName = 'SettingsFomr.tsx'
+const area = 'settings'
 
-function SettingsForm() {
-  const funcName: string = 'SettingsForm'
+function SettingsForm(): React.ReactElement {
+  const funcName = 'SettingsForm'
   log.rend(funcName, fileName, area)
 
   const [loading, setLoading] = useState(true)
@@ -36,14 +36,14 @@ function SettingsForm() {
   const form = useForm({
     resolver: zodResolver(STORE_SETTINGS_ZOD_SCHEMA) as Resolver<StoreSettings>
   })
-  const { control, reset, handleSubmit, getValues } = form
+  const { control, reset, handleSubmit } = form
 
   const navigate = useNavigate()
 
   useEffect(() => {
     log.cond('useEffect: Set form current values', funcName, fileName, area)
 
-    async function loadSettings() {
+    async function loadSettings(): Promise<void> {
       log.ipcSent(`Request current settings`, funcName, fileName, area)
       const currentSettings = await window.electron.getSettings()
       log.ipcRec('Current settings received', funcName, fileName, area, currentSettings)
@@ -52,7 +52,7 @@ function SettingsForm() {
       setLoading(false)
     }
 
-    loadSettings()
+    void loadSettings()
   }, [])
 
   if (loading) {
@@ -60,7 +60,7 @@ function SettingsForm() {
     return <SettingsFormLoading />
   }
 
-  const onSubmit = (newSettings) => {
+  const onSubmit = (newSettings): void => {
     log.cond('Settings-Form Submitted', funcName, fileName, area)
 
     newSettings.footageOrganiserVersion = FOOTAGE_ORGANISER_VERSION
@@ -68,10 +68,11 @@ function SettingsForm() {
     log.ipcSent('modify-settings', funcName, fileName, area, newSettings)
     window.electron.modifySettings(newSettings)
 
-    navigate(`/`)
+    void navigate(`/`)
   }
 
-  const onError = (errors: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onError = (errors: any): void => {
     console.log('Zod Errors:', errors)
   }
 

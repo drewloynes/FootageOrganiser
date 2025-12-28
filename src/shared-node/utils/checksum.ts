@@ -3,17 +3,17 @@ import { CRC32Stream } from 'crc32-stream'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 
-const fileName: string = 'checksum.ts'
-const area: string = 'utils'
+const fileName = 'checksum.ts'
+const area = 'utils'
 
 export async function generateChecksum(
   pathToFile: string,
   checksumType: CHECKSUM_TYPE
 ): Promise<string> {
-  const funcName: string = 'generateChecksum'
+  const funcName = 'generateChecksum'
   entryLog(funcName, fileName, area)
 
-  let checksum: string = ''
+  let checksum = ''
   switch (checksumType) {
     case CHECKSUM_TYPE.CRC: {
       condLog('CRC checksum', funcName, fileName, area)
@@ -38,10 +38,10 @@ export async function generateChecksum(
 }
 
 function generateCrcChecksum(pathToFile: string): Promise<string> {
-  const funcName: string = 'generateCrcChecksum'
+  const funcName = 'generateCrcChecksum'
   entryLog(funcName, fileName, area)
 
-  const checkSum: Promise<string> = new Promise((resolve, reject) => {
+  const checkSum = new Promise<string>((resolve, reject) => {
     condLog('Start CRC checksum promise', funcName, fileName, area)
 
     const stream = fs.createReadStream(pathToFile)
@@ -76,10 +76,10 @@ function generateCrcChecksum(pathToFile: string): Promise<string> {
 }
 
 function generateMd5Checksum(pathToFile: string): Promise<string> {
-  const funcName: string = 'generateMd5Checksum'
+  const funcName = 'generateMd5Checksum'
   entryLog(funcName, fileName, area)
 
-  const checksum: Promise<string> = new Promise((resolve, reject) => {
+  const checksum = new Promise<string>((resolve, reject) => {
     const hash = crypto.createHash('md5')
     const stream = fs.createReadStream(pathToFile)
 
@@ -102,10 +102,10 @@ function generateMd5Checksum(pathToFile: string): Promise<string> {
 }
 
 function generateSha256Checksum(pathToFile: string): Promise<string> {
-  const funcName: string = 'generateSha256Checksum'
+  const funcName = 'generateSha256Checksum'
   entryLog(funcName, fileName, area)
 
-  const checksum: Promise<string> = new Promise((resolve, reject) => {
+  const checksum = new Promise<string>((resolve, reject) => {
     const hash = crypto.createHash('sha256')
     const stream = fs.createReadStream(pathToFile)
 

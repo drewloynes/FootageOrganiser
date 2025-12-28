@@ -15,8 +15,8 @@ import {
 import { StoreSettings } from '@shared-all/types/settingsTypes'
 import { Control } from 'react-hook-form'
 
-const fileName: string = 'SettingsFormNumberInput.tsx'
-const area: string = 'settings'
+const fileName = 'SettingsFormNumberInput.tsx'
+const area = 'settings'
 
 export function SettingsFormNumberInput({
   control,
@@ -30,8 +30,8 @@ export function SettingsFormNumberInput({
   label?: string
   tooltip?: string
   placeHolderText?: string
-}) {
-  const funcName: string = 'SettingsFormNumberInput'
+}): React.ReactElement {
+  const funcName = 'SettingsFormNumberInput'
   log.rend(funcName, fileName, area)
 
   return (

@@ -3,11 +3,11 @@ import icon from '@resources/footage-organiser-logo-3.png?asset'
 import { BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 
-const fileName: string = 'window.ts'
-const area: string = 'window'
+const fileName = 'window.ts'
+const area = 'window'
 
 export function getWindow(): Electron.BrowserWindow | undefined {
-  const funcName: string = 'getWindow'
+  const funcName = 'getWindow'
   entryLog(funcName, fileName, area)
 
   const foundWindow = BrowserWindow.getAllWindows().find(
@@ -18,8 +18,8 @@ export function getWindow(): Electron.BrowserWindow | undefined {
   return foundWindow
 }
 
-export function openWindow(): void {
-  const funcName: string = 'openMainWindow'
+export async function openWindow(): Promise<void> {
+  const funcName = 'openMainWindow'
   entryLog(funcName, fileName, area)
 
   const window = getWindow()
@@ -28,15 +28,15 @@ export function openWindow(): void {
     window.show()
   } else {
     condLog(`Window doesn't currently exist`, funcName, fileName, area)
-    createWindow()
+    await createWindow()
   }
 
   exitLog(funcName, fileName, area)
   return
 }
 
-function createWindow(): void {
-  const funcName: string = 'createWindow'
+async function createWindow(): Promise<void> {
+  const funcName = 'createWindow'
   entryLog(funcName, fileName, area)
 
   new BrowserWindow({
@@ -68,10 +68,10 @@ function createWindow(): void {
 
   if (is.dev) {
     condLog(`In dev mode`, funcName, fileName, area)
-    devModeWindowModifications()
+    await devModeWindowModifications()
   } else {
     condLog(`Not dev mode`, funcName, fileName, area)
-    getWindow()?.loadFile(join(__dirname, '../renderer/index.html'))
+    await getWindow()?.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   exitLog(funcName, fileName, area)
@@ -79,12 +79,12 @@ function createWindow(): void {
 }
 
 function windowModifications(): void {
-  const funcName: string = 'windowModifications'
+  const funcName = 'windowModifications'
   entryLog(funcName, fileName, area)
 
-  // Forces external links to open througn default browser
+  // Forces external links to open through default browser
   getWindow()?.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
+    void shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
@@ -93,7 +93,7 @@ function windowModifications(): void {
 }
 
 function setupWindowCallbacks(): void {
-  const funcName: string = 'setupWindowCallbacks'
+  const funcName = 'setupWindowCallbacks'
   entryLog(funcName, fileName, area)
 
   getWindow()?.on('ready-to-show', () => {
@@ -104,8 +104,8 @@ function setupWindowCallbacks(): void {
   return
 }
 
-function devModeWindowModifications(): void {
-  const funcName: string = 'devModeWindowModifications'
+async function devModeWindowModifications(): Promise<void> {
+  const funcName = 'devModeWindowModifications'
   entryLog(funcName, fileName, area)
 
   // Adds two error logs but doesnt break any functionality so they aren't fixing:
@@ -115,9 +115,9 @@ function devModeWindowModifications(): void {
   // Renderer base on electron-vite cli changes
   // Load the remote URL for development or the local html file for production.
   if (process.env['ELECTRON_RENDERER_URL']) {
-    getWindow()?.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    await getWindow()?.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    getWindow()?.loadFile(join(__dirname, '../renderer/index.html'))
+    await getWindow()?.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   exitLog(funcName, fileName, area)

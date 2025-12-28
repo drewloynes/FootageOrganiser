@@ -1,11 +1,11 @@
 import { ComponentProps } from 'react'
 import { SidebarInset } from '../ui/sidebar'
 
-const fileName: string = 'FootOrgBody.tsx'
-const area: string = 'body'
+const fileName = 'FootOrgBody.tsx'
+const area = 'body'
 
-function FootOrgBody({ children }: ComponentProps<'div'>) {
-  const funcName: string = 'FootOrgBody'
+function FootOrgBody({ children }: ComponentProps<'div'>): React.ReactElement {
+  const funcName = 'FootOrgBody'
   log.rend(funcName, fileName, area)
 
   return (

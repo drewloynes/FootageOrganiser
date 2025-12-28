@@ -1,11 +1,11 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 
-const fileName: string = 'macOs.ts'
-const area: string = 'drive-info'
+const fileName = 'macOs.ts'
+const area = 'drive-info'
 
 export async function macGetVolNameFromFs(fs: string): Promise<string | undefined> {
-  const funcName: string = 'macGetVolNameFromFs'
+  const funcName = 'macGetVolNameFromFs'
   entryLog(funcName, fileName, area)
 
   let volumeName: string | undefined = undefined

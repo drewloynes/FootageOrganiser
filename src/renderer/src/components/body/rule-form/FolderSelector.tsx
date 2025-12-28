@@ -14,8 +14,8 @@ import { ShortPathInVolume } from '@shared-all/types/pathInVolumeTypes'
 import { StoreRule } from '@shared-all/types/ruleTypes'
 import { Control, FieldPath, useController } from 'react-hook-form'
 
-const fileName: string = 'FolderSelector.tsx'
-const area: string = 'rule-form'
+const fileName = 'FolderSelector.tsx'
+const area = 'rule-form'
 
 export function FolderSelector({
   control,
@@ -29,8 +29,8 @@ export function FolderSelector({
   buttonText: string
   label: string
   toolTip: string
-}) {
-  const funcName: string = 'FolderSelector'
+}): React.ReactElement {
+  const funcName = 'FolderSelector'
   log.rend(funcName, fileName, area)
 
   const {
@@ -44,7 +44,7 @@ export function FolderSelector({
     return <div />
   }
 
-  const selectFolder = async () => {
+  const selectFolder = async (): Promise<void> => {
     log.ipcSent('choose-directory', funcName, fileName, area)
     const directoryChosen: ShortPathInVolume | undefined = await window.electron.chooseDirectory()
     log.ipcRec('choose-directory', funcName, fileName, area, directoryChosen)
@@ -110,7 +110,10 @@ export function FolderSelector({
 }
 
 // Rework some ShadCN components to work with nested error objects
-function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
+function FormMessage({
+  className,
+  ...props
+}: React.ComponentProps<'p'>): React.ReactElement | null {
   const { error, formMessageId } = useFormField()
   let body = error ? String(error?.message ?? '') : props.children
 
@@ -141,7 +144,11 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
-function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function FormLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof LabelPrimitive.Root>): React.ReactElement {
+  // eslint-disable-next-line prefer-const
   let { error, formItemId } = useFormField()
 
   // Set error back to undefined if not changed in this component

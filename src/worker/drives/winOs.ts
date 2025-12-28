@@ -1,11 +1,11 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 
-const fileName: string = 'winOs.ts'
-const area: string = 'drive=info'
+const fileName = 'winOs.ts'
+const area = 'drive=info'
 
 export async function winGetVolNameFromMount(mount: string): Promise<string | undefined> {
-  const funcName: string = 'winGetVolNameFromMount'
+  const funcName = 'winGetVolNameFromMount'
   entryLog(funcName, fileName, area)
 
   let volumeName: string | undefined = undefined
