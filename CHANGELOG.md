@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.0
+
 Fixes:
 
 - Fixed non-existent folder bug to make the Mac version work.
