@@ -150,7 +150,7 @@ export class PathInVolume {
       condLog(`For drive with volume name: ${driveInfoItem.volumeName}`, funcName, fileName, area)
 
       if (driveInfoItem.volumeName !== this.volumeName) {
-        condLog(`Volume name does not match`, funcName, fileName, area)
+        condLog(`Volume name ${this.volumeName} does not match drive volume name`, funcName, fileName, area)
         continue
       }
 

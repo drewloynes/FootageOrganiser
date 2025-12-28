@@ -29,9 +29,11 @@ export enum UNEVALUATABLE_REASON {
   AWAITING_EVALUATION = 'Awaiting Evaluation',
   NO_PROBLEM = 'No Problem',
   RULE_DISABLED = 'Rule Disabled',
+  ZERO_EXISTING_BOTH_PATHS = 'Zero Existing Both Paths',
   ZERO_EXISTING_TARGET_PATHS = 'Zero Existing Target Paths',
   ZERO_EXISTING_ORIGIN_PATHS = 'Zero Existing Origin Paths',
   MIRROR_MULTIPLE_ORIGIN_PATHS = 'Mirror Rule Has Multiple Origin Paths',
+  BOTH_PATHS_FORMAT_NOT_COMPATIBLE = 'Both paths drive format is not compatible wth OS',
   TARGET_PATH_FORMAT_NOT_COMPATIBLE = 'Target path drive format is not compatible wth OS',
   ORIGIN_PATH_FORMAT_NOT_COMPATIBLE = 'Origin path drive format is not compatible wth OS'
 }
