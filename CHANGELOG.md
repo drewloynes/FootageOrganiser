@@ -6,6 +6,8 @@ Feature:
 
 - Inform when a drive format is not compatible with the OS.
 
+- More information to user on which paths cant be found.
+
 Fixes:
 
 - Ignore hidden files and folders on Mac.

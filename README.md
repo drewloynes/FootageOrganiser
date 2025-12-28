@@ -4,15 +4,50 @@ After filming a bunch of vlogs, once a week or so I would do the annoying long p
 
 So this is the footage organiser. The goal is to automate all that annoying boring stuff after you've filmed and before you've started editing.
 
-How it works? Well you install the app, and create some rules which tell the app where to copy from and to, and how to do it. Then the app can automatically follow these rules in the background, or require manual intervention to work. The help section in the app goes into a lot of detail
+How it works? Well you install the app, and create some rules which tell the app where to copy from and to, and how to do it. Then the app can automatically follow these rules in the background, or require manual intervention to work. The **help** section in the app goes into a lot of detail
 
-## Downloading & Installing App
+## Installing, Updating and Using
 
-Find the .exe or .dmg file from the latest release and download and install the app as normal.
+### Windows Installation
 
-Note: You may encounter warnings about being an untrusted developer. This is because I don't want to spend money to get the application certified.
+If installing on Windows. Download the .exe file from the [latest release](https://github.com/drewloynes/FootageOrganiser/releases).
 
-Once the app has been installed check out the help section for some explanations of how it works. Try and create a simple rule, get comfortable with what its doing, then setup your rules to automate all the annoying stuff.
+Once downloaded, double click to begin the install.
+
+**Be Aware:** I dont want to pay lots of money to big companies to get this app signed (authenticated to say its safe). Therefore you will encounter the following warning screen saying 'Windows protected your PC'.
+
+![Windows protected your PC](docs/images/Initial-Windows-Warning.png)
+
+Simply click 'More info'.
+
+![Windows protected your PC - More Info](docs/images/Expanded-Windows-Warning.png)
+
+And click 'Run anyway'.
+
+This will now install the Footage Organiser.
+
+### Mac Installation
+
+If installing on Mac. Download the .dmg file from the [latest release](https://github.com/drewloynes/FootageOrganiser/releases).
+
+Follow the usual process of running the DMG file and copying Footage Organiser into the Applications folder.
+
+**Be Aware:** Run the Footage Organiser and you will see the following alert as I do not want to pay a bunch of money to apple every year to get this side project signed.
+
+![Mac Warning](docs/images/Mac-Warning.png)
+
+In order to run the Footage Organiser, you must:
+
+- Open the Terminal App.
+- Enter the command `xattr -cr "/Applications/Footage Organiser.app”`.
+
+### Updating
+
+To update the Footage Organiser. Simply remove the old Footage Organiser and then repeat the installation process.
+
+### Using
+
+I have add a large amount of detail in the help section of the app to assisting in learning how to use it.
 
 ## Contributing
 
@@ -47,6 +82,17 @@ $ pnpm build:win
 # For macOS
 $ pnpm build:mac
 ```
+
+### Release
+
+To publish a release:
+
+- Commit a version bump:
+  - Bump version in package.json
+  - Bump version in changelog
+- Create a release from this version bump:
+  - Create and push a tag from main
+  - A draft release will be created. Add more details and publish the release.
 
 ### Design
 
