@@ -17,11 +17,12 @@ export default defineConfig({
       }
     },
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           main: resolve(__dirname, 'src/main/main.ts'),
           worker: resolve(__dirname, 'src/worker/worker.ts')
-        }
+        },
+        external: ['electron', /^electron\/.*/]
       },
       sourcemap: true
     },
@@ -32,13 +33,14 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         input: {
-          preload: resolve(__dirname, 'src/preload/index.ts') // Path to your preload file
+          preload: resolve(__dirname, 'src/preload/index.ts')
         },
         output: {
           format: 'cjs'
-        }
+        },
+        external: ['electron', /^electron\/.*/]
       },
       sourcemap: true
     }
