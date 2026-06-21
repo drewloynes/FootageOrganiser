@@ -13,7 +13,7 @@ export async function runWorker(): Promise<void> {
   const continueWork = true
   while (continueWork) {
     condLog('Continue work', funcName, fileName, area)
-
+    
     // Run a evaulation of the rules for any pending actions - then execute any actions
     if (await evaluateCurrentRules()) {
       condLog('There are executable actions for the rules', funcName, fileName, area)
