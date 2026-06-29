@@ -65,7 +65,7 @@
     "electron": "^42.4.1",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "framer-motion": "^12.40.0",
     "prettier": "^3.8.4",
     "prettier-plugin-organize-imports": "^4.3.0",
